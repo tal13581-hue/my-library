@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="הספרייה שלי">
+<meta name="theme-color" content="#4338CA">
+<title>הספרייה שלי</title>
+<style>
+  :root {
+    --purple: #4338CA;
+    --purple2: #6D28D9;
+    --teal: #0D9488;
+    --coral: #E85D4A;
+    --purple-light: #EDE9FE;
+    --purple-mid: #A78BFA;
+    --purple-dark: #312E81;
+    --text: #1a1a2e;
+    --text-secondary: #5b5b7b;
+    --text-tertiary: #9b9bb5;
+    --bg: #ffffff;
+    --bg-secondary: #F5F3FF;
+    --border: rgba(99,85,220,0.13);
+    --border-med: rgba(99,85,220,0.22);
+    --radius: 16px;
+    --radius-sm: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #ede9fe; --text-secondary: #a78bfa; --text-tertiary: #7c6fcd;
+      --bg: #0f0e1a; --bg-secondary: #1a1730;
+      --border: rgba(167,139,250,0.13); --border-med: rgba(167,139,250,0.22);
+      --purple-light: #2e2760;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system,'Helvetica Neue',Arial,sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
+  .app { display: flex; flex-direction: column; min-height: 100dvh; }
+
+  /* Header */
+  .header { padding: 48px 18px 0; background: linear-gradient(160deg, #312E81 0%, #4338CA 60%, #6D28D9 100%); position: sticky; top: 0; z-index: 10; overflow: hidden; }
+  .header-books-bg { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; opacity: 0.07; pointer-events: none; }
+  .header-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; padding-bottom: 14px; }
+  .header-shelf { display: flex; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+  .book-spine-deco { border-radius: 3px 3px 2px 2px; width: 11px; }
+  .header-text { flex: 1; }
+  .header-title { font-size: 21px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .header-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+
+  /* Nav */
+  .nav { display: flex; background: #312E81; }
+  .nav-btn { flex: 1; padding: 13px 4px; font-size: 15px; color: rgba(255,255,255,0.55); background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 7px; font-weight: 500; }
+  .nav-btn.active { color: #fff; border-bottom-color: #A78BFA; }
+
+  .content { padding: 18px; padding-bottom: 110px; flex: 1; }
+
+  /* Quote */
+  .quote-card { background: linear-gradient(135deg, var(--purple-light) 0%, #faf5ff 100%); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; border: 1px solid var(--border); }
+  @media (prefers-color-scheme: dark) { .quote-card { background: linear-gradient(135deg,#1e1a3a 0%,#16122e 100%); } }
+  .quote-mark { font-size: 52px; color: var(--purple-mid); line-height: 0.7; margin-bottom: 14px; font-family: Georgia,serif; }
+  .quote-text { font-size: 17px; line-height: 1.7; color: var(--text); font-style: italic; margin-bottom: 16px; }
+  .quote-text.ltr { direction: ltr; text-align: left; }
+  .quote-text.rtl { direction: rtl; text-align: right; }
+  .quote-author { font-size: 15px; font-weight: 600; color: var(--purple); }
+  .quote-book { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+  .quote-source { font-size: 11px; color: var(--teal); margin-top: 10px; display: flex; align-items: center; gap: 4px; }
+  .quote-placeholder { text-align: center; padding: 24px 0; }
+  .quote-placeholder .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .quote-placeholder p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Buttons */
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px; border-radius: var(--radius-sm); font-size: 16px; font-family: inherit; cursor: pointer; border: none; font-weight: 600; transition: opacity .15s, transform .1s; }
+  .btn:active { transform: scale(0.97); opacity: .88; }
+  .btn-primary { background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%); color: #fff; }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-outline { background: none; border: 1.5px solid var(--border-med); color: var(--text); }
+
+  /* Book cards */
+  .book-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .book-num { width: 28px; height: 28px; border-radius: 50%; background: var(--purple-light); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--purple); flex-shrink: 0; }
+  .author-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--purple-light); border: 2px solid var(--border-med); }
+  .author-avatar-placeholder { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--purple-light), #ddd8fe); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: var(--purple); flex-shrink: 0; border: 2px solid var(--border-med); }
+  .book-info { flex: 1; min-width: 0; }
+  .book-title { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .book-author { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+  .book-wiki-status { font-size: 11px; margin-top: 3px; }
+  .status-ok { color: var(--teal); }
+  .status-err { color: var(--coral); }
+  .book-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--border); cursor: pointer; color: var(--text-secondary); padding: 9px; border-radius: 10px; display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; }
+  .icon-btn:active { background: var(--bg-secondary); }
+  .icon-btn.del { border-color: rgba(232,93,74,.25); }
+  .icon-btn.del:active { color: var(--coral); }
+
+  /* Empty */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+  .empty .big-icon { font-size: 56px; margin-bottom: 16px; }
+  .empty p { font-size: 16px; font-weight: 500; }
+  .empty small { font-size: 14px; margin-top: 8px; display: block; color: var(--text-tertiary); }
+
+  /* FAB */
+  .fab { position: fixed; bottom: 30px; right: 20px; width: 62px; height: 62px; border-radius: 50%; background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%); color: #fff; border: none; font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(67,56,202,.45); z-index: 20; }
+  .fab:active { transform: scale(.93); }
+
+  /* Sheet */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { background: var(--bg); border-radius: 24px 24px 0 0; padding: 24px 20px 44px; width: 100%; max-width: 500px; }
+  .sheet-handle { width: 40px; height: 5px; background: var(--border-med); border-radius: 3px; margin: 0 auto 22px; }
+  .sheet-title { font-size: 19px; font-weight: 700; margin-bottom: 22px; color: var(--text); }
+  .field-label { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; margin-top: 16px; font-weight: 500; }
+  .field-label:first-of-type { margin-top: 0; }
+  .field-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-med); border-radius: var(--radius-sm); font-size: 16px; font-family: inherit; color: var(--text); background: var(--bg); }
+  .field-input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(99,85,220,.12); }
+  .sheet-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .sheet-actions .btn { flex: 1; }
+  .verify-box { margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; display: none; }
+  .verify-box.ok { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; display: block; }
+  .verify-box.err { background: #fff1f0; color: #7f1d1d; border: 1px solid #fca5a5; display: block; }
+  .verify-box.loading { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); display: block; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--purple-dark); color: #fff; padding: 13px 22px; border-radius: var(--radius-sm); font-size: 15px; z-index: 300; opacity: 0; transition: opacity .2s,transform .2s; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Loading dots */
+  .dots { display: inline-flex; gap: 5px; align-items: center; }
+  .dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.7); animation: blink 1.2s infinite; }
+  .dots span:nth-child(2) { animation-delay: .2s; }
+  .dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+  .author-progress { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .author-pill { font-size: 12px; padding: 5px 12px; border-radius: 20px; background: var(--purple-light); color: var(--purple); font-weight: 500; border: 1px solid var(--border); }
+  .author-pill.done { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .author-pill.current { background: var(--purple); color: #fff; border-color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <!-- decorative SVG bookshelf -->
+    <svg class="header-books-bg" viewBox="0 0 400 80" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="60" width="400" height="4" fill="white"/>
+      <rect x="8"  y="28" width="18" height="32" rx="2" fill="white"/>
+      <rect x="28" y="34" width="14" height="26" rx="2" fill="white"/>
+      <rect x="44" y="22" width="20" height="38" rx="2" fill="white"/>
+      <rect x="66" y="30" width="16" height="30" rx="2" fill="white"/>
+      <rect x="84" y="18" width="22" height="42" rx="2" fill="white"/>
+      <rect x="108" y="32" width="14" height="28" rx="2" fill="white"/>
+      <rect x="124" y="24" width="18" height="36" rx="2" fill="white"/>
+      <rect x="144" y="36" width="12" height="24" rx="2" fill="white"/>
+      <rect x="158" y="20" width="20" height="40" rx="2" fill="white"/>
+      <rect x="180" y="30" width="16" height="30" rx="2" fill="white"/>
+      <rect x="198" y="26" width="18" height="34" rx="2" fill="white"/>
+      <rect x="218" y="38" width="14" height="22" rx="2" fill="white"/>
+      <rect x="234" y="16" width="22" height="44" rx="2" fill="white"/>
+      <rect x="258" y="28" width="16" height="32" rx="2" fill="white"/>
+      <rect x="276" y="34" width="14" height="26" rx="2" fill="white"/>
+      <rect x="292" y="22" width="20" height="38" rx="2" fill="white"/>
+      <rect x="314" y="30" width="16" height="30" rx="2" fill="white"/>
+      <rect x="332" y="20" width="18" height="40" rx="2" fill="white"/>
+      <rect x="352" y="32" width="14" height="28" rx="2" fill="white"/>
+      <rect x="368" y="24" width="20" height="36" rx="2" fill="white"/>
+    </svg>
+    <div class="header-inner">
+      <div class="header-shelf">
+        <div class="book-spine-deco" style="height:38px;background:#F97316"></div>
+        <div class="book-spine-deco" style="height:44px;background:#EAB308"></div>
+        <div class="book-spine-deco" style="height:32px;background:#22C55E"></div>
+        <div class="book-spine-deco" style="height:48px;background:#EC4899"></div>
+        <div class="book-spine-deco" style="height:36px;background:#06B6D4"></div>
+        <div class="book-spine-deco" style="height:42px;background:#A78BFA"></div>
+      </div>
+      <div class="header-text">
+        <div class="header-title">הספרייה שלי</div>
+        <div class="header-sub" id="header-sub">0 ספרים</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" id="tab-quotes" onclick="showTab('quotes')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+      ציטוטים
+    </button>
+    <button class="nav-btn" id="tab-books" onclick="showTab('books')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      ספרים
+    </button>
+  </nav>
+  <div class="content" id="content"></div>
+</div>
+
+<button class="fab" id="fab" style="display:none" onclick="openAdd()" aria-label="הוסף ספר">+</button>
+<div id="overlay" style="display:none"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'library-books-v3';
+let books = [];
+let tab = 'quotes';
+let editId = null;
+let quote = null;
+let authorQueue = [];
+
+// ── Storage ───────────────────────────────────────────────
+function load() {
+  try { books = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { books = []; }
+  updateSub();
+}
+function save() { localStorage.setItem(STORE_KEY, JSON.stringify(books)); updateSub(); }
+function updateSub() {
+  const n = [...new Set(books.map(b => b.author))].length;
+  document.getElementById('header-sub').textContent =
+    books.length ? `${books.length} ספרים · ${n} סופר${n!==1?'ים':''}` : '0 ספרים';
+}
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ── Tabs ──────────────────────────────────────────────────
+function showTab(t) {
+  tab = t;
+  document.getElementById('tab-quotes').classList.toggle('active', t==='quotes');
+  document.getElementById('tab-books').classList.toggle('active', t==='books');
+  document.getElementById('fab').style.display = t==='books' ? 'flex' : 'none';
+  render();
+}
+function render() {
+  document.getElementById('content').innerHTML = tab==='quotes' ? renderQuotes() : renderBooks();
+}
+
+// ── Author photo (Wikipedia) ──────────────────────────────
+const PHOTO_OVERRIDE = {
+  'Cathy_O%27Neil': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Cathy_O%27Neil_at_Google_Cambridge.jpg/240px-Cathy_O%27Neil_at_Google_Cambridge.jpg',
+  'Christopher_Voss': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Chris_Voss_-_2019_%2848710852258%29.jpg/240px-Chris_Voss_-_2019_%2848710852258%29.jpg',
+  'Chris_Voss': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Chris_Voss_-_2019_%2848710852258%29.jpg/240px-Chris_Voss_-_2019_%2848710852258%29.jpg',
+};
+
+const photoCache = {};
+async function fetchAuthorPhoto(wikiName) {
+  if (!wikiName) return null;
+  if (photoCache[wikiName] !== undefined) return photoCache[wikiName];
+  if (PHOTO_OVERRIDE[wikiName]) { photoCache[wikiName] = PHOTO_OVERRIDE[wikiName]; return PHOTO_OVERRIDE[wikiName]; }
+  try {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(wikiName)}&prop=pageimages&pithumbsize=80&format=json&origin=*`;
+    const d = await (await fetch(url)).json();
+    const page = Object.values(d.query.pages)[0];
+    const src = page?.thumbnail?.source || null;
+    photoCache[wikiName] = src;
+    return src;
+  } catch(e) { photoCache[wikiName] = null; return null; }
+}
+
+// Preload photos for all authors in books
+async function preloadPhotos() {
+  const authors = [...new Set(books.map(b => b.author))];
+  await Promise.all(authors.map(a => {
+    const wn = getWikiName(a);
+    return wn ? fetchAuthorPhoto(wn) : Promise.resolve(null);
+  }));
+}
+
+// ── Render ────────────────────────────────────────────────
+function isHebrew(text) { return (text.match(/[\u0590-\u05FF]/g)||[]).length > text.length*0.2; }
+
+function renderQuotes() {
+  if (!books.length) return `<div class="empty"><div class="big-icon">📚</div><p>הוסף ספרים כדי לקבל ציטוטים</p><small>עבור ללשונית "ספרים" כדי להתחיל</small></div>`;
+  const authors = [...new Set(books.map(b => b.author))];
+  const currentAuthor = quote?.author;
+
+  let card;
+  if (quote) {
+    const rtl = isHebrew(quote.text);
+    card = `<div class="quote-card">
+      <div class="quote-mark">"</div>
+      <div class="quote-text ${rtl?'rtl':'ltr'}" dir="${rtl?'rtl':'ltr'}">${esc(quote.text)}</div>
+      <div class="quote-author">— ${esc(quote.author)}</div>
+      ${quote.book ? `<div class="quote-book">${esc(quote.book)}</div>` : ''}
+      <div class="quote-source"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${esc(quote.source)}</div>
+    </div>`;
+  } else {
+    card = `<div class="quote-card"><div class="quote-placeholder"><div class="big-icon">💬</div><p>לחץ לקבל ציטוט אקראי<br>מהסופרים בספרייתך</p></div></div>`;
+  }
+
+  const pillsHtml = '';
+
+  return card +
+    `<button class="btn btn-primary" id="qbtn" onclick="getQuote()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      ציטוט אקראי
+    </button>` + pillsHtml;
+}
+
+function renderBooks() {
+  if (!books.length) return `<div class="empty"><div class="big-icon">📖</div><p>אין ספרים עדיין</p><small>לחץ + להוסיף את הספר הראשון</small></div>`;
+
+  const list = books.map((b, i) => {
+    const wn = getWikiName(b.author);
+    const photo = wn ? photoCache[wn] : null;
+    const initials = b.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const avatarHtml = photo
+      ? `<img class="author-avatar" src="${esc(photo)}" alt="${esc(b.author)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      : '';
+    const placeholderStyle = photo ? 'display:none' : '';
+    const statusHtml = b.wikiVerified === true
+      ? `<span class="book-wiki-status status-ok">✓ ציטוטים זמינים</span>`
+      : b.wikiVerified === false
+      ? `<span class="book-wiki-status status-err">⚠ ציטוטים דרך Claude</span>`
+      : '';
+
+    return `<div class="book-card">
+      <div class="book-num">${i+1}</div>
+      ${avatarHtml}
+      <div class="author-avatar-placeholder" style="${placeholderStyle}">${initials}</div>
+      <div class="book-info">
+        <div class="book-title">${esc(b.title)}</div>
+        <div class="book-author">${esc(b.author)}</div>
+        ${statusHtml}
+      </div>
+      <div class="book-btns">
+        <button class="icon-btn" onclick="openEdit(${b.id})" aria-label="עריכה">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon-btn del" onclick="deleteBook(${b.id})" aria-label="מחיקה">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div id="book-list">${list}</div>`;
+}
+
+// ── Modal ─────────────────────────────────────────────────
+function openAdd() { editId = null; showSheet('הוסף ספר','',''); }
+function openEdit(id) {
+  const b = books.find(x=>x.id===id);
+  if (b) { editId = id; showSheet('עריכת ספר', b.title, b.author); }
+}
+function showSheet(title, t, a) {
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `<div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">${title}</div>
+    <div class="field-label">שם הספר *</div>
+    <input class="field-input" id="f-t" type="text" placeholder="שם הספר" value="${esc(t)}">
+    <div class="field-label">שם הסופר *</div>
+    <input class="field-input" id="f-a" type="text" placeholder="שם הסופר" oninput="scheduleVerify()" value="${esc(a)}">
+    <div id="verify-box" class="verify-box"></div>
+    <div class="sheet-actions">
+      <button class="btn btn-outline" onclick="closeSheet()">ביטול</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveBook()">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        שמור
+      </button>
+    </div>
+  </div>`;
+  ov.onclick = e => { if (e.target===ov) closeSheet(); };
+  setTimeout(() => document.getElementById('f-t').focus(), 50);
+  if (a) scheduleVerify();
+}
+function closeSheet() { document.getElementById('overlay').style.display = 'none'; clearTimeout(verifyTimer); }
+
+let verifyTimer = null;
+let lastVerifiedAuthor = '';
+let verifyResult = null; // {wikiName, found}
+
+function scheduleVerify() {
+  clearTimeout(verifyTimer);
+  const box = document.getElementById('verify-box');
+  if (box) { box.className = 'verify-box'; box.textContent = ''; }
+  verifyResult = null;
+  verifyTimer = setTimeout(verifyAuthor, 800);
+}
+
+async function verifyAuthor() {
+  const input = document.getElementById('f-a');
+  if (!input) return;
+  const name = input.value.trim();
+  if (!name || name === lastVerifiedAuthor) return;
+  lastVerifiedAuthor = name;
+
+  const box = document.getElementById('verify-box');
+  if (!box) return;
+  box.className = 'verify-box loading';
+  box.textContent = '🔍 מאמת סופר...';
+
+  // Ask Claude to resolve the English wiki name
+  const wikiName = await resolveWikiName(name);
+  if (!wikiName) {
+    verifyResult = { wikiName: null, found: false };
+    box.className = 'verify-box err';
+    box.textContent = '⚠ לא הצלחתי לזהות את הסופר. ודא שהשם נכון.';
+    return;
+  }
+
+  // Check if Wikiquote page exists with quotes
+  const found = await checkWikiquote(wikiName);
+  verifyResult = { wikiName, found };
+  if (found) {
+    box.className = 'verify-box ok';
+    box.textContent = `✓ ${name} נמצא ב-Wikiquote — ציטוטים זמינים`;
+  } else {
+    box.className = 'verify-box err';
+    box.textContent = `⚠ לא נמצאו ציטוטים ב-Wikiquote — ישתמש ב-Claude כגיבוי`;
+  }
+}
+
+async function resolveWikiName(hebrewName) {
+  // First check our local map
+  const local = getWikiName(hebrewName);
+  if (local) return local;
+  // Ask Claude
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:100,
+        messages:[{role:'user', content:`What is the exact English Wikipedia page title for the author "${hebrewName}"? Reply ONLY with the Wikipedia page title (e.g. "Franz_Kafka"), nothing else. If unknown, reply "UNKNOWN".`}]
+      })
+    });
+    const d = await r.json();
+    const txt = (d.content?.[0]?.text||'').trim().replace(/\s+/g,'_');
+    if (txt && txt !== 'UNKNOWN' && txt.length > 1) return txt;
+  } catch(e) {}
+  return null;
+}
+
+async function checkWikiquote(wikiName) {
+  try {
+    const url = `https://en.wikiquote.org/w/api.php?action=query&titles=${encodeURIComponent(wikiName)}&prop=revisions&rvprop=content&rvsection=0&format=json&origin=*`;
+    const d = await (await fetch(url)).json();
+    const page = Object.values(d.query.pages)[0];
+    if (!page || page.missing) return false;
+    const raw = page.revisions?.[0]?.['*'] || page.revisions?.[0]?.slots?.main?.['*'] || '';
+    return raw.length > 100;
+  } catch(e) { return false; }
+}
+
+async function saveBook() {
+  const title = document.getElementById('f-t').value.trim();
+  const author = document.getElementById('f-a').value.trim();
+  if (!title || !author) { alert('נא למלא שם ספר וסופר'); return; }
+
+  const prevAuthors = new Set(books.map(b=>b.author));
+
+  // Use verified wiki name if available
+  let wikiName = verifyResult?.wikiName || getWikiName(author) || null;
+  let wikiVerified = verifyResult ? verifyResult.found : undefined;
+
+  if (editId) {
+    const b = books.find(x=>x.id===editId);
+    if (b) { b.title=title; b.author=author; b.wikiName=wikiName; if (wikiVerified!==undefined) b.wikiVerified=wikiVerified; }
+  } else {
+    books.push({ id:Date.now(), title, author, wikiName, wikiVerified });
+  }
+  save();
+  closeSheet();
+  authorQueue = [];
+
+  if (!editId) {
+    const newA = [...new Set(books.map(b=>b.author))].filter(a=>!prevAuthors.has(a));
+    if (newA.length) toast(`✓ ${newA[0]} נוסף למאגר הסופרים`);
+  }
+
+  await preloadPhotos();
+  render();
+}
+
+function deleteBook(id) {
+  if (!confirm('למחוק את הספר?')) return;
+  books = books.filter(x=>x.id!==id);
+  authorQueue = [];
+  save(); render();
+}
+
+// ── Wiki name lookup ──────────────────────────────────────
+const WIKI_MAP = {
+  'פרנץ קפקא':'Franz_Kafka','גבריאל גרסיה מארקס':'Gabriel_García_Márquez',
+  'אנטואן דה סנט-אכזופרי':'Antoine_de_Saint-Exupéry','אלברט קאמי':'Albert_Camus',
+  'ארנסט המינגוויי':'Ernest_Hemingway','אוסקר ויילד':'Oscar_Wilde',
+  "ג'יין אוסטן":'Jane_Austen','ליאו טולסטוי':'Leo_Tolstoy',
+  'פיודור דוסטויבסקי':'Fyodor_Dostoyevsky',"ג'ורג' אורוול":'George_Orwell',
+  "וירג'יניה וולף":'Virginia_Woolf','שייקספיר':'William_Shakespeare',
+  'פבלו נרודה':'Pablo_Neruda','ויקטור הוגו':'Victor_Hugo',
+  'אגתה כריסטי':'Agatha_Christie','מרק טוויין':'Mark_Twain',
+  'אמיל זולא':'Émile_Zola','שארל בודלר':'Charles_Baudelaire',
+  'מרסל פרוסט':'Marcel_Proust','גוסטב פלובר':'Gustave_Flaubert',
+  'הרמן הסה':'Hermann_Hesse','תומס מאן':'Thomas_Mann',
+  'פרידריך ניטשה':'Friedrich_Nietzsche','סורן קירקגור':'Søren_Kierkegaard',
+  'אלברט איינשטיין':'Albert_Einstein','סיגמונד פרויד':'Sigmund_Freud',
+  'לורנס קראוס':'Lawrence_Krauss','Lawrence Krauss':'Lawrence_Krauss',
+  "Cathy O'Neil":'Cathy_O%27Neil','Cathy ONeil':'Cathy_O%27Neil','קתי אונייל':'Cathy_O%27Neil',
+  'Chris Voss':'Chris_Voss','Christopher Voss':'Chris_Voss','כריס ווס':'Chris_Voss',
+  'Michael Pollan':'Michael_Pollan','מייקל פולן':'Michael_Pollan',
+  'Steven Pinker':'Steven_Pinker','סטיבן פינקר':'Steven_Pinker',
+  'Dan Ariely':'Dan_Ariely','דן אריאלי':'Dan_Ariely',
+  'Daniel Kahneman':'Daniel_Kahneman','דניאל כהנמן':'Daniel_Kahneman',
+  'Don Miguel Ruiz':'Don_Miguel_Ruiz','דון מיגל רואיז':'Don_Miguel_Ruiz',
+  'David Deida':'David_Deida','דייוויד דידה':'David_Deida',
+  'Joby Warrick':'Joby_Warrick','ג׳ובי וורק':'Joby_Warrick',
+  'Yuval Noah Harari':'Yuval_Noah_Harari','יובל נוח הררי':'Yuval_Noah_Harari',
+  'Nassim Nicholas Taleb':'Nassim_Nicholas_Taleb','נסים טאלב':'Nassim_Nicholas_Taleb',
+  'Malcolm Gladwell':'Malcolm_Gladwell','מלקולם גלדוול':'Malcolm_Gladwell',
+  'Seth Godin':'Seth_Godin','סת גודין':'Seth_Godin',
+  'Simon Sinek':'Simon_Sinek','סיימון סינק':'Simon_Sinek',
+  'Brené Brown':'Bren%C3%A9_Brown','ברנה בראון':'Bren%C3%A9_Brown',
+  'Tim Ferriss':'Tim_Ferriss','טים פריס':'Tim_Ferriss',
+  'Ryan Holiday':'Ryan_Holiday','ריאן הולידיי':'Ryan_Holiday',
+  'James Clear':'James_Clear','ג׳יימס קליר':'James_Clear',
+  'Jordan Peterson':'Jordan_Peterson','ג׳ורדן פיטרסון':'Jordan_Peterson',
+  'Richard Dawkins':'Richard_Dawkins','ריצ׳רד דוקינס':'Richard_Dawkins',
+  'Neil deGrasse Tyson':'Neil_deGrasse_Tyson','ניל דגראס טייסון':'Neil_deGrasse_Tyson',
+  'Sam Harris':'Sam_Harris','סם האריס':'Sam_Harris',
+};
+function getWikiName(author) {
+  if (WIKI_MAP[author]) return WIKI_MAP[author];
+  // If book has stored wikiName
+  const b = books.find(x=>x.author===author);
+  if (b?.wikiName) return b.wikiName;
+  // If author name looks English, use it directly
+  if (/^[A-Za-z\s\-\.]+$/.test(author)) return author.replace(/ /g,'_');
+  return null;
+}
+
+// ── Round-robin queue (weighted by book count) ────────────
+// Each book = one slot. 3 books by author X → 3 appearances per cycle.
+function nextAuthor() {
+  if (!books.length) return null;
+  // Refill when empty or all done
+  if (!authorQueue.length || authorQueue.every(a => a.done)) {
+    const weighted = [...books].map(b => b.author);
+    // Fisher-Yates shuffle
+    for (let i = weighted.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [weighted[i], weighted[j]] = [weighted[j], weighted[i]];
+    }
+    authorQueue = weighted.map(name => ({ name, done: false }));
+  }
+  const next = authorQueue.find(a => !a.done);
+  if (next) { next.done = true; return next.name; }
+  return books[0].author;
+}
+
+// ── Quotes ────────────────────────────────────────────────
+async function getQuote() {
+  const btn = document.getElementById('qbtn');
+  if (btn) { btn.disabled=true; btn.innerHTML='<span class="dots"><span></span><span></span><span></span></span> מחפש...'; }
+
+  const author = nextAuthor();
+  if (!author) { render(); return; }
+
+  // Try all sources for THIS author only — never skip to another author
+  const wn = getWikiName(author);
+  let found = wn ? await fromWikiquote(wn, author) : null;
+  if (!found) found = await fromClaude(author);
+  if (!found) found = await fromClaudeSimple(author);
+
+  quote = found || { text: 'לא הצלחנו למצוא ציטוט — נסה שוב', author, book:'', source:'נסה שוב' };
+  render();
+}
+
+async function fromWikiquote(wikiName, displayAuthor) {
+  try {
+    const url = `https://en.wikiquote.org/w/api.php?action=query&titles=${encodeURIComponent(wikiName)}&prop=revisions&rvprop=content&format=json&origin=*`;
+    const d = await (await fetch(url)).json();
+    const page = Object.values(d.query.pages)[0];
+    if (!page || !page.revisions) return null;
+    const raw = page.revisions[0]['*'] || page.revisions[0]?.slots?.main?.['*'] || '';
+    const lines = raw.split('\n').filter(l => {
+      if (!l.startsWith('*') || l.startsWith('**')) return false;
+      if (l.length < 30 || l.length > 500) return false;
+      const c = l.replace(/\[\[.*?\]\]/g,'').replace(/\{\{.*?\}\}/g,'');
+      if (/^[*\s]*[—–\-]{2}/.test(c)) return false;
+      if (/\b(said|wrote|noted|remarked|stated|according to|attributed|described)\b/i.test(c)) return false;
+      return true;
+    });
+    if (!lines.length) return null;
+    const line = lines[Math.floor(Math.random()*lines.length)];
+    const clean = line
+      .replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g,'$1')
+      .replace(/\{\{[^}]*\}\}/g,'')
+      .replace(/[*\[\]|]/g,'')
+      .replace(/'{2,3}/g,'')
+      .replace(/<!--.*?-->/g,'')
+      .trim();
+    if (clean.length > 25) return { text:clean, author:displayAuthor, book:'', source:'Wikiquote' };
+  } catch(e) {}
+  return null;
+}
+
+// Quote cache per author — avoid repeating same quote in a session
+const quoteCache = {};
+
+async function fromClaude(author) {
+  const used = quoteCache[author] || [];
+  const usedJson = used.length ? `Avoid these quotes: ${JSON.stringify(used)}. ` : '';
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:400,
+        messages:[{role:'user', content:`You are a quote database. Give me one real, verbatim quote by ${author} — their own words from a book, interview, lecture, TED talk, or public speech. ${usedJson}The quote must be authentic and attributable. Respond ONLY with valid JSON (no markdown, no extra text): {"quote":"exact quote text here","book":"book title, interview name, or empty string"}`}]
+      })
+    });
+    const data = await r.json();
+    const txt = (data.content?.[0]?.text||'').replace(/^```(?:json)?|```$/gm,'').trim();
+    const p = JSON.parse(txt);
+    if (p.quote && p.quote.length > 10) {
+      // Cache to avoid repeats
+      if (!quoteCache[author]) quoteCache[author] = [];
+      quoteCache[author].push(p.quote.slice(0, 60));
+      if (quoteCache[author].length > 20) quoteCache[author].shift();
+      return { text:p.quote, author, book:p.book||'', source:'מאומת' };
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function fromClaudeSimple(author) {
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:250,
+        messages:[{role:'user', content:`Give me one real quote by ${author} from their own writings or speeches. Reply with ONLY the quote text, no attribution, no quotation marks, nothing else.`}]
+      })
+    });
+    const data = await r.json();
+    const txt = (data.content?.[0]?.text||'').trim().replace(/^[""“”]|[""“”]$/g,'').trim();
+    if (txt && txt.length > 10 && !txt.includes('I cannot') && !txt.includes("I don't")) {
+      return { text:txt, author, book:'', source:'מאומת' };
+    }
+  } catch(e) {}
+  return null;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ──────────────────────────────────────────────────
+load();
+preloadPhotos().then(() => render());
+</script>
+</body>
+</html>
