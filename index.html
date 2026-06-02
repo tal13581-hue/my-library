@@ -596,48 +596,57 @@ async function fromWikiquote(wikiName, displayAuthor) {
 // Quote cache per author — avoid repeating same quote in a session
 const quoteCache = {};
 
+async function claudePost(prompt, maxTokens) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await r.json();
+  if (data.error) { console.warn('Claude API error:', data.error.message); return null; }
+  return data.content?.[0]?.text || null;
+}
+
 async function fromClaude(author) {
   const used = quoteCache[author] || [];
-  const usedJson = used.length ? `Avoid these quotes: ${JSON.stringify(used)}. ` : '';
+  const usedNote = used.length ? ' Do not repeat these: ' + JSON.stringify(used) + '.' : '';
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:400,
-        messages:[{role:'user', content:`You are a quote database. Give me one real, verbatim quote by ${author} — their own words from a book, interview, lecture, TED talk, or public speech. ${usedJson}The quote must be authentic and attributable. Respond ONLY with valid JSON (no markdown, no extra text): {"quote":"exact quote text here","book":"book title, interview name, or empty string"}`}]
-      })
-    });
-    const data = await r.json();
-    const txt = (data.content?.[0]?.text||'').replace(/^```(?:json)?|```$/gm,'').trim();
-    const p = JSON.parse(txt);
+    const prompt = 'Give me one real, verbatim quote by ' + author + ' — their own words from a book, interview, lecture, or speech.' + usedNote + ' Respond ONLY with valid JSON, no markdown: {"quote":"the exact quote","book":"source title or empty string"}';
+    const txt = await claudePost(prompt, 400);
+    if (!txt) return null;
+    const clean = txt.replace(/^```(?:json)?[\s\S]*?\n|```$/gm, '').trim();
+    const p = JSON.parse(clean);
     if (p.quote && p.quote.length > 10) {
-      // Cache to avoid repeats
       if (!quoteCache[author]) quoteCache[author] = [];
       quoteCache[author].push(p.quote.slice(0, 60));
       if (quoteCache[author].length > 20) quoteCache[author].shift();
-      return { text:p.quote, author, book:p.book||'', source:'מאומת' };
+      return { text: p.quote, author: author, book: p.book || '', source: 'מאומת' };
     }
-  } catch(e) {}
+  } catch(e) { console.warn('fromClaude error:', e.message); }
   return null;
 }
 
 async function fromClaudeSimple(author) {
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:250,
-        messages:[{role:'user', content:`Give me one real quote by ${author} from their own writings or speeches. Reply with ONLY the quote text, no attribution, no quotation marks, nothing else.`}]
-      })
-    });
-    const data = await r.json();
-    const txt = (data.content?.[0]?.text||'').trim().replace(/^[""“”]|[""“”]$/g,'').trim();
-    if (txt && txt.length > 10 && !txt.includes('I cannot') && !txt.includes("I don't")) {
-      return { text:txt, author, book:'', source:'מאומת' };
+    const prompt = 'Write one real quote by ' + author + ' from their own writings or speeches. Reply with ONLY the quote text — no name, no source, no quotation marks.';
+    const txt = await claudePost(prompt, 250);
+    if (!txt) return null;
+    const clean = txt.trim().replace(/^[""«"']|[""»"']$/g, '').trim();
+    if (clean.length > 10 && !clean.toLowerCase().includes('i cannot') && !clean.toLowerCase().includes("i don't know")) {
+      return { text: clean, author: author, book: '', source: 'מאומת' };
     }
-  } catch(e) {}
+  } catch(e) { console.warn('fromClaudeSimple error:', e.message); }
   return null;
 }
+
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
