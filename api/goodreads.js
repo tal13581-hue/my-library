@@ -32,7 +32,17 @@ export default async function handler(req, res) {
 }
 
 function decodeEntities(s) {
-  return s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  return s
+    .replace(/&ldquo;|&rdquo;|&#8220;|&#8221;/g, '"')
+    .replace(/&lsquo;|&rsquo;|&#8216;|&#8217;/g, "'")
+    .replace(/&mdash;|&#8212;/g, '—')
+    .replace(/&ndash;|&#8211;/g, '–')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
 }
 
 function parseGoodreadsQuotes(html, author) {
