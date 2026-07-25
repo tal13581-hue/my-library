@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Returns Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--bg2:#111418;--bg3:#181c22;--bg4:#1e232b;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.2);
+  --text:#e8eaf0;--muted:#6b7280;--muted2:#4b5563;
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--accent:#f59e0b;
+  --font-mono:'IBM Plex Mono',monospace;--font-sans:'IBM Plex Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5;min-height:100vh}
+
+/* ── HEADER ── */
+header{border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,12,15,0.94);backdrop-filter:blur(12px);z-index:100}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;font-size:13px;color:#000}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-title{font-family:var(--font-mono);font-size:15px;font-weight:600}
+.header-title span{color:var(--muted);font-weight:400}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 16px;border-radius:7px;font-size:12px;font-family:var(--font-mono);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text);transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--border3);background:var(--bg3)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn-accent:hover{background:#d97706;border-color:#d97706}
+.btn-danger{border-color:rgba(239,68,68,0.4);color:var(--red)}
+.btn-danger:hover{background:rgba(239,68,68,0.1)}
+
+
+
+/* ── MAIN ── */
+main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi:hover{border-color:var(--border2)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.kpi:hover::before{opacity:1}
+.kpi-label{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.kpi-value{font-family:var(--font-mono);font-size:20px;font-weight:600;letter-spacing:-0.5px}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--font-mono)}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text)}
+
+/* ── NAV (year dropdowns) ── */
+.nav-bar{display:flex;align-items:center;gap:4px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.nav-item{position:relative}
+.nav-btn{padding:7px 18px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font-mono);font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-btn:hover{color:var(--text);border-color:var(--border2);background:var(--bg3)}
+.nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.caret{font-size:9px;opacity:0.6;transition:transform .15s}
+.nav-item:hover .caret{transform:rotate(180deg)}
+.nav-dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:6px;min-width:140px;z-index:50;opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .15s;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.nav-item:hover .nav-dropdown{opacity:1;pointer-events:all;transform:translateY(0)}
+.drop-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:6px;font-size:12px;font-family:var(--font-mono);cursor:pointer;color:var(--muted);transition:all .12s;white-space:nowrap}
+.drop-item:hover{background:var(--bg3);color:var(--text)}
+.drop-item.active{background:var(--text);color:var(--bg)}
+
+.nav-active-month{font-size:11px;font-family:var(--font-mono);color:var(--muted);padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3)}
+.nav-active-month span{color:var(--text);font-weight:500}
+
+/* ── CONFLICT BAR ── */
+
+
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:1fr 400px;gap:16px;margin-bottom:16px}
+@media(max-width:1050px){.charts-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-title{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.legend-wrap{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);color:var(--muted)}
+.legend-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── PROTOCOL TABLE ── */
+.proto-table{width:100%;border-collapse:collapse;font-size:11px}
+.proto-table th{font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);padding:0 8px 8px;text-align:right;font-weight:400}
+.proto-table th:first-child{text-align:left}
+.proto-table td{padding:7px 8px;font-family:var(--font-mono);border-top:1px solid var(--border);text-align:right;vertical-align:middle}
+.proto-table td:first-child{text-align:left}
+.proto-table tr:hover td{background:var(--bg3)}
+.proto-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.apr-wrap{display:flex;align-items:center;gap:5px;justify-content:flex-end}
+.apr-bar{height:4px;border-radius:2px;min-width:2px}
+.token-tag{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;display:inline-block}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:700px;margin:auto}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;border-radius:14px 14px 0 0;background:var(--bg2)}
+.modal-title{font-family:var(--font-mono);font-size:14px;font-weight:600}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:4px;transition:color .15s}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:24px;max-height:80vh;overflow-y:auto}
+.modal-footer{padding:14px 24px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.form-label{display:block;font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px}
+.form-input,.form-select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:8px 11px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color .15s}
+.form-input:focus,.form-select:focus{border-color:var(--accent)}
+.form-select option{background:var(--bg2)}
+#eMonth{background:var(--bg3);color:var(--text);font-family:var(--font-sans);font-weight:600;font-size:15px;letter-spacing:.01em;color-scheme:dark;padding:10px 14px;border:1px solid var(--border2);border-radius:8px;transition:border-color .15s,box-shadow .15s}
+#eMonth:hover{border-color:var(--border3)}
+#eMonth:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,0.15)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.section-divider{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:16px 0 10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.col-headers{display:grid;grid-template-columns:1.4fr 0.9fr 1fr 1fr 28px;gap:8px;padding:0 0 4px;margin-bottom:4px}
+.col-headers2{display:grid;grid-template-columns:1.6fr 1fr 28px;gap:8px;padding:0 0 4px;margin-bottom:4px}
+.col-h{font-size:9px;font-family:var(--font-mono);color:var(--muted2);text-transform:uppercase;letter-spacing:.07em}
+
+/* protocol entry row */
+.proto-entry{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;position:relative}
+.proto-entry-grid{display:grid;grid-template-columns:1.4fr 0.9fr 1fr 1fr 28px;gap:8px;align-items:center}
+.proto-entry-grid2{display:grid;grid-template-columns:1.6fr 1fr 28px;gap:8px;align-items:center}
+.remove-btn{width:28px;height:28px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:6px;color:var(--red);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;flex-shrink:0}
+.remove-btn:hover{background:rgba(239,68,68,0.3)}
+.calc-row{display:flex;gap:14px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);flex-wrap:wrap}
+.calc-chip{font-size:10px;font-family:var(--font-mono);color:var(--muted)}
+.calc-chip b{font-weight:500}
+
+.add-row-btn{width:100%;padding:9px;background:transparent;border:1px dashed var(--border2);border-radius:7px;color:var(--muted);font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:16px}
+.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* totals preview */
+.totals-box{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.total-item{text-align:center}
+.total-lbl{font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.total-val{font-size:17px;font-family:var(--font-mono);font-weight:600}
+
+/* manage modal */
+.manage-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
+.manage-name{font-family:var(--font-mono);font-size:13px;flex:1;min-width:80px}
+
+
+/* toast */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:12px 18px;font-family:var(--font-mono);font-size:12px;color:var(--text);z-index:999;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(34,197,94,0.5)}
+.toast.error{border-color:rgba(239,68,68,0.5)}
+
+footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;font-size:11px;font-family:var(--font-mono);color:var(--muted2);flex-wrap:wrap;gap:8px}
+
+.sub-tab{padding:5px 14px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font-mono);cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
+.sub-tab:hover{border-color:var(--border2);color:var(--text)}
+.sub-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+.pcrd{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;cursor:pointer;transition:border-color .15s}
+.pcrd:hover{border-color:var(--border2)}
+.pcrd-sym{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+.pcrd-price{font-size:17px;font-weight:600;font-family:var(--font-mono)}
+.pcrd-chg{font-size:11px;font-family:var(--font-mono);margin-top:3px}
+.pcrd-name{font-size:9px;color:var(--muted);font-family:var(--font-mono);margin-top:2px}
+.scard{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.scard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.scard-sym{font-family:var(--font-mono);font-size:12px;font-weight:600}
+.scard-chg{font-family:var(--font-mono);font-size:11px}
+
+.ucrd{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s}
+.ucrd:hover{border-color:var(--border2)}
+.ucrd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ucrd-sym{font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--text)}
+.ucrd-name{font-size:9px;color:var(--muted);font-family:var(--font-mono)}
+.ucrd-price{font-size:18px;font-weight:600;font-family:var(--font-mono);margin-bottom:2px}
+.ucrd-chg{font-size:11px;font-family:var(--font-mono);margin-bottom:6px}
+
+.range-btn{font-family:var(--font-mono);font-size:10px;padding:3px 9px;border-radius:5px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s}
+.range-btn.active,.range-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.er-leverage{display:flex;align-items:center;gap:6px;margin-top:8px;font-family:var(--font-mono);font-size:11px;color:var(--muted);cursor:pointer}
+.er-leverage input{width:14px;height:14px;cursor:pointer;accent-color:#f59e0b}
+.er-leverage .warn-label{color:#f59e0b}
+
+/* ── ALERTS ── */
+.alert-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--muted);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.alert-card.severity-critical{border-left-color:var(--red)}
+.alert-card.severity-warning{border-left-color:var(--accent)}
+.alert-card.severity-info{border-left-color:var(--blue)}
+.alert-meta{font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px}
+.alert-title{font-family:var(--font-mono);font-size:12px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.alert-summary{font-size:12px;color:var(--text);line-height:1.4}
+.emergency-badge{background:var(--red);color:#fff;font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:10px;font-weight:700;white-space:nowrap}
+
+/* ── SCREEN TABS ── */
+.screen-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.screen-tab{padding:12px 20px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:var(--font-mono);font-weight:500;cursor:pointer;background:var(--bg2);color:var(--muted);transition:all .15s;flex:1;min-width:160px;text-align:center}
+.screen-tab:hover{border-color:var(--border3);color:var(--text)}
+.screen-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.screen-panel{display:none}
+.screen-panel.active{display:block}
+
+/* ── POSITION CARDS (Portfolio screen) ── */
+.position-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.position-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.position-name-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.position-value{font-family:var(--font-mono);font-size:18px;font-weight:600}
+.yield-badge{font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:10px;border:1px solid var(--border2)}
+.yield-badge.fixed{color:var(--blue);border-color:var(--blue)}
+.yield-badge.variable{color:var(--accent);border-color:var(--accent)}
+.radio-group{display:flex;gap:14px;align-items:center}
+.radio-group label{display:flex;align-items:center;gap:5px;font-size:12px;font-family:var(--font-mono);color:var(--text);cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-mark">CR</div>
+    <div class="header-title">Crypto Returns <span>/ Dashboard</span></div>
+  </div>
+  <div class="header-right">
+    <button class="btn" onclick="openManageModal()">⚙ Manage</button>
+  </div>
+</header>
+
+<main>
+  <div class="screen-tabs">
+    <button class="screen-tab active" data-screen="portfolio" onclick="switchScreen('portfolio')">💼 My Portfolio</button>
+    <button class="screen-tab" data-screen="returns" onclick="switchScreen('returns')">📈 Returns Data</button>
+    <button class="screen-tab" data-screen="news" onclick="switchScreen('news')">🔔 Updates &amp; News</button>
+  </div>
+
+  <!-- ══════════════ SCREEN A: MY PORTFOLIO (default) ══════════════ -->
+  <div class="screen-panel active" id="screen-portfolio">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Your positions</span>
+      <span style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--green)" id="positionsTotal">$0</span>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">
+      <div class="kpi"><div class="kpi-label">Total rewards (all months)</div><div class="kpi-value neu" id="portfolioTotalRewards">$0</div></div>
+      <div class="kpi"><div class="kpi-label">Weighted avg. annual return</div><div class="kpi-value neu" id="portfolioWeightedApr">—</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-accent" onclick="openAddPositionModal()">💼 Add position</button>
+    </div>
+    <div id="positionsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:28px"></div>
+
+    <div class="charts-grid" style="margin-bottom:28px">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Portfolio value over time</span>
+          <div style="display:flex;gap:12px">
+            <span class="legend-item"><span class="legend-sq" style="background:#3b82f6"></span>New money</span>
+            <span class="legend-item"><span class="legend-sq" style="background:#f59e0b"></span>Yield growth</span>
+          </div>
+        </div>
+        <div style="position:relative;height:240px"><canvas id="valueChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><span class="chart-title">Portfolio distribution</span></div>
+        <div style="position:relative;height:180px;margin-bottom:14px"><canvas id="distPieChart"></canvas></div>
+        <div id="distLegend"></div>
+      </div>
+    </div>
+
+    <!-- LIVE PRICES -->
+    <div id="homePrices" style="margin-bottom:28px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:0"><span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Live prices</span><div style="display:flex;gap:5px;margin-left:12px"><button class="range-btn" onclick="setRange('24h',this)">24h</button><button class="range-btn active" onclick="setRange('7d',this)">7d</button><button class="range-btn" onclick="setRange('30d',this)">30d</button><button class="range-btn" onclick="setRange('1y',this)">1y</button></div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="priceTimestamp" style="font-family:var(--font-mono);font-size:10px;color:var(--muted2)"></span>
+          <button class="btn" id="refreshPricesBtn" onclick="loadPrices()" style="padding:4px 12px;font-size:11px">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="unifiedGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px"><div id="priceLoadMsg" style="grid-column:1/-1;text-align:center;padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--muted)">Loading prices...</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN B: RETURNS DATA ══════════════ -->
+  <div class="screen-panel" id="screen-returns">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-accent" onclick="openEntryModal(null)">📅 Month summary (variable positions)</button>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="nav-bar" id="navBar"></div>
+    <div id="monthSubTabs" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)"></div>
+
+    <div class="legend-wrap" id="legendWrap"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header"><span class="chart-title" id="barTitle">Monthly returns</span></div>
+        <div style="position:relative;height:300px"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Protocol breakdown — desired vs. actual</span>
+          <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted)">hover for details</span>
+        </div>
+        <div style="position:relative;height:180px;margin-bottom:16px"><canvas id="pieChart"></canvas></div>
+        <div id="protoTableWrap" style="overflow-x:auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN C: UPDATES & NEWS ══════════════ -->
+  <div class="screen-panel" id="screen-news">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn" onclick="openSourcesModal()">🔔 Manage sources</button>
+    </div>
+    <div id="alertsSection" style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">⚡ Alerts</span>
+        <span id="alertsUpdated" style="font-size:10px;color:var(--muted2);font-family:var(--font-mono)"></span>
+      </div>
+      <div id="alertsList"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>Crypto Returns Dashboard</span>
+  <span id="lastSaved" style="color:var(--muted2)"></span>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     ENTRY MODAL — used for BOTH new months AND editing
+     ══════════════════════════════════════════════════ -->
+<div class="overlay" id="entryOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="entryTitle">New month</span>
+      <button class="modal-close" onclick="closeEntry()">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Month picker -->
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">Month</label>
+          <input class="form-input" id="eMonth" type="month"/>
+        </div>
+
+      </div>
+
+
+      <!-- Column headers -->
+      <div class="section-divider">Pick a tracked position and its current quantity — return is calculated vs. last month automatically</div>
+      <div class="col-headers2">
+        <div class="col-h">Protocol</div>
+        <div class="col-h">Current qty</div>
+        <div></div>
+      </div>
+
+      <div id="eRows"></div>
+      <button class="add-row-btn" onclick="addEntryRow()">+ Add position</button>
+
+      <!-- Live totals -->
+      <div class="totals-box">
+        <div class="total-item">
+          <div class="total-lbl">Total invested</div>
+          <div class="total-val neu" id="eTotalInvest">$0</div>
+        </div>
+        <div class="total-item">
+          <div class="total-lbl">Monthly return</div>
+          <div class="total-val neu" id="eTotalReturn">$0</div>
+        </div>
+        <div class="total-item">
+          <div class="total-lbl">Portfolio APR</div>
+          <div class="total-val neu" id="eTotalAPR">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeEntry()">Cancel</button>
+      <button class="btn btn-accent" onclick="saveEntry()">Save month</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ADD POSITION MODAL — same overlay/modal pattern as Month summary
+     ══════════════════════════════════════════════════ -->
+<div class="overlay" id="addPositionOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add position</span>
+      <button class="modal-close" onclick="closeAddPositionModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row-3" style="margin-bottom:16px">
+        <div><label class="form-label">Protocol</label><input class="form-input" id="newPosName" placeholder="e.g. Kamino"/></div>
+        <div><label class="form-label">Coin</label><input class="form-input" id="newPosCoin" placeholder="e.g. Jupiter LP"/></div>
+        <div><label class="form-label">Symbol</label><input class="form-input" id="newPosSymbol" placeholder="e.g. JLP"/></div>
+      </div>
+      <div class="form-row-2" style="margin-bottom:16px">
+        <div><label class="form-label">Target yield (%)</label><input class="form-input" id="newPosApr" type="number" step="any" placeholder="e.g. 25"/></div>
+        <div><label class="form-label">Reward currency (only if different from Symbol)</label><input class="form-input" id="newPosRewardSymbol" placeholder="e.g. USDC"/></div>
+      </div>
+      <div class="form-row-2" style="align-items:flex-end">
+        <div>
+          <label class="form-label">Yield type</label>
+          <div class="radio-group">
+            <label><input type="radio" name="newPosType" value="variable" checked onchange="toggleNewPosFixedFields()"/> Variable (I'll update qty monthly)</label>
+            <label><input type="radio" name="newPosType" value="fixed" onchange="toggleNewPosFixedFields()"/> Fixed (auto-accrues)</label>
+          </div>
+        </div>
+      </div>
+      <div id="newPosFixedFields" style="display:none;margin-top:12px">
+        <div class="form-row-2">
+          <div><label class="form-label">Current token quantity</label><input class="form-input" id="newPosFixedQty" type="number" step="any" placeholder="e.g. 1000"/></div>
+        </div>
+        <p style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:4px">Accrual starts now, compounding monthly at the target yield, valued at live price.</p>
+      </div>
+      <div id="newPosVariableFields" style="margin-top:12px">
+        <div class="form-row-2">
+          <div><label class="form-label">Current token quantity (optional)</label><input class="form-input" id="newPosVariableQty" type="number" step="any" placeholder="e.g. 1000"/></div>
+        </div>
+        <p style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:4px">Creates this month's starting entry right away, valued at live price. Leave blank to skip and enter it later via Month summary — until then the position shows $0.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAddPositionModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="addPosition()">+ Add position</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE MODAL -->
+<div class="overlay" id="manageOverlay">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <span class="modal-title">Manage months</span>
+      <button class="modal-close" onclick="closeManage()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:16px">Click Edit to update a month's data.</p>
+      <div id="manageList"></div>
+
+      <div class="section-divider">Tracked coins (live prices)</div>
+      <div id="coinsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:6px;margin-bottom:16px">
+        <input class="form-input" id="newCoinSym" placeholder="Symbol e.g. DOGE" style="max-width:110px"/>
+        <input class="form-input" id="newCoinId" placeholder="CoinGecko ID e.g. dogecoin" style="flex:1"/>
+        <input class="form-input" id="newCoinName" placeholder="Display name (optional)" style="max-width:150px"/>
+        <button class="btn" style="padding:8px 12px;white-space:nowrap" onclick="addCoinFromForm()">+ Add</button>
+      </div>
+
+      <div class="section-divider" style="color:var(--red);border-color:rgba(239,68,68,0.3)">Danger zone</div>
+      <p style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-bottom:10px">Permanently erases every month, position and source you've entered — the whole dashboard resets to empty. Export a backup first if you might want this data again.</p>
+      <button class="btn btn-danger" onclick="deleteAllData()">🗑 Delete all data</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('importFile').click()">↑ Import JSON</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(event)"/>
+      <button class="btn" onclick="exportJSON()">↓ Export JSON</button>
+      <button class="btn" onclick="closeManage()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NEWS SOURCES MODAL — per-position monitoring sources
+     ══════════════════════════════════════════════════ -->
+<div class="overlay" id="sourcesOverlay">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <span class="modal-title">News sources</span>
+      <button class="modal-close" onclick="closeSources()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:16px">Websites, X accounts and Telegram channels to monitor for each position. The daily check reads <code>sources.json</code> in the repo — after adding sources here, click "Download sources.json" below and commit the file so the check picks them up.</p>
+      <div id="sourcesPositionList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="downloadSourcesJSON()">⬇ Download sources.json</button>
+      <button class="btn" onclick="closeSources()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="alerts.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+const DEFAULT = {
+  "MAR 26":{total:81,source:"dashboard",rows:[{p:"TRX Bot",v:37,qty:26599.78,token:"TRX",investUsd:8762},{p:"Kamino x 2.5",v:241,qty:1262,token:"JLP",investUsd:4914,leverageRisk:true},{p:"Kamino x 2.5 #2",v:-231,qty:940.1164,token:"JLP",investUsd:3661,leverageRisk:true},{p:"PYTH",v:22,qty:26639,token:"PYTH",investUsd:1219},{p:"GMX Staking",v:12,qty:345.21,token:"GMX",investUsd:2312}]}
+};
+
+// Coin colors (used by gc for token-named protocols)
+const COIN_COLORS={"BTC":"#f97316","ETH":"#9ca3af","SOL":"#7c3aed","TRX":"#ef4444","JLP":"#22c55e","PYTH":"#c084fc","GMX":"#3b82f6","NEAR":"#86efac","AERO":"#f1f5f9"};
+const COLORS={"Kamino":"#3b82f6","TRX Bot":"#22c55e","Binance":"#f59e0b","Ref Finance":"#ef4444","SyncSwap":"#8b5cf6","Sanctum":"#d97706","BlockCentral":"#ec4899","Aerodrome":"#84cc16","Cetus":"#06b6d4","Meridian":"#f87171","DOT Staking":"#4ade80","NEAR Staking":"#fde68a","Fuel":"#c084fc","Mode":"#60a5fa","USDC Autopilot":"#2dd4bf","MGX Staking":"#fb923c","Kamino Airdrop":"#93c5fd","AERO Staking":"#64748b","GMX Staking":"#67e8f9","PYTH":"#a3e635","SideShift":"#94a3b8","Kamino x 2.5":"#60a5fa","Kamino x 2.5 #2":"#f87171"};
+const COLOR_POOL=["#3b82f6","#22c55e","#f59e0b","#ef4444","#8b5cf6","#d97706","#ec4899","#84cc16","#06b6d4","#f87171","#4ade80","#fde68a","#c084fc","#60a5fa","#2dd4bf","#fb923c","#93c5fd","#64748b","#67e8f9","#a3e635","#94a3b8"];
+let _ci=0;
+const gc=p=>{
+  if(!COLORS[p]){
+    // Only avoid collisions with currently-tracked positions — the legacy COLORS map is
+    // pre-populated with every color for old protocol names that may no longer be active.
+    const activeNames=(typeof allPlatformNames==='function')?allPlatformNames():[];
+    const used=new Set(activeNames.filter(n=>n!==p&&COLORS[n]).map(n=>COLORS[n]));
+    let tries=0;
+    while(used.has(COLOR_POOL[_ci%COLOR_POOL.length])&&tries<COLOR_POOL.length){_ci++;tries++;}
+    COLORS[p]=COLOR_POOL[_ci%COLOR_POOL.length];
+    _ci++;
+  }
+  return COLORS[p];
+};
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let RAW={}, active="ALL", activeYear="ALL", barChart=null, pieChart=null;
+const STORAGE_KEY = 'crypto_dash_v3';
+
+function loadData(){
+  try{const s=localStorage.getItem(STORAGE_KEY);if(s){RAW=JSON.parse(s);document.getElementById('lastSaved').textContent='Loaded from storage';return;}}catch(e){}
+  RAW=JSON.parse(JSON.stringify(DEFAULT));
+}
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(RAW));
+  document.getElementById('lastSaved').textContent='Saved '+new Date().toLocaleTimeString();
+}
+
+// ── POSITIONS REGISTRY (source of truth for which positions exist —
+//    coin/symbol/target yield/sources, keyed by protocol name) ──
+let PLATFORMS={};
+let _openPositionEdit=null; // protocol name of the currently expanded position card, or null
+const PLATFORMS_KEY='crypto_dash_platforms_v1';
+function loadPlatforms(){
+  try{const s=localStorage.getItem(PLATFORMS_KEY);if(s){PLATFORMS=JSON.parse(s);return;}}catch(e){}
+  PLATFORMS={};
+  seedPlatformsFromLatestMonth(); // one-time migration so existing month data isn't orphaned from the new registry
+}
+function savePlatforms(){localStorage.setItem(PLATFORMS_KEY,JSON.stringify(PLATFORMS));}
+function seedPlatformsFromLatestMonth(){
+  const months=getMonths();
+  const latest=months[months.length-1];
+  if(!latest)return;
+  Object.entries(aggRows(RAW[latest].rows)).forEach(([p,d])=>{
+    if(!PLATFORMS[p])PLATFORMS[p]={coin:undefined,symbol:d.token||undefined,targetApr:null,sources:[],pendingAdjustQty:0};
+  });
+  savePlatforms();
+}
+
+// ── FIXED-YIELD AUTO-ACCRUAL ──
+// Token quantity compounds monthly at the target rate since fixedStartDate; always valued at the live price.
+const MS_PER_MONTH=1000*60*60*24*30.4368;
+function fixedAccruedQty(p,atDate){
+  const plat=PLATFORMS[p];
+  if(!plat||plat.yieldType!=='fixed'||!plat.fixedStartDate||!plat.fixedStartQty)return null;
+  const monthsElapsed=Math.max(0,((atDate||new Date())-new Date(plat.fixedStartDate))/MS_PER_MONTH);
+  const rate=(plat.targetApr||0)/100;
+  return plat.fixedStartQty*Math.pow(1+rate/12,monthsElapsed);
+}
+// Materializes each fixed position's current accrued value as a row in the current month,
+// reusing all the normal month/return infrastructure. Runs automatically — no manual save needed.
+function refreshFixedPositions(){
+  const now=new Date();
+  const currentMonthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
+  let changed=false;
+  Object.entries(PLATFORMS).forEach(([p,plat])=>{
+    if(plat.yieldType!=='fixed')return;
+    const qty=fixedAccruedQty(p,now);
+    if(qty==null)return;
+    const cgSym=(plat.symbol||'').toUpperCase();
+    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+    const price=live?live.current_price:0;
+    if(!price)return; // wait for live prices to load before materializing a value
+    const investUsd=Math.round(qty*price*100)/100;
+    const otherMonths=getMonths().filter(m=>m!==currentMonthLabel);
+    const prevMonth=otherMonths[otherMonths.length-1];
+    const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
+    const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):investUsd; // first appearance = baseline capital, not return
+    const v=Math.round((investUsd-lastMonthUsd)*100)/100;
+    const newMoney=prevAgg?undefined:investUsd; // first appearance = baseline capital, not yield
+    if(!RAW[currentMonthLabel])RAW[currentMonthLabel]={total:0,source:'fixed-auto',rows:[]};
+    RAW[currentMonthLabel].rows=RAW[currentMonthLabel].rows.filter(r=>r.p!==p);
+    RAW[currentMonthLabel].rows.push({p,v,qty:Math.round(qty*1e6)/1e6,token:plat.symbol||null,investUsd,newMoney,fixedAuto:true});
+    RAW[currentMonthLabel].total=Math.round(RAW[currentMonthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+    changed=true;
+  });
+  if(changed)saveData();
+  return changed;
+}
+// One-time migration: earlier versions queued deposits/withdrawals as "pending" until the next
+// Month summary. That mechanism is retired — apply anything still queued immediately instead.
+function flushPendingAdjustments(){
+  let changed=false;
+  Object.entries(PLATFORMS).forEach(([p,plat])=>{
+    if(plat.yieldType==='fixed')return;
+    const pending=plat.pendingAdjustQty||0;
+    if(!pending)return;
+    const cgSym=(plat.symbol||'').toUpperCase();
+    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+    if(!live||!live.current_price)return;
+    applyVariableAdjustmentNow(p,pending);
+    plat.pendingAdjustQty=0;
+    changed=true;
+  });
+  if(changed)savePlatforms();
+  return changed;
+}
+function allPlatformNames(){return Object.keys(PLATFORMS).sort();}
+function variablePlatformNames(){return allPlatformNames().filter(p=>(PLATFORMS[p]||{}).yieldType!=='fixed');}
+
+function openAddPositionModal(){document.getElementById('addPositionOverlay').classList.add('open');}
+function closeAddPositionModal(){document.getElementById('addPositionOverlay').classList.remove('open');}
+function toggleNewPosFixedFields(){
+  const type=document.querySelector('input[name="newPosType"]:checked').value;
+  document.getElementById('newPosFixedFields').style.display=type==='fixed'?'block':'none';
+  document.getElementById('newPosVariableFields').style.display=type==='variable'?'block':'none';
+}
+function addPosition(){
+  const name=document.getElementById('newPosName').value.trim();
+  const coin=document.getElementById('newPosCoin').value.trim();
+  const symbol=document.getElementById('newPosSymbol').value.trim().toUpperCase();
+  const rewardSymbol=document.getElementById('newPosRewardSymbol').value.trim().toUpperCase();
+  const targetApr=parseFloat(document.getElementById('newPosApr').value);
+  const yieldType=document.querySelector('input[name="newPosType"]:checked').value;
+  if(!name){showToast('Protocol name is required','error');return;}
+  if(PLATFORMS[name]){showToast('That position already exists','error');return;}
+  const pos={coin:coin||undefined,symbol:symbol||undefined,rewardSymbol:rewardSymbol||undefined,targetApr:isNaN(targetApr)?null:targetApr,sources:[],pendingAdjustQty:0,yieldType};
+  let initialQty=0;
+  if(yieldType==='fixed'){
+    const fixedQty=parseFloat(document.getElementById('newPosFixedQty').value)||0;
+    if(fixedQty<=0){showToast('Enter the current token quantity for a fixed position','error');return;}
+    pos.fixedStartQty=fixedQty;
+    pos.fixedStartDate=new Date().toISOString();
+  } else {
+    initialQty=parseFloat(document.getElementById('newPosVariableQty').value)||0;
+  }
+  PLATFORMS[name]=pos;
+  savePlatforms();
+  document.getElementById('newPosName').value='';
+  document.getElementById('newPosCoin').value='';
+  document.getElementById('newPosSymbol').value='';
+  document.getElementById('newPosApr').value='';
+  document.getElementById('newPosRewardSymbol').value='';
+  const fq=document.getElementById('newPosFixedQty');if(fq)fq.value='';
+  const vq=document.getElementById('newPosVariableQty');if(vq)vq.value='';
+  let noPriceYet=false;
+  if(yieldType==='fixed')refreshFixedPositions();
+  else if(initialQty>0){
+    const cgSym=symbol.toUpperCase();
+    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+    const price=live?live.current_price:0;
+    noPriceYet=!price;
+    const investUsd=Math.round(initialQty*price*100)/100;
+    const now=new Date();
+    const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
+    if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
+    RAW[monthLabel].rows.push({p:name,v:0,qty:initialQty,token:symbol||null,investUsd,newMoney:investUsd||undefined});
+    RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+    saveData();buildNav();
+  }
+  renderAll(active);
+  closeAddPositionModal();
+  if(yieldType==='fixed')showToast(`${name} added — accruing automatically`,'success');
+  else if(initialQty>0)showToast(noPriceYet?`${name} added — no live price for "${symbol}" yet, value will show once prices load`:`${name} added with its starting quantity`,'success');
+  else showToast(`${name} added — set its quantity in the next Month summary`,'success');
+}
+function removePosition(p){
+  if(!confirm(`Remove ${p} from tracked positions? Months where it actually earned a return keep that history — months with $0 return are cleaned up entirely.`))return;
+  delete PLATFORMS[p];
+  savePlatforms();
+  // Purge any month where this position never actually returned anything — no point leaving a $0 ghost row.
+  let raWChanged=false;
+  getMonths().forEach(m=>{
+    const rowsForP=RAW[m].rows.filter(r=>r.p===p);
+    if(!rowsForP.length)return;
+    const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
+    if(vSum!==0)return;
+    RAW[m].rows=RAW[m].rows.filter(r=>r.p!==p);
+    if(!RAW[m].rows.length){
+      delete RAW[m];
+      if(active===m)active='ALL';
+    } else {
+      RAW[m].total=Math.round(RAW[m].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+    }
+    raWChanged=true;
+  });
+  if(raWChanged)saveData();
+  buildNav();renderAll(active);
+}
+function setPlatformField(p,field,val){
+  if(!PLATFORMS[p])return;
+  PLATFORMS[p][field]=field==='targetApr'?(val===''?null:parseFloat(val)):val.trim();
+  savePlatforms();
+  renderPositionList();
+  renderProtoTable(active);
+}
+function applyPositionAdjustment(p,idx){
+  const el=document.getElementById('posAdj_'+idx);
+  const val=parseFloat(el.value);
+  if(!val){showToast('Enter a non-zero quantity','error');return;}
+  const plat=PLATFORMS[p];
+  if(!plat)return;
+  if(plat.yieldType==='fixed'){
+    // Rebase: fold the accrued-so-far quantity plus this deposit/withdrawal into a new starting point.
+    const accrued=fixedAccruedQty(p)||0;
+    const cgSymFx=(plat.symbol||'').toUpperCase();
+    const liveFx=(typeof CG!=='undefined'&&CG[cgSymFx])?liveData[CG[cgSymFx].id]:null;
+    const priceFx=liveFx?liveFx.current_price:0;
+    const depositUsd=Math.round(val*priceFx*100)/100;
+    plat.fixedStartQty=accrued+val;
+    plat.fixedStartDate=new Date().toISOString();
+    savePlatforms();
+    refreshFixedPositions();
+    if(priceFx){
+      // Tag the deposit's dollar value so it isn't counted as return this month.
+      const nowFx=new Date();
+      const monthLabelFx=MONTH_ABBR[nowFx.getMonth()]+' '+String(nowFx.getFullYear()).slice(-2);
+      const rowFx=RAW[monthLabelFx]&&RAW[monthLabelFx].rows.find(r=>r.p===p);
+      if(rowFx){
+        rowFx.newMoney=Math.round(((rowFx.newMoney||0)+depositUsd)*100)/100;
+        rowFx.v=Math.round((rowFx.v-depositUsd)*100)/100;
+        RAW[monthLabelFx].total=Math.round(RAW[monthLabelFx].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+        saveData();
+      }
+    }
+  } else {
+    applyVariableAdjustmentNow(p,val);
+  }
+  el.value='';
+  renderAll(active);
+  showToast(`${val>0?'+':''}${val} ${plat.symbol||''} applied to ${p} now`,'success');
+}
+// Writes a deposit/withdrawal straight into this month's row for a variable position, immediately —
+// no deferred "pending" step. The delta is tracked as newMoney (capital), not counted as return.
+function applyVariableAdjustmentNow(p,deltaQty){
+  const plat=PLATFORMS[p]||{};
+  const now=new Date();
+  const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
+  if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
+  const priorMonths=getMonths().filter(m=>m!==monthLabel);
+  const prevMonth=priorMonths.length?priorMonths[priorMonths.length-1]:null;
+  const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
+  const existingIdx=RAW[monthLabel].rows.findIndex(r=>r.p===p);
+  const existing=existingIdx>=0?RAW[monthLabel].rows[existingIdx]:null;
+  const baseQty=existing?(existing.qty||0):(prevAgg?(prevAgg.qty||0):0);
+  const newQty=Math.round((baseQty+deltaQty)*1e6)/1e6;
+  const cgSym=(plat.symbol||'').toUpperCase();
+  const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+  const price=live?live.current_price:0;
+  const investUsd=Math.round(newQty*price*100)/100;
+  const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):0;
+  const deltaUsd=Math.round(deltaQty*price*100)/100;
+  const priorNewMoney=existing?(existing.newMoney||0):0;
+  // First-ever appearance: the whole position is capital, not just this delta.
+  const newMoney=prevAgg?Math.round((priorNewMoney+deltaUsd)*100)/100:investUsd;
+  const v=Math.round((investUsd-lastMonthUsd-newMoney)*100)/100;
+  const row={p,v,qty:newQty,token:plat.symbol||null,investUsd,newMoney:newMoney||undefined,
+    rewardQty:existing?existing.rewardQty:undefined,rewardToken:existing?existing.rewardToken:undefined,
+    leverageRisk:existing?existing.leverageRisk:undefined};
+  if(existingIdx>=0)RAW[monthLabel].rows[existingIdx]=row;
+  else RAW[monthLabel].rows.push(row);
+  RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+  saveData();buildNav();
+}
+function addPlatformSource(p,idx){
+  const type=document.getElementById('srcType_'+idx).value;
+  const url=document.getElementById('srcUrl_'+idx).value.trim();
+  if(!url)return;
+  if(!PLATFORMS[p])return;
+  if(!PLATFORMS[p].sources)PLATFORMS[p].sources=[];
+  PLATFORMS[p].sources.push({type,url});
+  savePlatforms();
+  renderSourcesList();
+}
+function removePlatformSource(p,i){
+  if(!PLATFORMS[p]||!PLATFORMS[p].sources)return;
+  PLATFORMS[p].sources.splice(i,1);
+  savePlatforms();
+  renderSourcesList();
+}
+// Exports { platformName: [{type,url},...] } for every position that has sources —
+// the committed shape the daily monitoring routine reads from sources.json.
+function downloadSourcesJSON(){
+  const out={};
+  allPlatformNames().forEach(p=>{
+    const sources=(PLATFORMS[p]||{}).sources||[];
+    if(sources.length)out[p]=sources;
+  });
+  const b=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='sources.json';a.click();
+  showToast('sources.json downloaded — move it into crypto-dashboard/ and commit','success');
+}
+// On load, pull in whatever sources.json has (if this page is served over http, not file://)
+// and union them into each position's local sources so nothing committed is missing here.
+async function syncSourcesFromFile(){
+  try{
+    const res=await fetch('sources.json',{cache:'no-store'});
+    if(!res.ok)return;
+    const fileSources=await res.json();
+    let changed=false;
+    Object.entries(fileSources).forEach(([p,srcs])=>{
+      if(!PLATFORMS[p])return;
+      if(!PLATFORMS[p].sources)PLATFORMS[p].sources=[];
+      (srcs||[]).forEach(s=>{
+        if(!PLATFORMS[p].sources.some(existing=>existing.url===s.url)){
+          PLATFORMS[p].sources.push(s);
+          changed=true;
+        }
+      });
+    });
+    if(changed){savePlatforms();renderSourcesList();}
+  }catch(e){/* file:// or no sources.json yet — ignore */}
+}
+const SRC_ICON={website:'🌐',x:'𝕏',telegram:'✈'};
+const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+const fmt=v=>(v<0?'-':'')+'$'+Math.abs(Math.round(v)).toLocaleString();
+const fmtPct=v=>(v>=0?'+':'')+v.toFixed(1)+'%';
+const fmtQ=q=>q==null?'—':(q>1000?q.toLocaleString(undefined,{maximumFractionDigits:0}):parseFloat(Number(q).toFixed(4)).toString());
+const getMonths=()=>Object.keys(RAW).sort((a,b)=>monthSortKey(a)-monthSortKey(b));
+const getYear=m=>m.slice(-2);
+const getYears=()=>[...new Set(getMonths().map(getYear))].sort();
+const getMonthsForYear=yr=>yr==='ALL'?getMonths():getMonths().filter(m=>getYear(m)===yr);
+
+// ── month <input type=month> (YYYY-MM) <-> internal label (e.g. "JUN 26") ──
+const MONTH_ABBR=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function monthSortKey(label){
+  const [abbr,yy]=(label||'').split(' ');
+  const idx=MONTH_ABBR.indexOf((abbr||'').toUpperCase());
+  return parseInt('20'+yy,10)*12+(idx<0?0:idx);
+}
+function monthInputToLabel(val){
+  if(!val)return '';
+  const [y,m]=val.split('-');
+  return MONTH_ABBR[parseInt(m,10)-1]+' '+y.slice(-2);
+}
+function labelToMonthInput(label){
+  const [abbr,yy]=label.split(' ');
+  const idx=MONTH_ABBR.indexOf((abbr||'').toUpperCase());
+  if(idx<0||!yy)return '';
+  return '20'+yy+'-'+String(idx+1).padStart(2,'0');
+}
+function getPrevMonthFor(editMonth){
+  const months=getMonths();
+  const idx=editMonth?months.indexOf(editMonth):months.length;
+  return idx>0?months[idx-1]:null;
+}
+
+function aggRows(rows){
+  const m={};
+  rows.forEach(r=>{
+    if(!m[r.p])m[r.p]={v:0,qty:r.qty,token:r.token,investUsd:0,leverageRisk:false,rewardQty:0,rewardToken:null};
+    m[r.p].v+=r.v;
+    m[r.p].investUsd+=(r.investUsd||0);
+    m[r.p].rewardQty+=(r.rewardQty||0);
+    if(r.rewardToken&&!m[r.p].rewardToken)m[r.p].rewardToken=r.rewardToken;
+    if(r.qty&&!m[r.p].qty){m[r.p].qty=r.qty;m[r.p].token=r.token;}
+    if(r.leverageRisk)m[r.p].leverageRisk=true;
+  });
+  return m;
+}
+const calcAPR=(ret,inv)=>inv>0?(ret*12/inv)*100:null;
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function renderKPI(month){
+  const el=document.getElementById('kpiGrid');
+  const months=getMonthsForYear(activeYear);
+  if(month==='ALL'){
+    let sum=0,bV=-Infinity,wV=Infinity,bM='',wM='',inv=0;
+    months.forEach(m=>{const v=RAW[m].total;sum+=v;if(v>bV){bV=v;bM=m;}if(v<wV){wV=v;wM=m;}});
+    const last=months[months.length-1];
+    if(last)Object.values(aggRows(RAW[last].rows)).forEach(d=>{inv+=d.investUsd||0;});
+    el.innerHTML=`
+      <div class="kpi"><div class="kpi-label">Total return</div><div class="kpi-value ${sum>=0?'pos':'neg'}">${fmt(sum)}</div><div class="kpi-sub">${activeYear==='ALL'?'all time':'20'+activeYear}</div></div>
+      <div class="kpi"><div class="kpi-label">Monthly avg</div><div class="kpi-value neu">${fmt(Math.round(sum/(months.length||1)))}</div><div class="kpi-sub">per month</div></div>
+      <div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-value neu" style="font-size:18px">${fmt(inv)}</div><div class="kpi-sub">latest snapshot</div></div>
+      <div class="kpi"><div class="kpi-label">Best month</div><div class="kpi-value pos" style="font-size:16px">${months.length?fmt(bV):'—'}</div><div class="kpi-sub">${bM||'—'}</div></div>
+      <div class="kpi"><div class="kpi-label">Worst month</div><div class="kpi-value neg" style="font-size:16px">${months.length?fmt(wV):'—'}</div><div class="kpi-sub">${wM||'—'}</div></div>
+      <div class="kpi"><div class="kpi-label">Months</div><div class="kpi-value neu">${months.length}</div><div class="kpi-sub">months</div></div>`;
+  } else {
+    const d=RAW[month];
+    const aggd=aggRows(d.rows);
+    const ents=Object.entries(aggd);
+    const best=ents.length?ents.reduce((a,b)=>b[1].v>a[1].v?b:a):['—',{v:0}];
+    const worst=ents.length?ents.reduce((a,b)=>b[1].v<a[1].v?b:a):['—',{v:0}];
+    const inv=ents.reduce((s,[,x])=>s+(x.investUsd||0),0);
+    const apr=calcAPR(d.total,inv);
+    const conflictSub=d.conflict?`<div class="kpi-sub" style="color:#f59e0b">⚠ Excel total was ${fmt(d.xlTotal)}</div>`:'';
+    el.innerHTML=`
+      <div class="kpi"><div class="kpi-label">Return</div><div class="kpi-value ${d.total>=0?'pos':'neg'}">${fmt(d.total)}</div><div class="kpi-sub">${month}</div>${conflictSub}</div>
+      <div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-value neu" style="font-size:18px">${fmt(inv)}</div><div class="kpi-sub">this month</div></div>
+      <div class="kpi"><div class="kpi-label">Actual APR</div><div class="kpi-value ${apr!=null&&apr>=0?'pos':'neg'}" style="font-size:18px">${apr!=null?fmtPct(apr):'—'}</div><div class="kpi-sub">annualised</div></div>
+      <div class="kpi"><div class="kpi-label">Best protocol</div><div class="kpi-value pos" style="font-size:16px">${fmt(best[1].v)}</div><div class="kpi-sub">${best[0]}</div></div>
+      <div class="kpi"><div class="kpi-label">Worst protocol</div><div class="kpi-value neg" style="font-size:16px">${fmt(worst[1].v)}</div><div class="kpi-sub">${worst[0]}</div></div>
+      <div class="kpi"><div class="kpi-label">Protocols</div><div class="kpi-value neu">${ents.length}</div><div class="kpi-sub">active</div></div>`;
+  }
+}
+
+
+
+function renderBar(month){
+  if(barChart)barChart.destroy();
+  const months=getMonthsForYear(activeYear);
+  document.getElementById('barTitle').textContent=month==='ALL'?`Monthly returns — 20${activeYear}`:`${month} — by protocol`;
+  let labels,data,colors;
+  if(month==='ALL'){
+    labels=months;data=months.map(m=>RAW[m].total);
+    colors=months.map(m=>RAW[m].total>=0?'#22c55e':'#ef4444');
+  }else{
+    const sorted=Object.entries(aggRows(RAW[month].rows)).sort((a,b)=>b[1].v-a[1].v);
+    labels=sorted.map(e=>e[0]);data=sorted.map(e=>Math.round(e[1].v));colors=sorted.map(e=>gc(e[0]));
+  }
+  barChart=new Chart(document.getElementById('barChart').getContext('2d'),{
+    type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:"'IBM Plex Mono'"},bodyFont:{family:"'IBM Plex Mono'"},callbacks:{label:c=>' '+fmt(c.raw)}}},
+      scales:{y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},maxRotation:40,autoSkip:false},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}}}
+  });
+}
+
+function renderProtoTable(month){
+  if(pieChart)pieChart.destroy();
+  const months=getMonthsForYear(activeYear);
+  let aggd={};
+  if(month==='ALL'){months.forEach(m=>{const a=aggRows(RAW[m].rows);Object.entries(a).forEach(([p,d])=>{if(!aggd[p])aggd[p]={v:0,investUsd:0,token:d.token,qty:d.qty,leverageRisk:false,rewardQty:0,rewardToken:null};aggd[p].v+=d.v;aggd[p].investUsd+=d.investUsd||0;aggd[p].rewardQty+=d.rewardQty||0;if(d.rewardToken&&!aggd[p].rewardToken)aggd[p].rewardToken=d.rewardToken;if(d.leverageRisk)aggd[p].leverageRisk=true;});});}
+  else aggd=aggRows(RAW[month].rows);
+  const sorted=Object.entries(aggd).sort((a,b)=>b[1].v-a[1].v);
+  const posTotal=sorted.filter(e=>e[1].v>0).reduce((s,e)=>s+e[1].v,0);
+  const maxAPR=Math.max(1,...sorted.map(([,d])=>{const a=calcAPR(d.v,d.investUsd);return a?Math.abs(a):0;}));
+  const posSorted=sorted.filter(e=>e[1].v>0);
+  pieChart=new Chart(document.getElementById('pieChart').getContext('2d'),{
+    type:'doughnut',data:{labels:posSorted.map(e=>e[0]),datasets:[{data:posSorted.map(e=>Math.round(e[1].v)),backgroundColor:posSorted.map(e=>gc(e[0])),borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:"'IBM Plex Mono'"},bodyFont:{family:"'IBM Plex Mono'"},callbacks:{label:c=>` ${fmt(c.raw)} (${posTotal>0?((c.raw/posTotal)*100).toFixed(1):0}%)`}}}}
+  });
+  const isAll=month==='ALL';
+  document.getElementById('protoTableWrap').innerHTML=`
+    <table class="proto-table"><thead><tr>
+      <th>Protocol</th>${!isAll?'<th>Holdings</th>':''}${!isAll?'<th>Invested</th>':''}${!isAll?'<th>Reward</th>':''}
+      <th>Return</th><th>APR</th><th>Target</th>${!isAll?'<th></th>':''}
+    </tr></thead><tbody>
+    ${sorted.map(([p,d])=>{
+      const apr=calcAPR(d.v,d.investUsd);
+      const bw=apr!==null?Math.min(55,Math.abs(apr)/maxAPR*55):0;
+      const bc=apr!==null?(apr>=0?'var(--green)':'var(--red)'):'var(--muted)';
+      const tok=d.qty&&d.token?`${fmtQ(d.qty)} <span class="token-tag">${d.token}</span>`:'—';
+      const plat=PLATFORMS[p]||{};
+      const target=plat.targetApr;
+      const isFixedRow=plat.yieldType==='fixed';
+      let targetCell='<span style="color:var(--muted)">—</span>';
+      if(target!=null){
+        if(isFixedRow)targetCell=`<span style="color:var(--green)">${target}% (fixed)</span>`;
+        else{const meetsTarget=apr!=null?apr>=target:null;targetCell=`<span style="color:${meetsTarget?'var(--green)':'var(--red)'}">${target}%</span>`;}
+      }
+      return `<tr>
+        <td><span class="proto-dot" style="background:${gc(p)}"></span>${p}${d.token?` <span class="token-tag">${d.token}</span>`:''}${d.leverageRisk?' <span title="סיכון מינוף נלווה" style="color:#f59e0b;font-size:13px;cursor:help">⚠</span>':''}</td>
+        ${!isAll?`<td style="color:var(--muted)">${tok}</td>`:''}
+        ${!isAll?`<td>${d.investUsd?fmt(d.investUsd):'—'}</td>`:''}
+        ${!isAll?`<td style="color:var(--muted)">${d.rewardQty?('+'+fmtQ(d.rewardQty)+' '+(d.rewardToken||d.token||'')):'—'}</td>`:''}
+        <td class="${d.v>=0?'pos':'neg'}">${fmt(d.v)}</td>
+        <td><div class="apr-wrap"><span style="color:${bc};min-width:52px;text-align:right">${apr!==null?fmtPct(apr):'—'}</span><div class="apr-bar" style="width:${bw}px;background:${bc};opacity:0.55"></div></div></td>
+        <td>${targetCell}</td>
+        ${!isAll?`<td><div style="display:flex;gap:4px;justify-content:flex-end"><button class="btn" style="padding:2px 7px;font-size:10px" onclick="openEntryModal('${month}')">✎</button><button class="btn btn-danger" style="padding:2px 7px;font-size:10px" onclick="removePositionMonth('${p}','${month}')">×</button></div></td>`:''}
+      </tr>`;
+    }).join('')}
+    </tbody></table>`;
+}
+
+function renderLegend(month){
+  let aggd={};
+  const months=getMonthsForYear(activeYear);
+  if(month==='ALL')months.forEach(m=>RAW[m].rows.forEach(r=>{if(!aggd[r.p])aggd[r.p]=0;aggd[r.p]+=r.v;}));
+  else{const a=aggRows(RAW[month].rows);Object.entries(a).forEach(([p,d])=>{aggd[p]=d.v;});}
+  const top=Object.entries(aggd).sort((a,b)=>b[1]-a[1]).slice(0,9).map(e=>e[0]);
+  document.getElementById('legendWrap').innerHTML=top.map(p=>`<span class="legend-item"><span class="legend-sq" style="background:${gc(p)}"></span>${p}</span>`).join('');
+}
+
+function renderAll(month){renderKPI(month);renderBar(month);renderProtoTable(month);renderLegend(month);renderValueChart();renderPositionList();}
+
+let valueChart=null;
+let distPieChart=null;
+function renderValueChart(){
+  const canvas=document.getElementById('valueChart');
+  if(!canvas)return;
+  if(valueChart){valueChart.destroy();valueChart=null;}
+  const months=getMonths();
+  if(!months.length)return;
+  const totals=months.map(m=>Object.values(aggRows(RAW[m].rows)).reduce((s,d)=>s+(d.investUsd||0),0));
+  // First month's whole value is baseline capital (new money by definition — nothing existed before it).
+  // Every later month, only rows explicitly flagged with a "new money" amount count toward the new-money line;
+  // everything else in that month's delta is treated as yield/price growth.
+  let cumNew=0;
+  const cumNewMoney=months.map((m,i)=>{
+    cumNew+=(i===0)?totals[0]:RAW[m].rows.reduce((s,r)=>s+(r.newMoney||0),0);
+    return Math.min(cumNew,totals[i]);
+  });
+  valueChart=new Chart(canvas.getContext('2d'),{
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'New money',data:cumNewMoney,borderColor:'#3b82f6',borderWidth:1.5,backgroundColor:'rgba(59,130,246,0.28)',fill:'origin',tension:0.3,pointRadius:2},
+      {label:'Portfolio value',data:totals,borderColor:'#f59e0b',borderWidth:2,backgroundColor:'rgba(34,197,94,0.25)',fill:'-1',tension:0.3,pointRadius:2,pointBackgroundColor:'#f59e0b'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:"'IBM Plex Mono'"},bodyFont:{family:"'IBM Plex Mono'"},callbacks:{label:c=>' '+c.dataset.label+': '+fmt(c.raw)}}},
+      scales:{y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:9},maxRotation:40,autoSkip:false},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}}}
+  });
+}
+
+// ── NAV ──
+function buildNav(){
+  const wrap=document.getElementById('navBar');
+  const years=getYears();
+  const html=years.map(yr=>`
+    <div class="nav-item">
+      <button class="nav-btn${activeYear===yr?' active':''}" onclick="selectYear('${yr}')">20${yr}</button>
+    </div>`).join('');
+  wrap.innerHTML=html;
+
+  // For 2026+, render month sub-tabs below
+  const subWrap=document.getElementById('monthSubTabs');
+  const isNew=parseInt(activeYear)>=26;
+  if(isNew){
+    const months=getMonthsForYear(activeYear);
+    let tabs=`<button class="sub-tab${active==='ALL'?' active':''}" onclick="selectMonthTab('ALL')">Summary</button>`;
+    tabs+=months.map(m=>`<button class="sub-tab${active===m?' active':''}" onclick="selectMonthTab('${m}')">${m}</button>`).join('');
+    subWrap.innerHTML=tabs;
+    subWrap.style.display='flex';
+  } else {
+    subWrap.innerHTML='';
+    subWrap.style.display='none';
+  }
+}
+function selectYear(yr){
+  activeYear=yr;
+  active='ALL';
+  buildNav();
+  renderAll('ALL');
+}
+function selectMonthTab(m){
+  active=m;
+  buildNav();
+  renderAll(m);
+}
+
+// ═══════════════════════════════════════════════════
+// ENTRY MODAL — unified for Add AND Edit
+// ═══════════════════════════════════════════════════
+let _rowId=0, _editMonth=null, _prevMonth=null;
+
+function openEntryModal(editMonth){
+  _editMonth=editMonth;
+  _rowId=0;
+  _prevMonth=getPrevMonthFor(editMonth);
+  document.getElementById('entryTitle').textContent=editMonth?`Edit — ${editMonth}`:'Month summary';
+  const mInput=document.getElementById('eMonth');
+  mInput.value=editMonth?labelToMonthInput(editMonth):'';
+  mInput.disabled=!!editMonth;
+
+  document.getElementById('eRows').innerHTML='';
+  if(editMonth&&RAW[editMonth]){
+    const d=RAW[editMonth];
+    // Reconstruct rows: qty is the running total (first value wins, like aggRows).
+    const merged={};
+    d.rows.forEach(r=>{
+      if(!merged[r.p])merged[r.p]={qty:null,leverageRisk:false,rewardQty:0,rewardToken:null,newMoney:0};
+      if(r.qty&&!merged[r.p].qty)merged[r.p].qty=r.qty;
+      if(r.leverageRisk)merged[r.p].leverageRisk=true;
+      if(r.rewardToken){merged[r.p].rewardToken=r.rewardToken;merged[r.p].rewardQty+=(r.rewardQty||0);}
+      merged[r.p].newMoney+=(r.newMoney||0);
+    });
+    Object.entries(merged).forEach(([p,data])=>{
+      addEntryRow(p,data.qty||'',data.newMoney||0);
+      const lb=document.getElementById('eRows').lastElementChild;
+      if(lb){
+        if(data.leverageRisk){const cb=lb.querySelector('.er-lev');if(cb)cb.checked=true;}
+        if(data.rewardToken){const rq=lb.querySelector('.er-rewardqty');if(rq)rq.value=data.rewardQty||'';}
+      }
+    });
+  } else {
+    // New month: start empty — the user adds positions one at a time via "+ Add position",
+    // rather than every tracked position being pre-populated up front.
+  }
+
+  updateEntryTotals();
+  document.getElementById('entryOverlay').classList.add('open');
+}
+function closeEntry(){document.getElementById('entryOverlay').classList.remove('open');_editMonth=null;}
+
+
+function addEntryRow(protocol='',qty='',existingNewMoney=0){
+  const id=++_rowId;
+  const div=document.createElement('div');div.className='proto-entry';div.id='er_'+id;
+  div.dataset.existingNewMoney=existingNewMoney||0;
+  const options=variablePlatformNames().map(p=>`<option value="${p}" ${p===protocol?'selected':''}>${p} (${(PLATFORMS[p]&&PLATFORMS[p].symbol)||'?'})</option>`).join('');
+  div.innerHTML=`
+    <div class="proto-entry-grid2">
+      <div>
+        <div class="form-label" style="margin-bottom:3px">Protocol</div>
+        <select class="form-select er-name" onchange="this.closest('.proto-entry').dataset.existingNewMoney=0;updateEntryTotals()">
+          <option value="">— select position —</option>
+          ${options}
+        </select>
+      </div>
+      <div>
+        <div class="form-label" style="margin-bottom:3px">Current qty</div>
+        <input class="form-input er-qty" type="number" step="any" placeholder="e.g. 26599.78" value="${qty}" oninput="updateEntryTotals()"/>
+      </div>
+      <button class="remove-btn" onclick="document.getElementById('er_${id}').remove();updateEntryTotals()">×</button>
+    </div>
+    <div class="er-manualprice-wrap" id="mprice_${id}" style="display:none;margin-top:8px">
+      <div class="form-label" style="margin-bottom:3px">No live price for this symbol — enter manually ($)</div>
+      <input class="form-input er-price" type="number" step="any" placeholder="e.g. 4.72" style="max-width:160px" oninput="updateEntryTotals()"/>
+    </div>
+    <div class="er-rewardccy-wrap" style="display:none;margin-top:8px">
+      <div class="form-label reward-ccy-label" style="margin-bottom:3px">Reward received this month</div>
+      <input class="form-input er-rewardqty" type="number" step="any" placeholder="e.g. 12.5" style="max-width:160px" oninput="updateEntryTotals()"/>
+    </div>
+    <div class="calc-row" id="calcs_${id}"></div>
+    <label class="er-leverage">
+      <input type="checkbox" class="er-lev" onchange="updateEntryTotals()"/>
+      <span>⚠ <span class="warn-label">סיכון מינוף נלווה</span></span>
+    </label>`;
+  document.getElementById('eRows').appendChild(div);
+}
+
+// Shared calc used by both the live preview and saveEntry, so they can never drift apart.
+// Protocol/symbol come from the positions registry; only qty is typed here. Any capital
+// already tagged as newMoney (e.g. from a deposit applied via Portfolio update) is carried
+// forward as-is — it's excluded from "return" here rather than re-derived from the qty delta.
+function calcRowValues(div){
+  const p=(div.querySelector('.er-name').value||'').trim();
+  const plat=PLATFORMS[p]||{};
+  const token=(plat.symbol||'').trim();
+  const qty=parseFloat(div.querySelector('.er-qty').value)||0;
+  const existingNewMoney=parseFloat(div.dataset.existingNewMoney)||0;
+  const cgSym=token.toUpperCase();
+  const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+  const hasLivePrice=!!(live&&live.current_price);
+  const mpriceWrap=div.querySelector('.er-manualprice-wrap');
+  if(mpriceWrap)mpriceWrap.style.display=(p&&!hasLivePrice)?'block':'none';
+  const price=hasLivePrice?live.current_price:(parseFloat(div.querySelector('.er-price')?.value)||0);
+  const investUsd=Math.round(qty*price*100)/100;
+  const prevAgg=(_prevMonth&&RAW[_prevMonth])?aggRows(RAW[_prevMonth].rows)[p]:null;
+  let lastMonthUsd=0,oldQty=0,rewardQty=0,newMoney=existingNewMoney,rewardToken=token;
+
+  // If this position's dividend is paid in a different coin than the principal, the qty-delta
+  // math above doesn't apply — the reward amount is entered directly, in that other currency.
+  const rewardCcy=(plat.rewardSymbol||'').trim().toUpperCase();
+  const hasRewardCcy=!!(rewardCcy&&rewardCcy!==cgSym);
+  const rewardCcyWrap=div.querySelector('.er-rewardccy-wrap');
+  if(rewardCcyWrap){
+    rewardCcyWrap.style.display=(p&&hasRewardCcy)?'block':'none';
+    const lbl=rewardCcyWrap.querySelector('.reward-ccy-label');
+    if(lbl)lbl.textContent=`Reward received this month (${plat.rewardSymbol})`;
+  }
+  let rewardCcyUsd=0;
+  if(hasRewardCcy){
+    const rewardLive=(typeof CG!=='undefined'&&CG[rewardCcy])?liveData[CG[rewardCcy].id]:null;
+    const rewardPrice=rewardLive?rewardLive.current_price:0;
+    const rewardQtyEntered=parseFloat(div.querySelector('.er-rewardqty')?.value)||0;
+    rewardCcyUsd=Math.round(rewardQtyEntered*rewardPrice*100)/100;
+    rewardQty=rewardQtyEntered;
+    rewardToken=plat.rewardSymbol;
+  }
+
+  if(prevAgg){
+    lastMonthUsd=prevAgg.investUsd||0;
+    oldQty=prevAgg.qty||0;
+    if(!hasRewardCcy)rewardQty=Math.round((qty-oldQty)*1e6)/1e6;
+  } else if(qty>0&&!existingNewMoney){
+    // First time this protocol appears (and no deposit already recorded it) — the whole position is capital, not return.
+    newMoney=investUsd;
+    lastMonthUsd=investUsd;
+  }
+  const v=Math.round((investUsd-lastMonthUsd-newMoney+rewardCcyUsd)*100)/100;
+  return {p,token,qty,price,hasLivePrice,investUsd,lastMonthUsd,oldQty,rewardQty,rewardToken,rewardCcyUsd,newMoney,v};
+}
+
+function updateEntryTotals(){
+  let totalInvest=0,totalReturn=0;
+  document.querySelectorAll('.proto-entry').forEach(div=>{
+    const c=calcRowValues(div);
+    totalInvest+=c.investUsd;
+    totalReturn+=c.v;
+    const id=div.id.split('_')[1];
+    const calcsEl=document.getElementById('calcs_'+id);
+    if(calcsEl&&c.p&&c.qty){
+      const apr=c.investUsd>0?calcAPR(c.v,c.investUsd):null;
+      calcsEl.innerHTML=`
+        <span class="calc-chip">Price: <b>${c.price?((c.hasLivePrice?'● live ':'○ manual ')+fmtPrice(c.price)):'—'}</b></span>
+        <span class="calc-chip">Invested: <b>${fmt(c.investUsd)}</b></span>
+        <span class="calc-chip">Last month: <b>${fmt(c.lastMonthUsd)}</b></span>
+        <span class="calc-chip">Return: <b class="${c.v>=0?'pos':'neg'}">${fmt(c.v)}</b></span>
+        <span class="calc-chip">Reward: <b>${c.rewardQty?('+'+fmtQ(c.rewardQty)+' '+(c.rewardToken||'')):'—'}</b></span>
+        ${c.rewardCcyUsd?`<span class="calc-chip">Reward value: <b class="pos">${fmt(c.rewardCcyUsd)}</b></span>`:''}
+        ${c.newMoney?`<span class="calc-chip">New money: <b class="${c.newMoney>=0?'pos':'neg'}">${fmt(c.newMoney)}</b></span>`:''}
+        <span class="calc-chip">APR: <b class="${apr!=null&&apr>=0?'pos':'neg'}">${apr!=null?fmtPct(apr):'—'}</b></span>`;
+    } else if(calcsEl) calcsEl.innerHTML='';
+  });
+  const apr=totalInvest>0?calcAPR(totalReturn,totalInvest):null;
+  const iEl=document.getElementById('eTotalInvest');
+  const rEl=document.getElementById('eTotalReturn');
+  const aEl=document.getElementById('eTotalAPR');
+  iEl.textContent=fmt(totalInvest);iEl.className='total-val neu';
+  rEl.textContent=fmt(totalReturn);rEl.className='total-val '+(totalReturn>=0?'pos':'neg');
+  aEl.textContent=apr!=null?fmtPct(apr):'—';aEl.className='total-val '+(apr!=null?(apr>=0?'pos':'neg'):'neu');
+}
+
+function saveEntry(){
+  const monthName=monthInputToLabel(document.getElementById('eMonth').value);
+  const source='dashboard';
+  if(!monthName){showToast('Please pick a month','error');return;}
+  const newRows=[];const touched=[];
+  document.querySelectorAll('.proto-entry').forEach(div=>{
+    const c=calcRowValues(div);
+    if(!c.p)return;
+    const lev=div.querySelector('.er-lev')?.checked||false;
+    newRows.push({p:c.p,v:c.v,qty:c.qty||null,token:c.token||null,investUsd:c.investUsd,leverageRisk:lev||undefined,rewardQty:c.rewardQty||undefined,rewardToken:(c.rewardToken&&c.rewardToken!==c.token)?c.rewardToken:undefined,newMoney:c.newMoney||undefined});
+    touched.push(c.p);
+  });
+  if(newRows.length===0){showToast('Add at least one position','error');return;}
+  // Only the positions present in this form get updated — any other position already
+  // recorded for this month (e.g. edited separately, or via a deposit) is left untouched.
+  const untouchedRows=(RAW[monthName]&&RAW[monthName].rows)?RAW[monthName].rows.filter(r=>!touched.includes(r.p)):[];
+  const rows=[...untouchedRows,...newRows];
+  RAW[monthName]={total:Math.round(rows.reduce((s,r)=>s+r.v,0)*100)/100,source,rows};
+  activeYear=getYear(monthName);active='ALL';
+  saveData();buildNav();renderAll('ALL');
+  closeEntry();
+  showToast(`${monthName} ${_editMonth?'updated':'saved'} ✓`,'success');
+}
+
+// ═══════════════════════════════════════════════════
+// MANAGE MODAL
+// ═══════════════════════════════════════════════════
+function openManageModal(){
+  document.getElementById('manageList').innerHTML=getMonths().map(m=>{
+    const d=RAW[m];
+    const conflictBadge=d.conflict?` <span title="Excel total was ${fmt(d.xlTotal)}" style="color:#f59e0b;font-size:12px;cursor:help">⚠</span>`:'';
+    return `<div class="manage-row">
+      <span class="manage-name">${m}${conflictBadge}</span>
+      <span class="${d.total>=0?'pos':'neg'}" style="font-family:var(--font-mono);font-size:13px;min-width:80px;text-align:right">${fmt(d.total)}</span>
+
+      <button class="btn" style="padding:4px 10px;font-size:11px" onclick="closeManage();openEntryModal('${m}')">Edit</button>
+      <button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="deleteMonth('${m}')">Delete</button>
+    </div>`;
+  }).join('');
+  renderManageCoinsList();
+  document.getElementById('manageOverlay').classList.add('open');
+}
+function closeManage(){document.getElementById('manageOverlay').classList.remove('open');}
+
+// ── FLOW 1: Portfolio update (positions registry + deposits/withdrawals) ──
+function renderPositionList(){
+  const el=document.getElementById('positionsList');
+  const totEl=document.getElementById('positionsTotal');
+  if(!el)return;
+  const names=allPlatformNames();
+  if(!names.length){
+    el.innerHTML='<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one below.</p>';
+    if(totEl)totEl.textContent='$0';
+    const rewardsEl0=document.getElementById('portfolioTotalRewards');
+    const weightedEl0=document.getElementById('portfolioWeightedApr');
+    if(rewardsEl0)rewardsEl0.textContent='$0';
+    if(weightedEl0)weightedEl0.textContent='—';
+    renderPositionsPie();
+    return;
+  }
+  const months=getMonths();
+  const latest=months[months.length-1];
+  const latestAgg=latest?aggRows(RAW[latest].rows):{};
+  const cgReady=typeof CG!=='undefined';
+  let total=0,aprWeightSum=0,aprValSum=0;
+  el.innerHTML=names.map((p,idx)=>{
+    const plat=PLATFORMS[p]||{};
+    const isFixed=plat.yieldType==='fixed';
+    const cur=latestAgg[p];
+    const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
+    const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
+    const live=cgSym?liveData[CG[cgSym].id]:null;
+    const liveVal=(live&&curQty)?live.current_price*curQty:null;
+    const val=liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
+    total+=val;
+    const chg30=live?getChg(live,'30d'):null;
+    const apr=cur?calcAPR(cur.v,cur.investUsd):null;
+    const effectiveApr=isFixed?plat.targetApr:apr;
+    if(effectiveApr!=null&&val>0){aprValSum+=effectiveApr*val;aprWeightSum+=val;}
+    let aprLine='<span style="color:var(--muted)">no target set</span>';
+    if(isFixed){
+      // Fixed yield accrues at exactly the target rate by construction — no need to derive it from a noisy monthly calc.
+      if(plat.targetApr!=null)aprLine=`<span style="color:var(--green)">${plat.targetApr}% (fixed)</span>`;
+    } else if(plat.targetApr!=null){
+      const meets=apr!=null&&apr>=plat.targetApr;
+      aprLine=`<span style="color:${meets?'var(--green)':'var(--red)'}">${apr!=null?fmtPct(apr):'—'} vs target ${plat.targetApr}%</span>`;
+    }
+    const historyMonths=isFixed?[]:months.filter(m=>RAW[m].rows.some(r=>r.p===p));
+    const historyHtml=historyMonths.length?historyMonths.map(m=>{
+      const rowsForP=RAW[m].rows.filter(r=>r.p===p);
+      const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
+      const qtyDisplay=rowsForP.find(r=>r.qty!=null)?.qty;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;font-family:var(--font-mono)">
+        <span style="min-width:56px">${m}</span>
+        <span style="color:var(--muted);flex:1">${qtyDisplay!=null?fmtQ(qtyDisplay):'—'} qty</span>
+        <span class="${vSum>=0?'pos':'neg'}" style="min-width:70px;text-align:right">${fmt(vSum)}</span>
+        <button class="btn" style="padding:2px 8px;font-size:10px" onclick="openEntryModal('${m}')">Edit</button>
+        <button class="btn btn-danger" style="padding:2px 8px;font-size:10px" onclick="removePositionMonth('${p}','${m}')">×</button>
+      </div>`;
+    }).join(''):'<div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono)">No monthly entries yet</div>';
+    return `<div class="position-card">
+      <div class="position-top">
+        <div class="position-name-wrap">
+          <span class="manage-name">${p}</span>
+          <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
+          ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+          <button class="btn" style="padding:3px 9px;font-size:10px" onclick="toggleEditPosition('${p}')">✎ Edit</button>
+        </div>
+      </div>
+      <div class="position-value">${fmt(val)}</div>
+      <div style="font-size:10px;color:var(--muted2);font-family:var(--font-mono);margin-bottom:6px">
+        ${liveVal!=null?'● live price':'○ last snapshot'}${chg30!=null?` · 30d ${chg30>=0?'+':''}${chg30.toFixed(1)}%`:''}
+      </div>
+      <div style="font-size:11px;font-family:var(--font-mono);margin-bottom:2px">Return: ${aprLine}</div>
+      ${plat.rewardSymbol&&plat.rewardSymbol!==plat.symbol?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">Rewards paid in ${plat.rewardSymbol}</div>`:''}
+      <div id="posEdit_${idx}" style="display:${_openPositionEdit===p?'block':'none'};margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <input class="form-input" style="max-width:100px" placeholder="Coin" value="${plat.coin||''}" onchange="setPlatformField('${p}','coin',this.value)"/>
+          <input class="form-input" style="max-width:70px" placeholder="Symbol" value="${plat.symbol||''}" onchange="setPlatformField('${p}','symbol',this.value)"/>
+          <input class="form-input" style="max-width:70px" type="number" step="any" placeholder="Target %" value="${plat.targetApr??''}" onchange="setPlatformField('${p}','targetApr',this.value)"/>
+        </div>
+        <div style="margin-bottom:8px">
+          <label class="form-label">Reward currency (if paid in a different coin)</label>
+          <input class="form-input" style="max-width:100px" placeholder="e.g. USDC" value="${plat.rewardSymbol||''}" onchange="setPlatformField('${p}','rewardSymbol',this.value)"/>
+        </div>
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">
+          Current qty: ${curQty?fmtQ(curQty):'—'}
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+          <span class="form-label" style="margin-bottom:0;white-space:nowrap">Deposit / withdraw (±qty)</span>
+          <input class="form-input" id="posAdj_${idx}" type="number" step="any" style="max-width:120px" placeholder="e.g. 3000 or -500"/>
+          <button class="btn" style="padding:4px 10px;font-size:11px" onclick="applyPositionAdjustment('${p}',${idx})">Apply</button>
+        </div>
+        ${!isFixed?`<div style="margin-bottom:10px">
+          <div class="form-label">Monthly history</div>
+          ${historyHtml}
+        </div>`:''}
+        <button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removePosition('${p}')">Remove position</button>
+      </div>
+    </div>`;
+  }).join('');
+  if(totEl)totEl.textContent=fmt(total);
+  const totalRewards=getMonths().reduce((s,m)=>s+(RAW[m].total||0),0);
+  const rewardsEl=document.getElementById('portfolioTotalRewards');
+  const weightedEl=document.getElementById('portfolioWeightedApr');
+  if(rewardsEl){rewardsEl.textContent=fmt(totalRewards);rewardsEl.className='kpi-value '+(totalRewards>=0?'pos':'neg');}
+  if(weightedEl)weightedEl.textContent=aprWeightSum>0?fmtPct(aprValSum/aprWeightSum):'—';
+  renderPositionsPie();
+}
+function toggleEditPosition(p){
+  _openPositionEdit=(_openPositionEdit===p)?null:p;
+  renderPositionList();
+}
+function removePositionMonth(p,month){
+  if(!confirm(`Remove ${p}'s entry for ${month}? Other positions in that month are unaffected.`))return;
+  if(!RAW[month])return;
+  RAW[month].rows=RAW[month].rows.filter(r=>r.p!==p);
+  if(!RAW[month].rows.length){
+    delete RAW[month];
+    if(active===month)active='ALL';
+  } else {
+    RAW[month].total=Math.round(RAW[month].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+  }
+  saveData();buildNav();renderAll(active);
+  showToast(`Removed ${p} from ${month}`,'success');
+}
+
+// ── FLOW 3: News sources ──
+function openSourcesModal(){renderSourcesList();document.getElementById('sourcesOverlay').classList.add('open');}
+function closeSources(){document.getElementById('sourcesOverlay').classList.remove('open');}
+function renderSourcesList(){
+  const el=document.getElementById('sourcesPositionList');
+  if(!el)return;
+  const names=allPlatformNames();
+  if(!names.length){el.innerHTML='<p style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one via Portfolio update first.</p>';return;}
+  el.innerHTML=names.map((p,idx)=>{
+    const plat=PLATFORMS[p]||{};
+    const sources=plat.sources||[];
+    const chips=sources.length?sources.map((s,i)=>`<span class="token-tag" style="display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0">${SRC_ICON[s.type]||'🌐'} ${escHtml(s.url)}<span onclick="removePlatformSource('${p}',${i})" style="cursor:pointer;color:var(--red);font-weight:600">×</span></span>`).join('')
+      :'<span style="color:var(--muted2);font-size:10px">no sources yet</span>';
+    return `<div class="manage-row" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="manage-name">${p}</span>${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+      </div>
+      <div>${chips}</div>
+      <div style="display:flex;gap:6px">
+        <select class="form-select" id="srcType_${idx}" style="max-width:110px">
+          <option value="website">Website</option>
+          <option value="x">X</option>
+          <option value="telegram">Telegram</option>
+        </select>
+        <input class="form-input" id="srcUrl_${idx}" placeholder="https:// or @handle" style="flex:1"/>
+        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="addPlatformSource('${p}',${idx})">+ Add</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteMonth(month){
+  if(!confirm(`Delete ${month}?`))return;
+  delete RAW[month];active='ALL';
+  saveData();buildNav();renderAll(active);openManageModal();
+  showToast(`${month} deleted`,'success');
+}
+function exportJSON(){
+  const b=new Blob([JSON.stringify(RAW,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='crypto_returns.json';a.click();
+  showToast('JSON exported ✓','success');
+}
+function deleteAllData(){
+  if(!confirm('This permanently deletes every month, position and source you have entered. This cannot be undone. Continue?'))return;
+  if(!confirm('Last chance — consider clicking "Export JSON" first if you want a backup. Delete everything now?'))return;
+  RAW={};
+  PLATFORMS={};
+  active='ALL';activeYear='ALL';
+  saveData();savePlatforms();
+  buildNav();renderAll('ALL');
+  closeManage();
+  showToast('All data deleted','success');
+}
+function importJSON(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(reader.result);
+      const months=Object.keys(parsed);
+      if(typeof parsed!=='object'||Array.isArray(parsed)||!months.length)throw new Error('bad shape');
+      if(!confirm(`Replace all current data with ${months.length} month(s) from this file?`))return;
+      RAW=parsed;
+      saveData();buildNav();renderAll('ALL');openManageModal();
+      showToast('Data imported ✓','success');
+    }catch(err){
+      showToast('Invalid JSON file','error');
+    }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+document.getElementById('entryOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEntry();});
+document.getElementById('addPositionOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddPositionModal();});
+document.getElementById('manageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeManage();});
+document.getElementById('sourcesOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSources();});
+
+// ── LIVE PRICES (declared before the initial render call — renderPositionList needs CG/liveData on first paint) ──
+const DEFAULT_CG = {
+  BTC: {id:'bitcoin',                                         name:'Bitcoin',   color:'#f97316'},
+  ETH: {id:'ethereum',                                        name:'Ethereum',  color:'#9ca3af'},
+  SOL: {id:'solana',                                          name:'Solana',    color:'#7c3aed'},
+  TRX: {id:'tron',                                            name:'TRON',      color:'#ef4444'},
+  JLP: {id:'jupiter-perpetuals-liquidity-provider-token',     name:'JLP',       color:'#22c55e'},
+  PYTH:{id:'pyth-network',                                    name:'Pyth',      color:'#c084fc'},
+  GMX: {id:'gmx',                                             name:'GMX',       color:'#3b82f6'},
+  NEAR:{id:'near',                                            name:'NEAR',      color:'#86efac'},
+  AERO:{id:'aerodrome-finance',                               name:'Aerodrome', color:'#f1f5f9'},
+  DOT: {id:'polkadot',                                        name:'Polkadot',  color:'#e6007a'},
+  CETUS:{id:'cetus-protocol',                                 name:'Cetus',     color:'#00d2ff'},
+  USDC:{id:'usd-coin',                                        name:'USD Coin',  color:'#2775ca'}
+};
+// User can add/remove tracked coins via the Manage modal — persisted so the whole list survives reloads.
+const COINS_KEY='crypto_dash_coins_v1';
+function loadCoins(){
+  try{const s=localStorage.getItem(COINS_KEY);if(s)return JSON.parse(s);}catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_CG));
+}
+function saveCoins(){localStorage.setItem(COINS_KEY,JSON.stringify(CG));}
+const CG = loadCoins();
+let SYMS = Object.keys(CG);
+let IDS  = SYMS.map(s=>CG[s].id).join(',');
+let liveData   = {};  // id -> market data object
+let activeRange = '7d'; // current chart range
+
+function renderManageCoinsList(){
+  const el=document.getElementById('coinsList');
+  if(!el)return;
+  el.innerHTML=SYMS.map(sym=>`<span class="token-tag" style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px">
+    <span style="width:7px;height:7px;border-radius:50%;background:${CG[sym].color};display:inline-block;flex-shrink:0"></span>
+    ${escHtml(sym)}
+    <span onclick="removeCoin('${sym}')" style="cursor:pointer;color:var(--red);font-weight:600">×</span>
+  </span>`).join('');
+}
+function addCoinFromForm(){
+  const sym=document.getElementById('newCoinSym').value;
+  const id=document.getElementById('newCoinId').value;
+  const name=document.getElementById('newCoinName').value;
+  if(addCoin(sym,id,name)){
+    document.getElementById('newCoinSym').value='';
+    document.getElementById('newCoinId').value='';
+    document.getElementById('newCoinName').value='';
+  }
+}
+function addCoin(sym,id,name){
+  sym=(sym||'').trim().toUpperCase();
+  id=(id||'').trim().toLowerCase();
+  if(!sym||!id){showToast('Symbol and CoinGecko ID are required','error');return false;}
+  if(CG[sym]){showToast(sym+' is already tracked','error');return false;}
+  CG[sym]={id,name:(name||'').trim()||sym,color:COLOR_POOL[SYMS.length%COLOR_POOL.length]};
+  saveCoins();
+  SYMS=Object.keys(CG);IDS=SYMS.map(s=>CG[s].id).join(',');
+  renderManageCoinsList();
+  loadPrices();
+  showToast(sym+' added — loading price...','success');
+  return true;
+}
+function removeCoin(sym){
+  if(!CG[sym])return;
+  if(!confirm('Stop tracking '+sym+'? Any position using this symbol will lose its live price.'))return;
+  delete CG[sym];
+  saveCoins();
+  SYMS=Object.keys(CG);IDS=SYMS.map(s=>CG[s].id).join(',');
+  const el=document.getElementById('uc_'+sym); if(el)el.remove();
+  renderManageCoinsList();
+  showToast(sym+' removed','success');
+}
+
+function renderAlerts(){
+  const el=document.getElementById('alertsList');
+  const upd=document.getElementById('alertsUpdated');
+  if(!el)return;
+  const list=(typeof ALERTS!=='undefined'?ALERTS:[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!list.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No alerts yet — monitoring not set up.</div>';
+    if(upd)upd.textContent='';
+    return;
+  }
+  if(upd)upd.textContent='Last checked: '+(list[0].date||'');
+  el.innerHTML=list.map(a=>`
+    <div class="alert-card severity-${a.severity||'info'}">
+      <div class="alert-meta">${escHtml(a.date||'')} · ${escHtml(a.platform||'')}${a.sourceUrl?` · <a href="${escHtml(a.sourceUrl)}" target="_blank" rel="noopener" style="color:var(--muted)">source</a>`:''}</div>
+      <div class="alert-title">${escHtml(a.title||'')}${a.actionRequired?'<span class="emergency-badge">🚨 Emergency</span>':''}</div>
+      <div class="alert-summary">${escHtml(a.summary||'')}</div>
+    </div>`).join('');
+}
+
+// ── SCREEN TABS ──
+function switchScreen(name){
+  document.querySelectorAll('.screen-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.screen-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelector(`.screen-tab[data-screen="${name}"]`).classList.add('active');
+  // Chart.js measures canvas size at creation time — a canvas inside a display:none
+  // panel gets sized 0x0, so re-render any charts on the panel we just revealed.
+  if(name==='returns'){renderBar(active);renderProtoTable(active);}
+  if(name==='portfolio'){renderValueChart();}
+}
+
+loadData();loadPlatforms();activeYear=getYears().slice(-1)[0]||'ALL';buildNav();renderAll('ALL');renderAlerts();syncSourcesFromFile();
+
+// ── Price formatting ──
+function fmtPrice(p){
+  if(p == null) return '—';
+  return p >= 100 ? '$'+p.toLocaleString(undefined,{maximumFractionDigits:2})
+       : p >= 1   ? '$'+p.toFixed(3)
+       : p >= 0.01? '$'+p.toFixed(4)
+       : '$'+p.toFixed(6);
+}
+
+// ── Fetch prices + % changes in ONE call using /coins/markets ──
+// This returns: current_price, price_change_percentage_24h,
+//               price_change_percentage_7d_in_currency,
+//               price_change_percentage_30d_in_currency,
+//               price_change_percentage_1y_in_currency
+async function loadPrices(){
+  const btn = document.getElementById('refreshPricesBtn');
+  if(btn){btn.textContent='...'; btn.disabled=true;}
+
+  const url = 'https://api.coingecko.com/api/v3/coins/markets'
+    + '?vs_currency=usd'
+    + '&ids=' + IDS
+    + '&price_change_percentage=24h,7d,30d,1y'
+    + '&sparkline=false';
+
+  let rows = null, errMsg = null;
+  try{
+    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    if(r.status === 429) errMsg = 'Rate limited — try again shortly';
+    else if(!r.ok) errMsg = 'Failed to load prices (HTTP ' + r.status + ')';
+    else rows = await r.json();
+  }catch(e){
+    errMsg = e.name === 'TimeoutError' ? 'Price request timed out' : 'Failed to load prices';
+  }
+
+  if(btn){btn.textContent='↻ Refresh'; btn.disabled=false;}
+
+  const ts = document.getElementById('priceTimestamp');
+  if(!rows || !rows.length){
+    if(ts) ts.textContent = errMsg || 'Failed to load prices';
+    const msg = document.getElementById('priceLoadMsg');
+    if(msg) msg.textContent = errMsg || 'Failed to load prices';
+    return;
+  }
+
+  // Index by id
+  rows.forEach(row => { liveData[row.id] = row; });
+
+  if(ts) ts.textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+  renderPriceCards();
+}
+
+// ── Render unified price cards ──
+function renderPriceCards(){
+  const grid = document.getElementById('unifiedGrid');
+  if(!grid) return;
+  const msg = document.getElementById('priceLoadMsg');
+  if(msg) msg.remove();
+
+  SYMS.forEach(function(sym){
+    const d = liveData[CG[sym].id];
+    if(!d) return;
+
+    const chg = getChg(d, activeRange);
+    const pos = chg == null || chg >= 0;
+    const ps  = fmtPrice(d.current_price);
+    const pct = chg != null ? (pos?'+':'')+chg.toFixed(2)+'% '+activeRange : '—';
+
+    const existing = document.getElementById('uc_'+sym);
+    if(!existing){
+      const div = document.createElement('div');
+      div.className = 'ucrd'; div.id = 'uc_'+sym;
+      div.innerHTML =
+        '<div class="ucrd-top">'
+          +'<div style="display:flex;align-items:center;gap:5px">'
+          +'<span style="width:8px;height:8px;border-radius:50%;background:'+CG[sym].color+';flex-shrink:0"></span>'
+          +'<span class="ucrd-sym">'+sym+'</span></div>'
+          +'<span class="ucrd-name">'+CG[sym].name+'</span>'
+        +'</div>'
+        +'<div class="ucrd-price '+(pos?'pos':'neg')+'" id="upr_'+sym+'">'+ps+'</div>'
+        +'<div class="ucrd-chg  '+(pos?'pos':'neg')+'" id="uch_'+sym+'">'+pct+'</div>'
+        ;
+      grid.appendChild(div);
+    } else {
+      const pp = document.getElementById('upr_'+sym);
+      const cc = document.getElementById('uch_'+sym);
+      if(pp){ pp.textContent = ps;  pp.className = 'ucrd-price '+(pos?'pos':'neg'); }
+      if(cc){ cc.textContent = pct; cc.className = 'ucrd-chg  '+(pos?'pos':'neg'); }
+    }
+  });
+
+  const fixedChanged=refreshFixedPositions();
+  const pendingChanged=flushPendingAdjustments();
+  if(fixedChanged||pendingChanged){buildNav();renderAll(active);} else renderPositionList();
+}
+
+function getChg(d, range){
+  if(range === '24h') return d.price_change_percentage_24h;
+  if(range === '7d')  return d.price_change_percentage_7d_in_currency;
+  if(range === '30d') return d.price_change_percentage_30d_in_currency;
+  if(range === '1y')  return d.price_change_percentage_1y_in_currency;
+  return d.price_change_percentage_30d_in_currency;
+}
+
+// ── Range selector ──
+function setRange(range, btn){
+  activeRange = range;
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderPriceCards();   // update % labels immediately
+  // Reload sparklines for new range
+
+}
+
+
+// Hide home prices when a year is clicked
+// homePrices stays visible always — no override needed
+
+// ── PORTFOLIO DISTRIBUTION — derived straight from your tracked positions, no manual entry ──
+function renderPositionsPie(){
+  const canvas=document.getElementById('distPieChart');
+  const legEl=document.getElementById('distLegend');
+  if(!canvas)return;
+  if(distPieChart)distPieChart.destroy();
+  const names=allPlatformNames();
+  const months=getMonths();
+  const latest=months[months.length-1];
+  const latestAgg=latest?aggRows(RAW[latest].rows):{};
+  const cgReady=typeof CG!=='undefined';
+  const labels=[],values=[],colors=[];
+  names.forEach(p=>{
+    const plat=PLATFORMS[p]||{};
+    const isFixed=plat.yieldType==='fixed';
+    const cur=latestAgg[p];
+    const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
+    const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
+    const live=cgSym?liveData[CG[cgSym].id]:null;
+    const liveVal=(live&&curQty)?live.current_price*curQty:null;
+    const val=liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
+    if(val>0){labels.push(p);values.push(Math.round(val));colors.push(gc(p));}
+  });
+  if(!values.length){
+    canvas.style.opacity='0.3';
+    if(legEl)legEl.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">No valued positions yet</div>';
+    return;
+  }
+  canvas.style.opacity='1';
+  const total=values.reduce((a,b)=>a+b,0);
+  if(legEl){
+    legEl.innerHTML=labels.map((p,i)=>{
+      const pct=total>0?(values[i]/total*100).toFixed(1):0;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-family:var(--font-mono);font-size:11px">
+        <span style="width:9px;height:9px;border-radius:50%;background:${colors[i]};flex-shrink:0"></span>
+        <span style="flex:1;color:var(--text)">${p}</span>
+        <span style="color:var(--muted);min-width:38px;text-align:right">${pct}%</span>
+        <span style="font-weight:600;min-width:70px;text-align:right">${fmt(values[i])}</span>
+      </div>`;
+    }).join('');
+  }
+  distPieChart=new Chart(canvas.getContext('2d'),{
+    type:'doughnut',
+    data:{labels,datasets:[{data:values,backgroundColor:colors,borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:c=>{const pct=total>0?(c.raw/total*100).toFixed(1):0;return ' '+fmt(c.raw)+' ('+pct+'%)';}}}}}
+  });
+}
+
+window.addEventListener('load', ()=>{ setTimeout(loadPrices, 500); });
+
+</script>
+</body>
+</html>
