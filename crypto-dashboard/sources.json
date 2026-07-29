@@ -25,6 +25,13 @@
     {"type": "website", "url": "https://kamino.com/docs"},
     {"type": "website", "url": "https://api.llama.fi/protocol/kamino"}
   ],
+  "Aerodrome / veAERO": [
+    {"type": "website", "url": "https://raw.githubusercontent.com/aerodrome-finance/docs/main/content/voting.mdx"},
+    {"type": "website", "url": "https://raw.githubusercontent.com/aerodrome-finance/docs/main/content/tokenomics.mdx"},
+    {"type": "website", "url": "https://github.com/aerodrome-finance"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/aerodrome"},
+    {"type": "x", "url": "https://x.com/aerodromefi"}
+  ],
   "General Market News": [
     {"type": "website", "url": "https://cointelegraph.com/rss"}
   ]
