@@ -1,1 +1,31 @@
-{}
+{
+  "40acres.finance": [
+    {"type": "website", "url": "https://docs.40acres.finance"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/40-acres"}
+  ],
+  "Hot Wallet / NEAR Staking": [
+    {"type": "telegram", "url": "https://t.me/hotonnear"},
+    {"type": "website", "url": "https://hot-labs.org/blog"}
+  ],
+  "Jupiter / JLP": [
+    {"type": "website", "url": "https://discuss.jup.ag"}
+  ],
+  "Pyth": [
+    {"type": "website", "url": "https://www.pyth.network/blog"}
+  ],
+  "Lido": [
+    {"type": "website", "url": "https://blog.lido.fi"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/lido"}
+  ],
+  "GMX": [
+    {"type": "website", "url": "https://github.com/gmx-io"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/gmx"}
+  ],
+  "Kamino": [
+    {"type": "website", "url": "https://kamino.com/docs"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/kamino"}
+  ],
+  "General Market News": [
+    {"type": "website", "url": "https://cointelegraph.com/rss"}
+  ]
+}
