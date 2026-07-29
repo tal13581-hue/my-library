@@ -1412,10 +1412,13 @@ function deleteMonth(month){
   saveData();buildNav();renderAll(active);openManageModal();
   showToast(`${month} deleted`,'success');
 }
+// Full backup: months data + positions/sources registry + any custom tracked coins —
+// everything needed to fully restore the dashboard in a different file/browser.
 function exportJSON(){
-  const b=new Blob([JSON.stringify(RAW,null,2)],{type:'application/json'});
+  const backup={_type:'crypto-dashboard-backup',_version:2,RAW,PLATFORMS,CG};
+  const b=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='crypto_returns.json';a.click();
-  showToast('JSON exported ✓','success');
+  showToast('Full backup exported ✓','success');
 }
 function deleteAllData(){
   if(!confirm('This permanently deletes every month, position and source you have entered. This cannot be undone. Continue?'))return;
@@ -1435,12 +1438,26 @@ function importJSON(e){
   reader.onload=()=>{
     try{
       const parsed=JSON.parse(reader.result);
-      const months=Object.keys(parsed);
-      if(typeof parsed!=='object'||Array.isArray(parsed)||!months.length)throw new Error('bad shape');
-      if(!confirm(`Replace all current data with ${months.length} month(s) from this file?`))return;
-      RAW=parsed;
-      saveData();buildNav();renderAll('ALL');openManageModal();
-      showToast('Data imported ✓','success');
+      if(typeof parsed!=='object'||Array.isArray(parsed))throw new Error('bad shape');
+      const isFullBackup=parsed._type==='crypto-dashboard-backup';
+      const newRaw=isFullBackup?parsed.RAW:parsed;
+      const months=Object.keys(newRaw||{});
+      if(!newRaw||!months.length)throw new Error('bad shape');
+      const extra=isFullBackup?` (plus ${Object.keys(parsed.PLATFORMS||{}).length} position(s)${parsed.CG?' and tracked coins':''})`:'';
+      if(!confirm(`Replace all current data with ${months.length} month(s) from this file${extra}?`))return;
+      RAW=newRaw;
+      saveData();
+      if(isFullBackup){
+        if(parsed.PLATFORMS){PLATFORMS=parsed.PLATFORMS;savePlatforms();}
+        if(parsed.CG){
+          Object.keys(CG).forEach(k=>delete CG[k]);
+          Object.assign(CG,parsed.CG);
+          saveCoins();
+          SYMS=Object.keys(CG);IDS=SYMS.map(s=>CG[s].id).join(',');
+        }
+      }
+      buildNav();renderAll('ALL');openManageModal();
+      showToast(isFullBackup?'Full backup imported ✓':'Data imported ✓','success');
     }catch(err){
       showToast('Invalid JSON file','error');
     }
