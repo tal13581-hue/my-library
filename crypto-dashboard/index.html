@@ -569,9 +569,14 @@ function refreshFixedPositions(){
     const otherMonths=getMonths().filter(m=>m!==currentMonthLabel);
     const prevMonth=otherMonths[otherMonths.length-1];
     const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
-    const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):investUsd; // first appearance = baseline capital, not return
+    // First appearance (no prior month yet): isolate the real yield accrued so far — qty grown
+    // past fixedStartQty, valued at today's price — instead of treating the whole value as
+    // baseline with $0 return. Otherwise a position started mid-month shows no return until
+    // the next calendar month, even though it's genuinely accruing daily.
+    const principalUsd=Math.round((plat.fixedStartQty||0)*price*100)/100;
+    const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):principalUsd;
     const v=Math.round((investUsd-lastMonthUsd)*100)/100;
-    const newMoney=prevAgg?undefined:investUsd; // first appearance = baseline capital, not yield
+    const newMoney=prevAgg?undefined:principalUsd;
     if(!RAW[currentMonthLabel])RAW[currentMonthLabel]={total:0,source:'fixed-auto',rows:[]};
     RAW[currentMonthLabel].rows=RAW[currentMonthLabel].rows.filter(r=>r.p!==p);
     RAW[currentMonthLabel].rows.push({p,v,qty:Math.round(qty*1e6)/1e6,token:plat.symbol||null,investUsd,newMoney,fixedAuto:true});
