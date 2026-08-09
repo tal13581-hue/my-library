@@ -604,6 +604,50 @@ function flushPendingAdjustments(){
   if(changed)savePlatforms();
   return changed;
 }
+// ── APR AUTO-SYNC ──
+// Positions can point targetApr at a live JSON endpoint instead of a manually-entered number.
+// aprSourceQuery is a tiny path language: dot-separated keys, plus [field=value] to pick an
+// array element by a predicate (comma-separate multiple predicates), e.g. "data.apr" or
+// "[symbol=INF].apy" or "[project=sanctum-infinity,symbol=INF].apy".
+const APR_SYNC_MIN_INTERVAL_MS=6*60*60*1000; // don't hit external APIs more than once per 6h per position
+function resolveAprPath(root,path){
+  const tokens=(path||'').match(/[^.\[\]]+|\[[^\]]+\]/g)||[];
+  let cur=root;
+  for(const tok of tokens){
+    if(cur==null)return null;
+    if(tok[0]==='['){
+      const conds=tok.slice(1,-1).split(',').map(c=>{const i=c.indexOf('=');return[c.slice(0,i).trim(),c.slice(i+1).trim()];});
+      if(!Array.isArray(cur))return null;
+      cur=cur.find(item=>conds.every(([k,v])=>String(item?.[k])===v));
+    } else {
+      cur=cur[tok];
+    }
+  }
+  return cur;
+}
+async function syncAllAprs(force){
+  let changed=false;
+  for(const[p,plat]of Object.entries(PLATFORMS)){
+    if(!plat.aprAutoSync||!plat.aprSourceUrl)continue;
+    if(!force&&plat.aprSyncedAt&&(Date.now()-plat.aprSyncedAt)<APR_SYNC_MIN_INTERVAL_MS)continue;
+    try{
+      const res=await fetch(plat.aprSourceUrl);
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const json=await res.json();
+      const val=resolveAprPath(json,plat.aprSourceQuery||'');
+      const num=typeof val==='number'?val:parseFloat(val);
+      if(isNaN(num))throw new Error('query "'+(plat.aprSourceQuery||'')+'" did not resolve to a number');
+      plat.targetApr=Math.round(num*100)/100;
+      plat.aprSyncError=null;
+    }catch(e){
+      plat.aprSyncError=String(e.message||e);
+    }
+    plat.aprSyncedAt=Date.now();
+    changed=true;
+  }
+  if(changed){savePlatforms();renderPositionList();renderProtoTable(active);}
+  return changed;
+}
 function allPlatformNames(){return Object.keys(PLATFORMS).sort();}
 function variablePlatformNames(){return allPlatformNames().filter(p=>(PLATFORMS[p]||{}).yieldType!=='fixed');}
 
@@ -688,10 +732,13 @@ function removePosition(p){
 }
 function setPlatformField(p,field,val){
   if(!PLATFORMS[p])return;
-  PLATFORMS[p][field]=field==='targetApr'?(val===''?null:parseFloat(val)):val.trim();
+  if(field==='targetApr')PLATFORMS[p][field]=val===''?null:parseFloat(val);
+  else if(field==='aprAutoSync')PLATFORMS[p][field]=!!val;
+  else PLATFORMS[p][field]=val.trim();
   savePlatforms();
   renderPositionList();
   renderProtoTable(active);
+  if(['aprAutoSync','aprSourceUrl','aprSourceQuery'].includes(field)&&PLATFORMS[p].aprAutoSync&&PLATFORMS[p].aprSourceUrl)syncAllAprs(true);
 }
 function applyPositionAdjustment(p,idx){
   const el=document.getElementById('posAdj_'+idx);
@@ -1334,6 +1381,19 @@ function renderPositionList(){
           <label class="form-label">Reward currency (if paid in a different coin)</label>
           <input class="form-input" style="max-width:100px" placeholder="e.g. USDC" value="${plat.rewardSymbol||''}" onchange="setPlatformField('${p}','rewardSymbol',this.value)"/>
         </div>
+        <div style="margin-bottom:8px">
+          <label class="form-label" style="display:flex;align-items:center;gap:6px">
+            <input type="checkbox" ${plat.aprAutoSync?'checked':''} onchange="setPlatformField('${p}','aprAutoSync',this.checked)"/>
+            Auto-sync Target % from a live URL
+          </label>
+          ${plat.aprAutoSync?`
+          <input class="form-input" placeholder="https://api.example.com/apr" value="${plat.aprSourceUrl||''}" onchange="setPlatformField('${p}','aprSourceUrl',this.value)"/>
+          <input class="form-input" style="margin-top:4px" placeholder="Query, e.g. data.apr or [symbol=INF].apy" value="${plat.aprSourceQuery||''}" onchange="setPlatformField('${p}','aprSourceQuery',this.value)"/>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:3px">
+            ${plat.aprSyncError?`<span style="color:var(--red)">Sync error: ${escHtml(plat.aprSyncError)}</span>`:(plat.aprSyncedAt?`Last synced ${new Date(plat.aprSyncedAt).toLocaleString()}`:'Not synced yet')}
+            <button class="btn" style="padding:2px 8px;font-size:10px;margin-left:6px" onclick="syncAllAprs(true)">Sync now</button>
+          </div>`:''}
+        </div>
         <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">
           Current qty: ${curQty?fmtQ(curQty):'—'}
         </div>
@@ -1578,7 +1638,7 @@ function switchScreen(name){
   if(name==='portfolio'){renderValueChart();}
 }
 
-loadData();loadPlatforms();activeYear=getYears().slice(-1)[0]||'ALL';buildNav();renderAll('ALL');renderAlerts();syncSourcesFromFile();
+loadData();loadPlatforms();activeYear=getYears().slice(-1)[0]||'ALL';buildNav();renderAll('ALL');renderAlerts();syncSourcesFromFile();syncAllAprs();
 
 // ── Price formatting ──
 function fmtPrice(p){

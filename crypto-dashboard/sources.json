@@ -32,6 +32,10 @@
     {"type": "website", "url": "https://api.llama.fi/protocol/aerodrome"},
     {"type": "x", "url": "https://x.com/aerodromefi"}
   ],
+  "Sanctum": [
+    {"type": "website", "url": "https://blog.sanctum.so"},
+    {"type": "website", "url": "https://api.llama.fi/protocol/sanctum-infinity"}
+  ],
   "General Market News": [
     {"type": "website", "url": "https://cointelegraph.com/rss"}
   ]
