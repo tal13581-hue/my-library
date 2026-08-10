@@ -12,14 +12,20 @@
   --bg:#0a0c0f;--bg2:#111418;--bg3:#181c22;--bg4:#1e232b;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.2);
   --text:#e8eaf0;--muted:#6b7280;--muted2:#4b5563;
-  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--accent:#c8791a;
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--accent:#f59e0b;
   --font-mono:'IBM Plex Mono',monospace;--font-sans:'IBM Plex Sans',sans-serif;
 }
+html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5;min-height:100vh}
+
+/* ── STATE-CHANGE ANIMATIONS — fast (≤160ms), just enough to soften a hard cut ── */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── HEADER ── */
 header{border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,12,15,0.94);backdrop-filter:blur(12px);z-index:100}
-.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;font-size:13px;color:#000}
+.logo-mark{width:32px;height:32px;background:#f7931a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:18px;color:#fff}
 .header-left{display:flex;align-items:center;gap:14px}
 .header-title{font-family:var(--font-mono);font-size:15px;font-weight:600}
 .header-title span{color:var(--muted);font-weight:400}
@@ -37,15 +43,13 @@ header{border-bottom:1px solid var(--border);padding:16px 32px;display:flex;alig
 main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 
 /* ── KPI ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
-@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px 18px;position:relative;overflow:hidden;transition:border-color .2s;text-align:center}
 .kpi:hover{border-color:var(--border2)}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
 .kpi:hover::before{opacity:1}
 .kpi-label{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
-.kpi-value{font-family:var(--font-mono);font-size:20px;font-weight:600;letter-spacing:-0.5px}
+.kpi-value{font-family:var(--font-mono);font-size:27px;font-weight:600;letter-spacing:-0.5px}
 .kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--font-mono)}
 .pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text)}
 
@@ -72,7 +76,7 @@ main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 /* ── CHARTS ── */
 .charts-grid{display:grid;grid-template-columns:1fr 400px;gap:16px;margin-bottom:16px}
 @media(max-width:1050px){.charts-grid{grid-template-columns:1fr}}
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column}
 .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .chart-title{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .legend-wrap{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
@@ -84,11 +88,12 @@ main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 .proto-row-header span{text-align:right}
 .proto-row-header span:first-child{text-align:left}
 .proto-list{display:flex;flex-direction:column;gap:3px}
-.proto-row{display:grid;grid-template-columns:2.1fr .68fr .68fr .68fr;gap:8px;align-items:center;padding:9px 12px;border-radius:8px;font-family:var(--font-mono);font-size:12px;transition:background .15s}
+.proto-row{display:grid;grid-template-columns:2.1fr .68fr .68fr .68fr;gap:8px;align-items:center;padding:9px 12px;border-radius:8px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:background .15s}
 .proto-row:hover{background:var(--bg3)}
 .proto-row>span{text-align:right}
 .proto-row-name{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;text-align:left!important}
 .proto-row-name .pname{overflow-wrap:break-word}
+.proto-row-history{grid-column:1/-1;padding:4px 8px 12px 30px;animation:fadeIn 150ms ease}
 .proto-dot{display:inline-block;width:7px;height:7px;border-radius:2px;flex-shrink:0}
 .proto-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;object-fit:cover}
 .token-tag{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;display:inline-block;flex-shrink:0}
@@ -96,8 +101,8 @@ main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
-.overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:700px;margin:auto}
+.overlay.open{display:flex;animation:fadeIn 130ms ease}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:700px;margin:auto;animation:fadeInUp 150ms ease}
 .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;border-radius:14px 14px 0 0;background:var(--bg2)}
 .modal-title{font-family:var(--font-mono);font-size:14px;font-weight:600}
 .modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:4px;transition:color .15s}
@@ -139,7 +144,7 @@ main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 
 /* manage modal */
 .manage-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
-.manage-name{font-family:var(--font-mono);font-size:13px;flex:1;min-width:80px}
+.manage-name{font-family:var(--font-mono);font-size:12px;flex:1;min-width:80px}
 
 
 /* toast */
@@ -165,8 +170,12 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
 .scard-sym{font-family:var(--font-mono);font-size:12px;font-weight:600}
 .scard-chg{font-family:var(--font-mono);font-size:11px}
 
-.ucrd{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s}
+.ucrd{position:relative;z-index:0;overflow:hidden;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s}
 .ucrd:hover{border-color:var(--border2)}
+.ucrd.pos-glow{background:radial-gradient(circle at 85% 105%,rgba(34,197,94,0.12),transparent 65%),var(--bg2)}
+.ucrd.neg-glow{background:radial-gradient(circle at 85% 105%,rgba(239,68,68,0.12),transparent 65%),var(--bg2)}
+.ucrd-face-bg{position:absolute;right:-8px;bottom:-16px;font-size:76px;line-height:1;opacity:0.3;z-index:-1;pointer-events:none;user-select:none}
+.ucrd-body{position:relative;z-index:1}
 .ucrd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .ucrd-sym{font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--text)}
 .ucrd-name{font-size:9px;color:var(--muted);font-family:var(--font-mono)}
@@ -196,13 +205,13 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
 .screen-tab:hover{border-color:var(--border3);color:var(--text)}
 .screen-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
 .screen-panel{display:none}
-.screen-panel.active{display:block}
+.screen-panel.active{display:block;animation:fadeIn 150ms ease}
 
 /* ── POSITION CARDS (Portfolio screen) ── */
-.position-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
-.position-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.position-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;position:relative}
+.position-top{margin-bottom:8px;padding-right:78px}
 .position-name-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.position-value{font-family:var(--font-mono);font-size:18px;font-weight:600}
+.position-value{font-family:var(--font-mono);font-size:14px;font-weight:600}
 .yield-badge{font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:10px;border:1px solid var(--border2)}
 .yield-badge.fixed{color:var(--blue);border-color:var(--blue)}
 .yield-badge.variable{color:var(--accent);border-color:var(--accent)}
@@ -214,7 +223,7 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
 
 <header>
   <div class="header-left">
-    <div class="logo-mark">CR</div>
+    <div class="logo-mark">₿</div>
     <div class="header-title">Crypto Returns <span>/ Dashboard</span></div>
   </div>
   <div class="header-right">
@@ -231,19 +240,15 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
 
   <!-- ══════════════ SCREEN A: MY PORTFOLIO (default) ══════════════ -->
   <div class="screen-panel active" id="screen-portfolio">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Your positions</span>
-      <span style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--green)" id="positionsTotal">$0</span>
-    </div>
     <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">
-      <div class="kpi"><div class="kpi-label">Total rewards (all months)</div><div class="kpi-value neu" id="portfolioTotalRewards">$0</div></div>
-      <div class="kpi"><div class="kpi-label">Weighted avg. annual return</div><div class="kpi-value neu" id="portfolioWeightedApr">—</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="switchScreen('returns')"><div class="kpi-label">Your positions</div><div class="kpi-value" style="color:var(--green)" id="positionsTotal">$0</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="openAprBreakdown()"><div class="kpi-label">Weighted avg. annual return</div><div class="kpi-value neu" id="portfolioWeightedApr">—</div></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px">
-      <button class="btn" onclick="openManagePositionsModal()">⚙ Manage positions</button>
+      <button class="btn" onclick="openPositionsManageModal()">⚙ Manage positions</button>
       <button class="btn btn-accent" onclick="openAddPositionModal()">💼 Add position</button>
     </div>
-    <div id="positionsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:28px"></div>
+    <div id="positionsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:28px"></div>
 
     <div class="charts-grid" style="margin-bottom:28px">
       <div class="chart-card">
@@ -254,7 +259,7 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
             <span class="legend-item"><span class="legend-sq" style="background:#f59e0b"></span>Yield growth</span>
           </div>
         </div>
-        <div style="position:relative;height:240px"><canvas id="valueChart"></canvas></div>
+        <div style="position:relative;flex:1;min-height:240px"><canvas id="valueChart"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-header"><span class="chart-title">Portfolio distribution</span></div>
@@ -269,10 +274,20 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
         <div style="display:flex;align-items:center;gap:0"><span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Live prices</span><div style="display:flex;gap:5px;margin-left:12px"><button class="range-btn" onclick="setRange('24h',this)">24h</button><button class="range-btn active" onclick="setRange('7d',this)">7d</button><button class="range-btn" onclick="setRange('30d',this)">30d</button><button class="range-btn" onclick="setRange('1y',this)">1y</button></div></div>
         <div style="display:flex;align-items:center;gap:10px">
           <span id="priceTimestamp" style="font-family:var(--font-mono);font-size:10px;color:var(--muted2)"></span>
+          <button class="btn" onclick="openAddCoin()" style="padding:4px 12px;font-size:11px">+ Add coin</button>
           <button class="btn" id="refreshPricesBtn" onclick="loadPrices()" style="padding:4px 12px;font-size:11px">↻ Refresh</button>
         </div>
       </div>
       <div id="unifiedGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px"><div id="priceLoadMsg" style="grid-column:1/-1;text-align:center;padding:16px;font-family:var(--font-mono);font-size:12px;color:var(--muted)">Loading prices...</div></div>
+    </div>
+
+    <!-- PORTFOLIO VALUE IN BTC -->
+    <div class="chart-card" style="margin-bottom:28px">
+      <div class="chart-header">
+        <span class="chart-title">Portfolio value in ₿BTC</span>
+        <span id="btcValueStatus" style="font-size:10px;font-family:var(--font-mono);color:var(--muted)"></span>
+      </div>
+      <div style="position:relative;flex:1;min-height:240px"><canvas id="btcValueChart"></canvas></div>
     </div>
   </div>
 
@@ -294,12 +309,15 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       </div>
       <div class="chart-card">
         <div class="chart-header">
-          <span class="chart-title">Protocol breakdown — desired vs. actual</span>
+          <span class="chart-title">Protocol breakdown</span>
           <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted)">hover for details</span>
         </div>
-        <div style="position:relative;height:180px;margin-bottom:16px"><canvas id="pieChart"></canvas></div>
-        <div id="protoTableWrap" style="overflow-x:auto"></div>
+        <div style="position:relative;flex:1;min-height:260px"><canvas id="pieChart"></canvas></div>
       </div>
+    </div>
+    <div class="chart-card" style="margin-top:16px">
+      <div class="chart-header"><span class="chart-title">Protocol breakdown — desired vs. actual</span></div>
+      <div id="protoTableWrap" style="overflow-x:auto"></div>
     </div>
   </div>
 
@@ -316,6 +334,7 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       <div id="alertsList"></div>
     </div>
   </div>
+
 </main>
 
 <footer>
@@ -335,12 +354,18 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
     <div class="modal-body">
 
       <!-- Month picker -->
-      <div class="form-row-2">
+      <div id="eMonthNow" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Updating <b style="color:var(--text)" id="eMonthNowLabel">now</b></span>
+        <span style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline" onclick="toggleEntryPastMonth(true)">🕐 Enter a past month instead</span>
+      </div>
+      <div class="form-row-2" id="eMonthRow" style="display:none">
         <div>
           <label class="form-label">Month</label>
           <input class="form-input" id="eMonth" type="month"/>
         </div>
-
+        <div style="display:flex;align-items:flex-end;padding-bottom:8px">
+          <span style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline" onclick="toggleEntryPastMonth(false)">↩ Back to now</span>
+        </div>
       </div>
 
 
@@ -372,7 +397,6 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeEntry()">Cancel</button>
       <button class="btn btn-accent" onclick="saveEntry()">Save month</button>
     </div>
   </div>
@@ -410,7 +434,14 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
         <div class="form-row-2">
           <div><label class="form-label">Current token quantity</label><input class="form-input" id="newPosFixedQty" type="number" step="any" placeholder="e.g. 1000"/></div>
         </div>
-        <p style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:4px">Accrual starts now, compounding monthly at the target yield, valued at live price.</p>
+        <div style="margin-top:12px">
+          <label class="form-label">How the yield shows up</label>
+          <div class="radio-group" style="flex-direction:column;align-items:flex-start;gap:8px">
+            <label><input type="radio" name="newPosAccrualMode" value="qty" checked/> Quantity grows automatically (e.g. a rebasing stake — more tokens appear over time)</label>
+            <label><input type="radio" name="newPosAccrualMode" value="value"/> Yield embodied in price, quantity stays fixed (e.g. an LP/vault share token — return estimated from target % and price, never negative)</label>
+          </div>
+        </div>
+        <p style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:8px">Accrual starts now, compounding monthly at the target yield, valued at live price.</p>
       </div>
       <div id="newPosVariableFields" style="margin-top:12px">
         <div class="form-row-2">
@@ -420,40 +451,24 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeAddPositionModal()">Cancel</button>
       <button class="btn btn-accent" onclick="addPosition()">+ Add position</button>
     </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════
-     QUICK LIST MODAL — shared by "Monthly avg" breakdown and "Months" jump-picker
-     ══════════════════════════════════════════════════ -->
-<div class="overlay" id="quickListOverlay">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header">
-      <span class="modal-title" id="quickListTitle">List</span>
-      <button class="modal-close" onclick="closeQuickList()">×</button>
-    </div>
-    <div class="modal-body" id="quickListBody" style="padding:10px 20px"></div>
-    <div class="modal-footer"><button class="btn" onclick="closeQuickList()">Close</button></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════
-     MANAGE POSITIONS MODAL — single place to edit/remove any position
+     MANAGE POSITIONS MODAL — single place to reach every position's edit/remove
      ══════════════════════════════════════════════════ -->
 <div class="overlay" id="positionsManageOverlay">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="max-width:520px">
     <div class="modal-header">
       <span class="modal-title">Manage positions</span>
-      <button class="modal-close" onclick="closeManagePositionsModal()">×</button>
+      <button class="modal-close" onclick="closePositionsManageModal()">×</button>
     </div>
     <div class="modal-body">
       <p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:16px">Click a position to edit its details, adjust its quantity, or remove it.</p>
       <div id="positionsManageList"></div>
     </div>
-    <div class="modal-footer"><button class="btn" onclick="closeManagePositionsModal()">Close</button></div>
   </div>
 </div>
 
@@ -470,11 +485,8 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
 
       <div class="section-divider">Tracked coins (live prices)</div>
       <div id="coinsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
-      <div style="display:flex;gap:6px;margin-bottom:16px">
-        <input class="form-input" id="newCoinSym" placeholder="Symbol e.g. DOGE" style="max-width:110px"/>
-        <input class="form-input" id="newCoinId" placeholder="CoinGecko ID e.g. dogecoin" style="flex:1"/>
-        <input class="form-input" id="newCoinName" placeholder="Display name (optional)" style="max-width:150px"/>
-        <button class="btn" style="padding:8px 12px;white-space:nowrap" onclick="addCoinFromForm()">+ Add</button>
+      <div style="margin-bottom:16px">
+        <button class="btn" onclick="openAddCoin()">+ Add coin</button>
       </div>
 
       <div class="section-divider" style="color:var(--red);border-color:rgba(239,68,68,0.3)">Danger zone</div>
@@ -485,7 +497,22 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       <button class="btn" onclick="document.getElementById('importFile').click()">↑ Import JSON</button>
       <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(event)"/>
       <button class="btn" onclick="exportJSON()">↓ Export JSON</button>
-      <button class="btn" onclick="closeManage()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COIN MODAL — minimal, just the one field, nothing else -->
+<div class="overlay" id="addCoinOverlay">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title">Add a coin to track</span>
+      <button class="modal-close" onclick="closeAddCoin()">×</button>
+    </div>
+    <div class="modal-body">
+      <input class="form-input" id="newCoinQuery" placeholder="Coin name or symbol/ID — e.g. Dogecoin, DOGE, or dogecoin" style="width:100%" onkeydown="if(event.key==='Enter')addCoinFromForm()"/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-accent" id="newCoinBtn" onclick="addCoinFromForm()">+ Add</button>
     </div>
   </div>
 </div>
@@ -506,6 +533,66 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
     <div class="modal-footer">
       <button class="btn" onclick="downloadSourcesJSON()">⬇ Download sources.json</button>
       <button class="btn" onclick="closeSources()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- BREAKDOWN MODAL — shared by the two Portfolio-screen KPI tiles: per-protocol $ rewards, or per-protocol % return -->
+<div class="overlay" id="breakdownOverlay">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <span class="modal-title" id="breakdownTitle">Breakdown</span>
+      <button class="modal-close" onclick="closeBreakdown()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="breakdownList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POSITION DETAIL MODAL — one position's value over time, with an Edit toggle -->
+<div class="overlay" id="positionDetailOverlay">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <span class="modal-title" id="positionDetailTitle">Position</span>
+      <button class="modal-close" onclick="closePositionDetail()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:2px">Value since this position started, weekly</div>
+      <div style="font-size:9px;font-family:var(--font-mono);color:var(--muted2);margin-bottom:10px">Smoothed between your monthly entries — not new data points</div>
+      <div style="position:relative;height:220px" id="positionDetailChartWrap"><canvas id="positionDetailChart"></canvas></div>
+      <div id="positionDetailEmpty" style="display:none;font-size:12px;color:var(--muted);font-family:var(--font-mono);text-align:center;padding:24px 0">No history yet for this position.</div>
+      <div id="positionDetailEditWrap" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-accent" id="positionDetailEditBtn" onclick="togglePositionDetailEdit()">✎ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- COIN DETAIL MODAL — portfolio value of one tracked coin over time -->
+<div class="overlay" id="coinDetailOverlay">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <span class="modal-title" id="coinDetailTitle">Coin</span>
+      <button class="modal-close" onclick="closeCoinDetail()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Price change</div>
+        <div style="display:flex;gap:5px" id="coinDetailRangeBtns">
+          <button class="range-btn" onclick="setCoinDetailRange('1',this)">Daily</button>
+          <button class="range-btn active" onclick="setCoinDetailRange('7',this)">Weekly</button>
+          <button class="range-btn" onclick="setCoinDetailRange('30',this)">Monthly</button>
+          <button class="range-btn" onclick="setCoinDetailRange('365',this)">Yearly</button>
+        </div>
+      </div>
+      <div style="position:relative;height:220px" id="coinDetailChartWrap"><canvas id="coinDetailChart"></canvas></div>
+      <div id="coinDetailPriceNote" style="display:none;font-size:11px;color:var(--accent);font-family:var(--font-mono);margin-top:8px;padding:8px 10px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;align-items:center;justify-content:space-between;gap:8px"></div>
+      <div id="coinDetailEmpty" style="display:none;font-size:12px;color:var(--muted);font-family:var(--font-mono);text-align:center;padding:24px 0">No price data for this coin.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="coinDetailRemoveBtn">🗑 Remove from display</button>
     </div>
   </div>
 </div>
@@ -571,7 +658,7 @@ function seedPlatformsFromLatestMonth(){
   const latest=months[months.length-1];
   if(!latest)return;
   Object.entries(aggRows(RAW[latest].rows)).forEach(([p,d])=>{
-    if(!PLATFORMS[p])PLATFORMS[p]={coin:undefined,symbol:d.token||undefined,targetApr:null,sources:[],pendingAdjustQty:0};
+    if(!PLATFORMS[p])PLATFORMS[p]={coin:undefined,symbol:d.token||undefined,targetApr:null,pendingAdjustQty:0};
   });
   savePlatforms();
 }
@@ -579,9 +666,56 @@ function seedPlatformsFromLatestMonth(){
 // ── FIXED-YIELD AUTO-ACCRUAL ──
 // Token quantity compounds monthly at the target rate since fixedStartDate; always valued at the live price.
 const MS_PER_MONTH=1000*60*60*24*30.4368;
+// One-time migration: an earlier iteration had a third accrual mode ("price appreciates" — a raw
+// mark-to-market delta) that was retired in favor of "value". Any position still carrying that
+// stale tag would otherwise silently fall through to "qty" mode's default — and since its
+// fixedStartQty may have been rebased lower during that mode's lifetime, that can manufacture a
+// phantom quantity drop (and a negative return) relative to the real historical record. Migrate
+// it to "value" and recover the real quantity from history if the stored one is stale-low.
+function migrateLegacyAccrualModes(){
+  let changed=false;
+  Object.entries(PLATFORMS).forEach(([p,plat])=>{
+    if(plat.yieldType!=='fixed'||plat.accrualMode!=='price')return;
+    const lastKnown=latestRowForPlatform(p);
+    if(lastKnown&&lastKnown.qty>(plat.fixedStartQty||0)){
+      plat.fixedStartQty=lastKnown.qty;
+      plat.fixedStartDate=new Date().toISOString();
+    }
+    plat.accrualMode='value';
+    changed=true;
+  });
+  if(changed)savePlatforms();
+  return changed;
+}
+// One-time (idempotent) migration: Variable positions' Return used to be the full dollar
+// mark-to-market change, which mixed in price swings on the principal. It's now just the value
+// of the reward actually entered, so already-saved rows need to be recomputed the same way —
+// reconstructing each row's own historical price from its stored investUsd/qty (never today's
+// live price, so old months don't silently reprice). Rows whose reward was paid in a different
+// currency can't be safely reconstructed this way (we never stored that currency's historical
+// price) so they're left untouched.
+function migrateVariableReturnsToRewardBased(){
+  let changed=false;
+  getMonths().forEach(m=>{
+    let monthChanged=false;
+    RAW[m].rows.forEach(row=>{
+      if(row.fixedAuto)return;
+      if(row.rewardToken)return;
+      const impliedPrice=row.qty?((row.investUsd||0)/row.qty):0;
+      const newV=row.rewardQty?Math.round(row.rewardQty*impliedPrice*100)/100:0;
+      if(newV!==row.v){row.v=newV;monthChanged=true;}
+    });
+    if(monthChanged){RAW[m].total=Math.round(RAW[m].rows.reduce((s,r)=>s+r.v,0)*100)/100;changed=true;}
+  });
+  if(changed)saveData();
+  return changed;
+}
 function fixedAccruedQty(p,atDate){
   const plat=PLATFORMS[p];
   if(!plat||plat.yieldType!=='fixed'||!plat.fixedStartDate||!plat.fixedStartQty)return null;
+  // "value" mode: the yield shows up in the token's price, not in the quantity held — so the
+  // quantity never grows on its own (only through explicit deposits).
+  if(plat.accrualMode==='value')return plat.fixedStartQty;
   const monthsElapsed=Math.max(0,((atDate||new Date())-new Date(plat.fixedStartDate))/MS_PER_MONTH);
   const rate=(plat.targetApr||0)/100;
   return plat.fixedStartQty*Math.pow(1+rate/12,monthsElapsed);
@@ -601,24 +735,42 @@ function refreshFixedPositions(){
     const price=live?live.current_price:0;
     if(!price)return; // wait for live prices to load before materializing a value
     const investUsd=Math.round(qty*price*100)/100;
-    const otherMonths=getMonths().filter(m=>m!==currentMonthLabel);
-    const prevMonth=otherMonths[otherMonths.length-1];
-    const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
-    // First appearance (no prior month yet): isolate the real yield accrued so far — qty grown
-    // past fixedStartQty, valued at today's price — instead of treating the whole value as
-    // baseline with $0 return. Otherwise a position started mid-month shows no return until
-    // the next calendar month, even though it's genuinely accruing daily.
+    const prevAgg=latestRowForPlatform(p,currentMonthLabel);
     const principalUsd=Math.round((plat.fixedStartQty||0)*price*100)/100;
-    const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):principalUsd;
-    const v=Math.round((investUsd-lastMonthUsd)*100)/100;
+    let v,impliedQty,cumYieldUsd;
+    if(plat.accrualMode==='value'){
+      // "value" mode: quantity never grows — the token's real price is deliberately NOT used to
+      // derive return (too noisy / can be negative). Instead the yield is a theoretical estimate
+      // compounding continuously, prorated by actual elapsed time, from a dollar principal frozen
+      // at the last rebase (deposit/withdrawal or mode switch) — NOT recomputed from today's live
+      // value each time, otherwise every refresh would credit a full month's rate regardless of
+      // how much of the month has actually passed. Always non-negative and immune to the token's
+      // own price swings. impliedQty converts this month's dollar gain to a token count purely for
+      // display — it never changes the real held quantity.
+      if(plat.fixedPrincipalUsd==null)plat.fixedPrincipalUsd=principalUsd; // backfill for positions predating this field
+      const monthlyRate=(plat.targetApr||0)/100/12;
+      const monthsElapsed=Math.max(0,(now-new Date(plat.fixedStartDate))/MS_PER_MONTH);
+      cumYieldUsd=Math.round(plat.fixedPrincipalUsd*(Math.pow(1+monthlyRate,monthsElapsed)-1)*100)/100;
+      const prevCumYield=prevAgg?(prevAgg.cumYieldUsd||0):0;
+      v=Math.round((cumYieldUsd-prevCumYield)*100)/100;
+      impliedQty=price>0?Math.round((v/price)*1e6)/1e6:0;
+    } else {
+      // "qty" mode (default): valued from the newly-accrued token quantity only — qty grown
+      // since last month (or since the position's start, for its first month) — priced at
+      // today's rate. Can never go negative from the underlying token's market price moving,
+      // because the accrued quantity itself never drops.
+      const prevQty=prevAgg?(prevAgg.qty||0):(plat.fixedStartQty||0);
+      const deltaQty=Math.round((qty-prevQty)*1e6)/1e6;
+      v=Math.round(deltaQty*price*100)/100;
+    }
     const newMoney=prevAgg?undefined:principalUsd;
     if(!RAW[currentMonthLabel])RAW[currentMonthLabel]={total:0,source:'fixed-auto',rows:[]};
     RAW[currentMonthLabel].rows=RAW[currentMonthLabel].rows.filter(r=>r.p!==p);
-    RAW[currentMonthLabel].rows.push({p,v,qty:Math.round(qty*1e6)/1e6,token:plat.symbol||null,investUsd,newMoney,fixedAuto:true});
+    RAW[currentMonthLabel].rows.push({p,v,qty:Math.round(qty*1e6)/1e6,token:plat.symbol||null,investUsd,newMoney,impliedQty,cumYieldUsd,fixedAuto:true});
     RAW[currentMonthLabel].total=Math.round(RAW[currentMonthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
     changed=true;
   });
-  if(changed)saveData();
+  if(changed){saveData();savePlatforms();}
   return changed;
 }
 // One-time migration: earlier versions queued deposits/withdrawals as "pending" until the next
@@ -639,210 +791,10 @@ function flushPendingAdjustments(){
   if(changed)savePlatforms();
   return changed;
 }
-// ── APR AUTO-SYNC ──
-// Positions can point targetApr at a live JSON endpoint instead of a manually-entered number.
-// aprSourceQuery is a tiny path language: dot-separated keys, plus [field=value] to pick an
-// array element by a predicate (comma-separate multiple predicates), e.g. "data.apr" or
-// "[symbol=INF].apy" or "[project=sanctum-infinity,symbol=INF].apy".
-const APR_SYNC_MIN_INTERVAL_MS=6*60*60*1000; // don't hit external APIs more than once per 6h per position
-function resolveAprPath(root,path){
-  const tokens=(path||'').match(/[^.\[\]]+|\[[^\]]+\]/g)||[];
-  let cur=root;
-  for(const tok of tokens){
-    if(cur==null)return null;
-    if(tok[0]==='['){
-      const conds=tok.slice(1,-1).split(',').map(c=>{const i=c.indexOf('=');return[c.slice(0,i).trim(),c.slice(i+1).trim()];});
-      if(!Array.isArray(cur))return null;
-      cur=cur.find(item=>conds.every(([k,v])=>String(item?.[k])===v));
-    } else {
-      cur=cur[tok];
-    }
-  }
-  return cur;
-}
-async function syncAllAprs(force){
-  let changed=false;
-  for(const[p,plat]of Object.entries(PLATFORMS)){
-    if(!plat.aprAutoSync||!plat.aprSourceUrl)continue;
-    if(!force&&plat.aprSyncedAt&&(Date.now()-plat.aprSyncedAt)<APR_SYNC_MIN_INTERVAL_MS)continue;
-    try{
-      const res=await fetch(plat.aprSourceUrl);
-      if(!res.ok)throw new Error('HTTP '+res.status);
-      const json=await res.json();
-      const val=resolveAprPath(json,plat.aprSourceQuery||'');
-      const num=typeof val==='number'?val:parseFloat(val);
-      if(isNaN(num))throw new Error('query "'+(plat.aprSourceQuery||'')+'" did not resolve to a number');
-      plat.targetApr=Math.round(num*100)/100;
-      plat.aprSyncError=null;
-    }catch(e){
-      plat.aprSyncError=String(e.message||e);
-    }
-    plat.aprSyncedAt=Date.now();
-    changed=true;
-  }
-  if(changed){savePlatforms();renderPositionList();renderProtoTable(active);}
-  return changed;
-}
 function allPlatformNames(){return Object.keys(PLATFORMS).sort();}
 function variablePlatformNames(){return allPlatformNames().filter(p=>(PLATFORMS[p]||{}).yieldType!=='fixed');}
 
-function openAddPositionModal(){document.getElementById('addPositionOverlay').classList.add('open');}
-function closeAddPositionModal(){document.getElementById('addPositionOverlay').classList.remove('open');}
-function toggleNewPosFixedFields(){
-  const type=document.querySelector('input[name="newPosType"]:checked').value;
-  document.getElementById('newPosFixedFields').style.display=type==='fixed'?'block':'none';
-  document.getElementById('newPosVariableFields').style.display=type==='variable'?'block':'none';
-}
-function addPosition(){
-  const name=document.getElementById('newPosName').value.trim();
-  const coin=document.getElementById('newPosCoin').value.trim();
-  const symbol=document.getElementById('newPosSymbol').value.trim().toUpperCase();
-  const rewardSymbol=document.getElementById('newPosRewardSymbol').value.trim().toUpperCase();
-  const targetApr=parseFloat(document.getElementById('newPosApr').value);
-  const yieldType=document.querySelector('input[name="newPosType"]:checked').value;
-  if(!name){showToast('Protocol name is required','error');return;}
-  if(PLATFORMS[name]){showToast('That position already exists','error');return;}
-  const pos={coin:coin||undefined,symbol:symbol||undefined,rewardSymbol:rewardSymbol||undefined,targetApr:isNaN(targetApr)?null:targetApr,sources:[],pendingAdjustQty:0,yieldType};
-  let initialQty=0;
-  if(yieldType==='fixed'){
-    const fixedQty=parseFloat(document.getElementById('newPosFixedQty').value)||0;
-    if(fixedQty<=0){showToast('Enter the current token quantity for a fixed position','error');return;}
-    pos.fixedStartQty=fixedQty;
-    pos.fixedStartDate=new Date().toISOString();
-  } else {
-    initialQty=parseFloat(document.getElementById('newPosVariableQty').value)||0;
-  }
-  PLATFORMS[name]=pos;
-  savePlatforms();
-  document.getElementById('newPosName').value='';
-  document.getElementById('newPosCoin').value='';
-  document.getElementById('newPosSymbol').value='';
-  document.getElementById('newPosApr').value='';
-  document.getElementById('newPosRewardSymbol').value='';
-  const fq=document.getElementById('newPosFixedQty');if(fq)fq.value='';
-  const vq=document.getElementById('newPosVariableQty');if(vq)vq.value='';
-  let noPriceYet=false;
-  if(yieldType==='fixed')refreshFixedPositions();
-  else if(initialQty>0){
-    const cgSym=symbol.toUpperCase();
-    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
-    const price=live?live.current_price:0;
-    noPriceYet=!price;
-    const investUsd=Math.round(initialQty*price*100)/100;
-    const now=new Date();
-    const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
-    if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
-    RAW[monthLabel].rows.push({p:name,v:0,qty:initialQty,token:symbol||null,investUsd,newMoney:investUsd||undefined});
-    RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
-    saveData();buildNav();
-  }
-  renderAll(active);
-  closeAddPositionModal();
-  if(yieldType==='fixed')showToast(`${name} added — accruing automatically`,'success');
-  else if(initialQty>0)showToast(noPriceYet?`${name} added — no live price for "${symbol}" yet, value will show once prices load`:`${name} added with its starting quantity`,'success');
-  else showToast(`${name} added — set its quantity in the next Month summary`,'success');
-}
-function removePosition(p){
-  if(!confirm(`Remove ${p} from tracked positions? Months where it actually earned a return keep that history — months with $0 return are cleaned up entirely.`))return;
-  delete PLATFORMS[p];
-  savePlatforms();
-  // Purge any month where this position never actually returned anything — no point leaving a $0 ghost row.
-  let raWChanged=false;
-  getMonths().forEach(m=>{
-    const rowsForP=RAW[m].rows.filter(r=>r.p===p);
-    if(!rowsForP.length)return;
-    const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
-    if(vSum!==0)return;
-    RAW[m].rows=RAW[m].rows.filter(r=>r.p!==p);
-    if(!RAW[m].rows.length){
-      delete RAW[m];
-      if(active===m)active='ALL';
-    } else {
-      RAW[m].total=Math.round(RAW[m].rows.reduce((s,r)=>s+r.v,0)*100)/100;
-    }
-    raWChanged=true;
-  });
-  if(raWChanged)saveData();
-  buildNav();renderAll(active);
-}
-function setPlatformField(p,field,val){
-  if(!PLATFORMS[p])return;
-  if(field==='targetApr')PLATFORMS[p][field]=val===''?null:parseFloat(val);
-  else if(field==='aprAutoSync')PLATFORMS[p][field]=!!val;
-  else PLATFORMS[p][field]=val.trim();
-  savePlatforms();
-  renderPositionList();
-  renderProtoTable(active);
-  if(['aprAutoSync','aprSourceUrl','aprSourceQuery'].includes(field)&&PLATFORMS[p].aprAutoSync&&PLATFORMS[p].aprSourceUrl)syncAllAprs(true);
-}
-function applyPositionAdjustment(p,idx){
-  const el=document.getElementById('posAdj_'+idx);
-  const val=parseFloat(el.value);
-  if(!val){showToast('Enter a non-zero quantity','error');return;}
-  const plat=PLATFORMS[p];
-  if(!plat)return;
-  if(plat.yieldType==='fixed'){
-    // Rebase: fold the accrued-so-far quantity plus this deposit/withdrawal into a new starting point.
-    const accrued=fixedAccruedQty(p)||0;
-    const cgSymFx=(plat.symbol||'').toUpperCase();
-    const liveFx=(typeof CG!=='undefined'&&CG[cgSymFx])?liveData[CG[cgSymFx].id]:null;
-    const priceFx=liveFx?liveFx.current_price:0;
-    const depositUsd=Math.round(val*priceFx*100)/100;
-    plat.fixedStartQty=accrued+val;
-    plat.fixedStartDate=new Date().toISOString();
-    savePlatforms();
-    refreshFixedPositions();
-    if(priceFx){
-      // Tag the deposit's dollar value so it isn't counted as return this month.
-      const nowFx=new Date();
-      const monthLabelFx=MONTH_ABBR[nowFx.getMonth()]+' '+String(nowFx.getFullYear()).slice(-2);
-      const rowFx=RAW[monthLabelFx]&&RAW[monthLabelFx].rows.find(r=>r.p===p);
-      if(rowFx){
-        rowFx.newMoney=Math.round(((rowFx.newMoney||0)+depositUsd)*100)/100;
-        rowFx.v=Math.round((rowFx.v-depositUsd)*100)/100;
-        RAW[monthLabelFx].total=Math.round(RAW[monthLabelFx].rows.reduce((s,r)=>s+r.v,0)*100)/100;
-        saveData();
-      }
-    }
-  } else {
-    applyVariableAdjustmentNow(p,val);
-  }
-  el.value='';
-  renderAll(active);
-  showToast(`${val>0?'+':''}${val} ${plat.symbol||''} applied to ${p} now`,'success');
-}
-// Writes a deposit/withdrawal straight into this month's row for a variable position, immediately —
-// no deferred "pending" step. The delta is tracked as newMoney (capital), not counted as return.
-function applyVariableAdjustmentNow(p,deltaQty){
-  const plat=PLATFORMS[p]||{};
-  const now=new Date();
-  const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
-  if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
-  const priorMonths=getMonths().filter(m=>m!==monthLabel);
-  const prevMonth=priorMonths.length?priorMonths[priorMonths.length-1]:null;
-  const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
-  const existingIdx=RAW[monthLabel].rows.findIndex(r=>r.p===p);
-  const existing=existingIdx>=0?RAW[monthLabel].rows[existingIdx]:null;
-  const baseQty=existing?(existing.qty||0):(prevAgg?(prevAgg.qty||0):0);
-  const newQty=Math.round((baseQty+deltaQty)*1e6)/1e6;
-  const cgSym=(plat.symbol||'').toUpperCase();
-  const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
-  const price=live?live.current_price:0;
-  const investUsd=Math.round(newQty*price*100)/100;
-  const lastMonthUsd=prevAgg?(prevAgg.investUsd||0):0;
-  const deltaUsd=Math.round(deltaQty*price*100)/100;
-  const priorNewMoney=existing?(existing.newMoney||0):0;
-  // First-ever appearance: the whole position is capital, not just this delta.
-  const newMoney=prevAgg?Math.round((priorNewMoney+deltaUsd)*100)/100:investUsd;
-  const v=Math.round((investUsd-lastMonthUsd-newMoney)*100)/100;
-  const row={p,v,qty:newQty,token:plat.symbol||null,investUsd,newMoney:newMoney||undefined,
-    rewardQty:existing?existing.rewardQty:undefined,rewardToken:existing?existing.rewardToken:undefined,
-    leverageRisk:existing?existing.leverageRisk:undefined};
-  if(existingIdx>=0)RAW[monthLabel].rows[existingIdx]=row;
-  else RAW[monthLabel].rows.push(row);
-  RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
-  saveData();buildNav();
-}
+// ── FLOW: News sources — per-position monitoring URLs feeding the daily alert-check routine ──
 function addPlatformSource(p,idx){
   const type=document.getElementById('srcType_'+idx).value;
   const url=document.getElementById('srcUrl_'+idx).value.trim();
@@ -893,6 +845,373 @@ async function syncSourcesFromFile(){
   }catch(e){/* file:// or no sources.json yet — ignore */}
 }
 const SRC_ICON={website:'🌐',x:'𝕏',telegram:'✈'};
+function openSourcesModal(){renderSourcesList();document.getElementById('sourcesOverlay').classList.add('open');}
+function closeSources(){document.getElementById('sourcesOverlay').classList.remove('open');}
+function renderSourcesList(){
+  const el=document.getElementById('sourcesPositionList');
+  if(!el)return;
+  const names=allPlatformNames();
+  if(!names.length){el.innerHTML='<p style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one via Portfolio update first.</p>';return;}
+  el.innerHTML=names.map((p,idx)=>{
+    const plat=PLATFORMS[p]||{};
+    const sources=plat.sources||[];
+    const chips=sources.length?sources.map((s,i)=>`<span class="token-tag" style="display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0">${SRC_ICON[s.type]||'🌐'} ${escHtml(s.url)}<span onclick="removePlatformSource('${p}',${i})" style="cursor:pointer;color:var(--red);font-weight:600">×</span></span>`).join('')
+      :'<span style="color:var(--muted2);font-size:10px">no sources yet</span>';
+    return `<div class="manage-row" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="manage-name">${p}</span>${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+      </div>
+      <div>${chips}</div>
+      <div style="display:flex;gap:6px">
+        <select class="form-select" id="srcType_${idx}" style="max-width:110px">
+          <option value="website">Website</option>
+          <option value="x">X</option>
+          <option value="telegram">Telegram</option>
+        </select>
+        <input class="form-input" id="srcUrl_${idx}" placeholder="https:// or @handle" style="flex:1"/>
+        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="addPlatformSource('${p}',${idx})">+ Add</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+// Renders the ALERTS array (populated by the daily alert-check routine into alerts.js) into the Updates & News screen.
+function renderAlerts(){
+  const el=document.getElementById('alertsList');
+  const upd=document.getElementById('alertsUpdated');
+  if(!el)return;
+  const list=(typeof ALERTS!=='undefined'?ALERTS:[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!list.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No alerts yet — monitoring not set up.</div>';
+    if(upd)upd.textContent='';
+    return;
+  }
+  if(upd)upd.textContent='Last checked: '+(list[0].date||'');
+  el.innerHTML=list.map(a=>`
+    <div class="alert-card severity-${a.severity||'info'}">
+      <div class="alert-meta">${escHtml(a.date||'')} · ${escHtml(a.platform||'')}${a.sourceUrl?` · <a href="${escHtml(a.sourceUrl)}" target="_blank" rel="noopener" style="color:var(--muted)">source</a>`:''}</div>
+      <div class="alert-title">${escHtml(a.title||'')}${a.actionRequired?'<span class="emergency-badge">🚨 Emergency</span>':''}</div>
+      <div class="alert-summary">${escHtml(a.summary||'')}</div>
+    </div>`).join('');
+}
+
+function openAddPositionModal(){document.getElementById('addPositionOverlay').classList.add('open');}
+function closeAddPositionModal(){document.getElementById('addPositionOverlay').classList.remove('open');}
+function toggleNewPosFixedFields(){
+  const type=document.querySelector('input[name="newPosType"]:checked').value;
+  document.getElementById('newPosFixedFields').style.display=type==='fixed'?'block':'none';
+  document.getElementById('newPosVariableFields').style.display=type==='variable'?'block':'none';
+}
+function addPosition(){
+  const name=document.getElementById('newPosName').value.trim();
+  const coin=document.getElementById('newPosCoin').value.trim();
+  const symbol=document.getElementById('newPosSymbol').value.trim().toUpperCase();
+  const rewardSymbol=document.getElementById('newPosRewardSymbol').value.trim().toUpperCase();
+  const targetApr=parseFloat(document.getElementById('newPosApr').value);
+  const yieldType=document.querySelector('input[name="newPosType"]:checked').value;
+  if(!name){showToast('Protocol name is required','error');return;}
+  if(PLATFORMS[name]){showToast('That position already exists','error');return;}
+  const pos={coin:coin||undefined,symbol:symbol||undefined,rewardSymbol:rewardSymbol||undefined,targetApr:isNaN(targetApr)?null:targetApr,pendingAdjustQty:0,yieldType};
+  let initialQty=0;
+  if(yieldType==='fixed'){
+    const fixedQty=parseFloat(document.getElementById('newPosFixedQty').value)||0;
+    if(fixedQty<=0){showToast('Enter the current token quantity for a fixed position','error');return;}
+    pos.fixedStartQty=fixedQty;
+    pos.fixedStartDate=new Date().toISOString();
+    pos.accrualMode=document.querySelector('input[name="newPosAccrualMode"]:checked').value;
+  } else {
+    initialQty=parseFloat(document.getElementById('newPosVariableQty').value)||0;
+  }
+  PLATFORMS[name]=pos;
+  savePlatforms();
+  document.getElementById('newPosName').value='';
+  document.getElementById('newPosCoin').value='';
+  document.getElementById('newPosSymbol').value='';
+  document.getElementById('newPosApr').value='';
+  document.getElementById('newPosRewardSymbol').value='';
+  const fq=document.getElementById('newPosFixedQty');if(fq)fq.value='';
+  const vq=document.getElementById('newPosVariableQty');if(vq)vq.value='';
+  const amDefault=document.querySelector('input[name="newPosAccrualMode"][value="qty"]');if(amDefault)amDefault.checked=true;
+  let noPriceYet=false;
+  if(yieldType==='fixed')refreshFixedPositions();
+  else if(initialQty>0){
+    const cgSym=symbol.toUpperCase();
+    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+    const price=live?live.current_price:0;
+    noPriceYet=!price;
+    const investUsd=Math.round(initialQty*price*100)/100;
+    const now=new Date();
+    const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
+    if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
+    RAW[monthLabel].rows.push({p:name,v:0,qty:initialQty,token:symbol||null,investUsd,newMoney:investUsd||undefined});
+    RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+    saveData();buildNav();
+  }
+  renderAll(active);
+  closeAddPositionModal();
+  if(yieldType==='fixed')showToast(`${name} added — accruing automatically`,'success');
+  else if(initialQty>0)showToast(noPriceYet?`${name} added — no live price for "${symbol}" yet, value will show once prices load`:`${name} added with its starting quantity`,'success');
+  else showToast(`${name} added — set its quantity in the next Month summary`,'success');
+}
+function removePosition(p){
+  if(!confirm(`Remove ${p} from tracked positions? Months where it actually earned a return keep that history — months with $0 return are cleaned up entirely.`))return;
+  delete PLATFORMS[p];
+  savePlatforms();
+  // Purge any month where this position never actually returned anything — no point leaving a $0 ghost row.
+  let raWChanged=false;
+  getMonths().forEach(m=>{
+    const rowsForP=RAW[m].rows.filter(r=>r.p===p);
+    if(!rowsForP.length)return;
+    const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
+    if(vSum!==0)return;
+    RAW[m].rows=RAW[m].rows.filter(r=>r.p!==p);
+    if(!RAW[m].rows.length){
+      delete RAW[m];
+      if(active===m)active='ALL';
+    } else {
+      RAW[m].total=Math.round(RAW[m].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+    }
+    raWChanged=true;
+  });
+  if(raWChanged)saveData();
+  buildNav();renderAll(active);
+}
+function setPlatformField(p,field,val){
+  if(!PLATFORMS[p])return;
+  PLATFORMS[p][field]=field==='targetApr'?(val===''?null:parseFloat(val)):val.trim();
+  savePlatforms();
+  // Changing a fixed position's target rate changes this month's already-materialized row —
+  // recompute it now instead of waiting for the next price refresh.
+  if(field==='targetApr'&&PLATFORMS[p].yieldType==='fixed')refreshFixedPositions();
+  buildNav();
+  renderAll(active);
+}
+// Switches a fixed position between "qty grows" and "price appreciates" accrual. Rebases at the
+// quantity accrued so far under the OLD mechanism, so the switch itself never creates a phantom
+// jump or loss in the position's tracked quantity — "now" just becomes the new starting point.
+function setAccrualMode(p,mode){
+  const plat=PLATFORMS[p];
+  if(!plat||plat.accrualMode===mode)return;
+  const currentQty=fixedAccruedQty(p)||plat.fixedStartQty||0;
+  plat.fixedStartQty=currentQty;
+  plat.fixedStartDate=new Date().toISOString();
+  plat.accrualMode=mode;
+  if(mode==='value'){
+    // Freeze today's dollar value as the new principal the theoretical yield curve compounds
+    // from — resets the clock on the target-rate accrual, same as the quantity rebase above.
+    const cgSym=(plat.symbol||'').toUpperCase();
+    const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+    const price=live?live.current_price:0;
+    plat.fixedPrincipalUsd=Math.round(currentQty*price*100)/100;
+  }
+  savePlatforms();
+  refreshFixedPositions();
+  buildNav();
+  renderAll(active);
+}
+function setAprAutoSync(p,checked){
+  if(!PLATFORMS[p])return;
+  PLATFORMS[p].aprAutoSync=checked;
+  savePlatforms();
+  renderPositionList();
+  if(checked)syncPlatformApr(p);
+}
+// Fetches a target-yield value from an external API for one position (e.g. Lido's public
+// APR endpoint) and writes it into targetApr. Used both by the manual "Sync now" button and
+// by the weekly auto-check on page load — same code path either way.
+// Chainlink's "Variable Reward Rate" has no public endpoint that returns the percentage
+// directly — it's derived from two real sources: the community pool's raw emission rate
+// (juels/sec, embedded in the staking page's server-rendered data — BigInt because it exceeds
+// JS's safe integer range) and the community pool's total staked LINK (a documented query on the
+// same site). rate% = emissionRate × secondsPerYear × 100 / totalPrincipal. Verified against the
+// site's own displayed figure (4.320004% computed vs 4.32% displayed) before wiring this in.
+async function fetchChainlinkCommunityRate(){
+  const htmlRes=await fetch('https://staking.chain.link/',{cache:'no-store',signal:AbortSignal.timeout(8000)});
+  if(!htmlRes.ok)throw new Error('HTTP '+htmlRes.status+' (page)');
+  const html=await htmlRes.text();
+  const m=html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if(!m)throw new Error('page data not found');
+  const data=JSON.parse(m[1]);
+  const hex=data&&data.props&&data.props.pageProps&&data.props.pageProps.rewardBuckets&&data.props.pageProps.rewardBuckets.communityBase&&data.props.pageProps.rewardBuckets.communityBase.emissionRate&&data.props.pageProps.rewardBuckets.communityBase.emissionRate.hex;
+  if(!hex)throw new Error('emission rate not found');
+  const emissionRate=BigInt(hex);
+  const principalRes=await fetch('https://staking.chain.link/api/query?query=STAKING_POOL_TOTAL_PRINCIPAL_QUERY&variables=%7B%22schemaName%22%3A%22ethereum-mainnet%22%2C%22contractAddress%22%3A%220xBc10f2E862ED4502144c7d632a3459F49DFCDB5e%22%7D',{cache:'no-store',signal:AbortSignal.timeout(8000)});
+  if(!principalRes.ok)throw new Error('HTTP '+principalRes.status+' (principal)');
+  const principalJson=await principalRes.json();
+  const nodes=principalJson&&principalJson.data&&principalJson.data.allStakingv02StakingPoolPrincipals&&principalJson.data.allStakingv02StakingPoolPrincipals.nodes;
+  const totalPrincipal=BigInt((nodes&&nodes[0]&&nodes[0].totalPrincipal)||'0');
+  if(totalPrincipal===0n)throw new Error('total principal not found');
+  const scaled=emissionRate*31536000n*100000000n/totalPrincipal;
+  return Number(scaled)/1000000;
+}
+async function syncPlatformApr(p,opts){
+  opts=opts||{};
+  const plat=PLATFORMS[p];
+  if(!plat)return false;
+  if(plat.aprSourceType!=='chainlink-community-rate'&&!plat.aprSourceUrl)return false;
+  try{
+    const val=plat.aprSourceType==='chainlink-community-rate'
+      ?await fetchChainlinkCommunityRate()
+      :await (async()=>{
+        const r=await fetch(plat.aprSourceUrl,{cache:'no-store',signal:AbortSignal.timeout(8000)});
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        const j=await r.json();
+        return parseFloat(resolveJsonPath(j,plat.aprSourceQuery||''));
+      })();
+    if(isNaN(val))throw new Error('no number at "'+(plat.aprSourceQuery||'(empty path)')+'"');
+    plat.targetApr=Math.round(val*100)/100;
+    plat.aprSyncedAt=Date.now();
+    plat.aprSyncError=null;
+    savePlatforms();
+    if(!opts.silent){renderPositionList();renderProtoTable(active);showToast(`${p} target yield synced: ${plat.targetApr}%`,'success');}
+    return true;
+  }catch(e){
+    plat.aprSyncError=String((e&&e.message)||e);
+    savePlatforms();
+    if(!opts.silent){renderPositionList();showToast(`Couldn't sync ${p}'s yield: ${plat.aprSyncError}`,'error');}
+    return false;
+  }
+}
+const APR_SYNC_INTERVAL_MS=7*24*60*60*1000;
+// Runs on every page load: seeds a sensible default source for any Lido position that doesn't
+// have one yet, then re-syncs anything enabled whose last sync is missing or >7 days old.
+async function checkWeeklyAprSyncs(){
+  const LIDO_STAKING_URL='https://eth-api.lido.fi/v1/protocol/steth/apr/last';
+  const MELLOW_EARNETH_URL='https://points.mellow.finance/v1/vaults';
+  const STAKELINK_URL='https://yields.llama.fi/chart/4f5deb26-5f61-45a3-8f61-0edca3a86809';
+  const SANCTUM_POOLS_URL='https://yields.llama.fi/pools';
+  Object.keys(PLATFORMS).forEach(p=>{
+    const plat=PLATFORMS[p];
+    if(/sanctum/i.test(p)&&!plat.aprSourceUrl){
+      // Sanctum's own API requires a paid API key, so it's not safe to embed client-side.
+      // DefiLlama's public yields API tracks Sanctum's Infinity pool (symbol INF) with no auth
+      // required — filter the full pools list by symbol since the exact pool id isn't pinned here.
+      plat.aprSourceUrl=SANCTUM_POOLS_URL;
+      plat.aprSourceQuery='data.[symbol=INF].apy';
+      plat.aprAutoSync=true;
+      savePlatforms();
+    } else if(/stake\.?link/i.test(p)&&!plat.aprSourceUrl){
+      // stake.link's own site computes this client-side from on-chain data with no clean API —
+      // but DefiLlama already tracks this exact pool (project "stake.link-liquid", symbol
+      // STLINK) via its public yields API, updated daily. Far more stable than reverse-engineering
+      // stake.link's internal calculation ourselves.
+      plat.aprSourceUrl=STAKELINK_URL;
+      plat.aprSourceQuery='data.[last].apy';
+      plat.aprAutoSync=true;
+      savePlatforms();
+    } else if(/earn ?eth/i.test(p)){
+      // Lido's EarnETH vault (Mellow-curated) — no dedicated public endpoint of its own, but
+      // Mellow's public vaults API lists it with a live apy field. Find it in the array by id.
+      // Also self-heals a position that got seeded with the plain-staking URL below before this
+      // more specific rule existed — force it onto the right source and re-sync right away.
+      if(!plat.aprSourceUrl||plat.aprSourceUrl===LIDO_STAKING_URL){
+        plat.aprSourceUrl=MELLOW_EARNETH_URL;
+        plat.aprSourceQuery='[id=lido-earn-eth].apy';
+        plat.aprAutoSync=true;
+        plat.aprSyncedAt=null;
+        savePlatforms();
+      }
+    } else if(/lido/i.test(p)&&!plat.aprSourceUrl){
+      plat.aprSourceUrl=LIDO_STAKING_URL;
+      plat.aprSourceQuery='data.apr';
+      plat.aprAutoSync=true;
+      savePlatforms();
+    } else if(/chainlink/i.test(p)&&plat.aprSourceType!=='chainlink-community-rate'){
+      plat.aprSourceType='chainlink-community-rate';
+      plat.aprSourceUrl=null;
+      plat.aprSourceQuery=null;
+      plat.aprAutoSync=true;
+      plat.aprSyncedAt=null;
+      savePlatforms();
+    }
+  });
+  const due=Object.keys(PLATFORMS).filter(p=>{
+    const plat=PLATFORMS[p];
+    const hasSource=plat.aprSourceType==='chainlink-community-rate'||plat.aprSourceUrl;
+    if(!plat.aprAutoSync||!hasSource)return false;
+    return !plat.aprSyncedAt||(Date.now()-plat.aprSyncedAt)>APR_SYNC_INTERVAL_MS;
+  });
+  if(!due.length)return;
+  for(const p of due)await syncPlatformApr(p,{silent:true});
+  renderPositionList();renderProtoTable(active);
+  showToast(`Synced weekly target yield for: ${due.join(', ')}`,'success');
+}
+function applyPositionAdjustment(p,idx){
+  const el=document.getElementById('posAdj_'+idx);
+  const val=parseFloat(el.value);
+  if(!val){showToast('Enter a non-zero quantity','error');return;}
+  const plat=PLATFORMS[p];
+  if(!plat)return;
+  if(plat.yieldType==='fixed'){
+    // Rebase: fold the accrued-so-far quantity plus this deposit/withdrawal into a new starting point.
+    const accrued=fixedAccruedQty(p)||0;
+    const cgSymFx=(plat.symbol||'').toUpperCase();
+    const liveFx=(typeof CG!=='undefined'&&CG[cgSymFx])?liveData[CG[cgSymFx].id]:null;
+    const priceFx=liveFx?liveFx.current_price:0;
+    const depositUsd=Math.round(val*priceFx*100)/100;
+    if(plat.accrualMode==='value'){
+      // Roll the yield accrued so far into the new principal before resetting the clock below —
+      // otherwise a deposit would silently wipe out everything already accrued under "value" mode.
+      const monthlyRateFx=(plat.targetApr||0)/100/12;
+      const monthsElapsedFx=Math.max(0,(new Date()-new Date(plat.fixedStartDate))/MS_PER_MONTH);
+      const yieldSoFarFx=(plat.fixedPrincipalUsd||0)*(Math.pow(1+monthlyRateFx,monthsElapsedFx)-1);
+      plat.fixedPrincipalUsd=Math.round(((plat.fixedPrincipalUsd||0)+yieldSoFarFx+depositUsd)*100)/100;
+    }
+    plat.fixedStartQty=accrued+val;
+    plat.fixedStartDate=new Date().toISOString();
+    savePlatforms();
+    refreshFixedPositions();
+    if(priceFx){
+      // Tag the deposit's dollar value so it isn't counted as return this month.
+      const nowFx=new Date();
+      const monthLabelFx=MONTH_ABBR[nowFx.getMonth()]+' '+String(nowFx.getFullYear()).slice(-2);
+      const rowFx=RAW[monthLabelFx]&&RAW[monthLabelFx].rows.find(r=>r.p===p);
+      if(rowFx){
+        rowFx.newMoney=Math.round(((rowFx.newMoney||0)+depositUsd)*100)/100;
+        rowFx.v=Math.round((rowFx.v-depositUsd)*100)/100;
+        RAW[monthLabelFx].total=Math.round(RAW[monthLabelFx].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+        saveData();
+      }
+    }
+  } else {
+    applyVariableAdjustmentNow(p,val);
+  }
+  el.value='';
+  renderAll(active);
+  showToast(`${val>0?'+':''}${val} ${plat.symbol||''} applied to ${p} now`,'success');
+}
+// Writes a deposit/withdrawal straight into this month's row for a variable position, immediately —
+// no deferred "pending" step. The delta is tracked as newMoney (capital), not counted as return.
+function applyVariableAdjustmentNow(p,deltaQty){
+  const plat=PLATFORMS[p]||{};
+  const now=new Date();
+  const monthLabel=MONTH_ABBR[now.getMonth()]+' '+String(now.getFullYear()).slice(-2);
+  if(!RAW[monthLabel])RAW[monthLabel]={total:0,source:'dashboard',rows:[]};
+  const priorMonths=getMonths().filter(m=>m!==monthLabel);
+  const prevMonth=priorMonths.length?priorMonths[priorMonths.length-1]:null;
+  const prevAgg=prevMonth?aggRows(RAW[prevMonth].rows)[p]:null;
+  const existingIdx=RAW[monthLabel].rows.findIndex(r=>r.p===p);
+  const existing=existingIdx>=0?RAW[monthLabel].rows[existingIdx]:null;
+  const baseQty=existing?(existing.qty||0):(prevAgg?(prevAgg.qty||0):0);
+  const newQty=Math.round((baseQty+deltaQty)*1e6)/1e6;
+  const cgSym=(plat.symbol||'').toUpperCase();
+  const live=(typeof CG!=='undefined'&&CG[cgSym])?liveData[CG[cgSym].id]:null;
+  const price=live?live.current_price:0;
+  const investUsd=Math.round(newQty*price*100)/100;
+  const deltaUsd=Math.round(deltaQty*price*100)/100;
+  const priorNewMoney=existing?(existing.newMoney||0):0;
+  // First-ever appearance: the whole position is capital, not just this delta.
+  const newMoney=prevAgg?Math.round((priorNewMoney+deltaUsd)*100)/100:investUsd;
+  // A deposit/withdrawal is pure capital movement, not yield — it never contributes to Return.
+  // Keep whatever reward was already recorded for this month (e.g. via Month summary), if any.
+  const v=existing?existing.v:0;
+  const row={p,v,qty:newQty,token:plat.symbol||null,investUsd,newMoney:newMoney||undefined,
+    rewardQty:existing?existing.rewardQty:undefined,rewardToken:existing?existing.rewardToken:undefined,
+    leverageRisk:existing?existing.leverageRisk:undefined};
+  if(existingIdx>=0)RAW[monthLabel].rows[existingIdx]=row;
+  else RAW[monthLabel].rows.push(row);
+  RAW[monthLabel].total=Math.round(RAW[monthLabel].rows.reduce((s,r)=>s+r.v,0)*100)/100;
+  saveData();buildNav();
+}
 const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 // ═══════════════════════════════════════════════════
@@ -933,10 +1252,12 @@ function getPrevMonthFor(editMonth){
 function aggRows(rows){
   const m={};
   rows.forEach(r=>{
-    if(!m[r.p])m[r.p]={v:0,qty:r.qty,token:r.token,investUsd:0,leverageRisk:false,rewardQty:0,rewardToken:null};
+    if(!m[r.p])m[r.p]={v:0,qty:r.qty,token:r.token,investUsd:0,leverageRisk:false,rewardQty:0,rewardToken:null,impliedQty:0};
     m[r.p].v+=r.v;
     m[r.p].investUsd+=(r.investUsd||0);
     m[r.p].rewardQty+=(r.rewardQty||0);
+    m[r.p].impliedQty+=(r.impliedQty||0);
+    if(r.cumYieldUsd!=null)m[r.p].cumYieldUsd=r.cumYieldUsd;
     if(r.rewardToken&&!m[r.p].rewardToken)m[r.p].rewardToken=r.rewardToken;
     if(r.qty&&!m[r.p].qty){m[r.p].qty=r.qty;m[r.p].token=r.token;}
     if(r.leverageRisk)m[r.p].leverageRisk=true;
@@ -944,6 +1265,71 @@ function aggRows(rows){
   return m;
 }
 const calcAPR=(ret,inv)=>inv>0?(ret*12/inv)*100:null;
+// Dot-path resolver for APR auto-sync sources. Supports a `[field=value]` segment to find one
+// element in an array by a field match (e.g. an API returning a list of vaults) before
+// continuing to resolve the rest of the path on that element.
+function resolveJsonPath(obj,path){
+  const segments=(path||'').split('.').filter(Boolean);
+  let cur=obj;
+  for(const seg of segments){
+    if(cur==null)return undefined;
+    const filterMatch=seg.match(/^\[(\w+)=([^\]]+)\]$/);
+    const idxMatch=seg.match(/^\[(-?\d+|last)\]$/);
+    if(filterMatch){
+      if(!Array.isArray(cur))return undefined;
+      cur=cur.find(item=>item&&String(item[filterMatch[1]])===filterMatch[2]);
+    } else if(idxMatch){
+      if(!Array.isArray(cur))return undefined;
+      const idx=idxMatch[1]==='last'?cur.length-1:(Number(idxMatch[1])<0?cur.length+Number(idxMatch[1]):Number(idxMatch[1]));
+      cur=cur[idx];
+    } else {
+      cur=cur[seg];
+    }
+  }
+  return cur;
+}
+// A position's row for the globally-latest month only exists if that month's data was actually
+// entered for it — variable positions aren't touched every month (fixed ones auto-refresh, so
+// they always are). Looking up RAW[latestMonth] alone silently shows $0 for anything not
+// re-entered this month; walk backwards to that position's own most recent row instead.
+function latestRowForPlatform(p,excludeMonth){
+  const months=getMonths();
+  for(let i=months.length-1;i>=0;i--){
+    const m=months[i];
+    if(m===excludeMonth)continue;
+    const agg=aggRows(RAW[m].rows)[p];
+    if(agg)return agg;
+  }
+  return null;
+}
+// A variable position's most recently *evidenced* return — walks back past months where it was
+// re-recorded with no new reward (qty unchanged since last time, v=0), since that just means
+// "nothing new to report yet," not "confirmed zero yield." Without this, checking in on a
+// position the same month it paid out (before it's paid again) would show 0% and bury a real
+// recent gain. Falls back to the plain latest row if the position has never recorded a reward.
+function lastEvidencedReturnForPlatform(p){
+  const months=getMonths();
+  for(let i=months.length-1;i>=0;i--){
+    const agg=aggRows(RAW[months[i]].rows)[p];
+    if(agg&&Math.abs(agg.v)>0.001)return agg;
+  }
+  return latestRowForPlatform(p);
+}
+// A position's value right now: live price × its current quantity when a live price is being
+// tracked for it, otherwise the dollar value recorded on its most recent row. Same rule the
+// Portfolio screen's position cards and totals use — kept as one function so "now" always means
+// the same thing everywhere it's shown.
+function currentValueForPlatform(p){
+  const plat=PLATFORMS[p]||{};
+  const isFixed=plat.yieldType==='fixed';
+  const cur=latestRowForPlatform(p);
+  const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
+  const cgReady=typeof CG!=='undefined';
+  const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
+  const live=cgSym?liveData[CG[cgSym].id]:null;
+  const liveVal=(live&&curQty)?live.current_price*curQty:null;
+  return liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
+}
 
 // ═══════════════════════════════════════════════════
 // RENDER
@@ -952,20 +1338,21 @@ function renderKPI(month){
   const el=document.getElementById('kpiGrid');
   const months=getMonthsForYear(activeYear);
   if(month==='ALL'){
-    let sum=0,wV=Infinity,wM='',inv=0;
-    months.forEach(m=>{const v=RAW[m].total;sum+=v;if(v<wV){wV=v;wM=m;}});
+    let sum=0,inv=0;
+    months.forEach(m=>{sum+=RAW[m].total;});
     const last=months[months.length-1];
     if(last)Object.values(aggRows(RAW[last].rows)).forEach(d=>{inv+=d.investUsd||0;});
+    const allTimeApr=(inv>0&&months.length>0)?(sum/inv)*(12/months.length)*100:null;
     el.innerHTML=`
-      <div class="kpi"><div class="kpi-label">Total return</div><div class="kpi-value ${sum>=0?'pos':'neg'}">${fmt(sum)}</div><div class="kpi-sub">${activeYear==='ALL'?'all time':'20'+activeYear}</div></div>
-      <div class="kpi" style="cursor:pointer" onclick="openMonthlyAvgModal()"><div class="kpi-label">Monthly avg</div><div class="kpi-value neu">${fmt(Math.round(sum/(months.length||1)))}</div><div class="kpi-sub">per month · click for %</div></div>
-      <div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-value neu" style="font-size:18px">${fmt(inv)}</div><div class="kpi-sub">latest snapshot</div></div>
-      <div class="kpi"><div class="kpi-label">Worst month</div><div class="kpi-value neg" style="font-size:16px">${months.length?fmt(wV):'—'}</div><div class="kpi-sub">${wM||'—'}</div></div>
-      <div class="kpi" style="cursor:pointer" onclick="openMonthsListModal()"><div class="kpi-label">Months</div><div class="kpi-value neu">${months.length}</div><div class="kpi-sub">click to jump to one</div></div>`;
+      <div class="kpi" style="cursor:pointer" onclick="openRewardsBreakdown()"><div class="kpi-label">Total rewards (all months)</div><div class="kpi-value ${sum>=0?'pos':'neg'}">${fmt(sum)}</div><div class="kpi-sub">${activeYear==='ALL'?'all time':'20'+activeYear}</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="openMonthlyAvgBreakdown()"><div class="kpi-label">Monthly avg</div><div class="kpi-value neu">${fmt(Math.round(sum/(months.length||1)))}</div><div class="kpi-sub">per month · click for %</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="openMonthsBreakdown()"><div class="kpi-label">Months</div><div class="kpi-value neu">${months.length}</div><div class="kpi-sub">click to jump to one</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="openAprBreakdown()"><div class="kpi-label">All-time annual return</div><div class="kpi-value ${allTimeApr!=null&&allTimeApr>=0?'pos':'neg'}">${allTimeApr!=null?fmtPct(allTimeApr):'—'}</div><div class="kpi-sub">actual, annualised</div></div>`;
   } else {
     const d=RAW[month];
     const aggd=aggRows(d.rows);
     const ents=Object.entries(aggd);
+    const best=ents.length?ents.reduce((a,b)=>b[1].v>a[1].v?b:a):['—',{v:0}];
     const worst=ents.length?ents.reduce((a,b)=>b[1].v<a[1].v?b:a):['—',{v:0}];
     const inv=ents.reduce((s,[,x])=>s+(x.investUsd||0),0);
     const apr=calcAPR(d.total,inv);
@@ -974,6 +1361,7 @@ function renderKPI(month){
       <div class="kpi"><div class="kpi-label">Return</div><div class="kpi-value ${d.total>=0?'pos':'neg'}">${fmt(d.total)}</div><div class="kpi-sub">${month}</div>${conflictSub}</div>
       <div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-value neu" style="font-size:18px">${fmt(inv)}</div><div class="kpi-sub">this month</div></div>
       <div class="kpi"><div class="kpi-label">Actual APR</div><div class="kpi-value ${apr!=null&&apr>=0?'pos':'neg'}" style="font-size:18px">${apr!=null?fmtPct(apr):'—'}</div><div class="kpi-sub">annualised</div></div>
+      <div class="kpi"><div class="kpi-label">Best protocol</div><div class="kpi-value pos" style="font-size:16px">${fmt(best[1].v)}</div><div class="kpi-sub">${best[0]}</div></div>
       <div class="kpi"><div class="kpi-label">Worst protocol</div><div class="kpi-value neg" style="font-size:16px">${fmt(worst[1].v)}</div><div class="kpi-sub">${worst[0]}</div></div>
       <div class="kpi"><div class="kpi-label">Protocols</div><div class="kpi-value neu">${ents.length}</div><div class="kpi-sub">active</div></div>`;
   }
@@ -1001,6 +1389,20 @@ function renderBar(month){
   });
 }
 
+// Full $ and APR history for one protocol, oldest to newest — powers the on-demand expand row
+// instead of a permanent column, so the table stays uncluttered by default.
+function protocolMonthlyHistory(p){
+  return getMonths().map(m=>{
+    const agg=aggRows(RAW[m].rows)[p];
+    if(!agg)return null;
+    return {month:m,v:agg.v,apr:calcAPR(agg.v,agg.investUsd)};
+  }).filter(Boolean);
+}
+let _openProtoDetail=null;
+function toggleProtoDetail(p){
+  _openProtoDetail=(_openProtoDetail===p)?null:p;
+  renderProtoTable(active);
+}
 function renderProtoTable(month){
   if(pieChart)pieChart.destroy();
   const months=getMonthsForYear(activeYear);
@@ -1031,12 +1433,18 @@ function renderProtoTable(month){
       const cgSymRow=(d.token||'').toUpperCase();
       const liveRow=(typeof CG!=='undefined'&&CG[cgSymRow])?liveData[CG[cgSymRow].id]:null;
       const iconHtml=liveRow&&liveRow.image?`<img class="proto-icon" src="${liveRow.image}" alt=""/>`:`<span class="proto-dot" style="background:${gc(p)}"></span>`;
-      return `<div class="proto-row">
-        <div class="proto-row-name">${iconHtml}<span class="pname" title="${escHtml(p)}">${p}</span>${d.token?`<span class="token-tag">${d.token}</span>`:''}${d.leverageRisk?' <span title="סיכון מינוף נלווה" style="color:#f59e0b;font-size:13px;cursor:help">⚠</span>':''}</div>
+      const isOpen=_openProtoDetail===p;
+      const history=isOpen?protocolMonthlyHistory(p):[];
+      return `<div class="proto-row" onclick="toggleProtoDetail('${p}')">
+        <div class="proto-row-name"><span class="caret" style="display:inline-block;transform:rotate(${isOpen?'180deg':'0deg'})">▾</span>${iconHtml}<span class="pname" title="${escHtml(p)}">${p}</span>${d.token?`<span class="token-tag">${d.token}</span>`:''}${d.leverageRisk?' <span title="סיכון מינוף נלווה" style="color:#f59e0b;font-size:13px;cursor:help">⚠</span>':''}</div>
         <span class="${d.v>=0?'pos':'neg'}">${fmt(d.v)}</span>
         <span style="color:${bc}">${apr!==null?fmtPct(apr):'—'}</span>
         <span>${targetCell}</span>
-      </div>`;
+      </div>
+      ${isOpen?`<div class="proto-row-history" style="display:flex;flex-wrap:wrap;gap:6px 16px">
+          ${history.length?history.map(h=>`<span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;gap:4px">${h.month}: <b class="${h.v>=0?'pos':'neg'}">${fmt(h.v)}</b>${h.apr!=null?` (${fmtPct(h.apr)})`:''}<span onclick="event.stopPropagation();removePositionMonth('${p}','${h.month}')" style="cursor:pointer;color:var(--red);font-weight:600" title="Remove this month's entry">×</span></span>`).join('')
+            :'<span style="font-size:10px;font-family:var(--font-mono);color:var(--muted2)">No history yet</span>'}
+        </div>`:''}`;
     }).join('')}
     </div>`;
 }
@@ -1054,31 +1462,150 @@ function renderAll(month){renderKPI(month);renderBar(month);renderProtoTable(mon
 
 let valueChart=null;
 let distPieChart=null;
+// Underlying data is only ever recorded monthly, but this chart is meant to read daily — so it
+// builds monthly anchor points (same carry-forward + live-last-point rule as before), then
+// linearly interpolates a value every day between them. "Yield growth" only ever steps at a real
+// recorded month (cumYield is a step function of the lower anchor); "New money" is whatever's
+// left of the interpolated total once that realized yield is subtracted, so the two lines stay
+// consistent by construction on every single day, not just at month boundaries.
+function portfolioValueHistory(){
+  const months=getMonths();
+  if(!months.length)return {labels:[],totals:[],newMoney:[]};
+  const platNames=allPlatformNames();
+  const monthTotals=months.map((m,i)=>platNames.reduce((sum,p)=>{
+    for(let j=i;j>=0;j--){
+      const agg=aggRows(RAW[months[j]].rows)[p];
+      if(agg)return sum+(agg.investUsd||0);
+    }
+    return sum;
+  },0));
+  let cy=0;
+  const cumYieldByMonth=months.map(m=>{cy+=RAW[m].total||0;return cy;});
+  const anchors=months.map((m,i)=>({date:monthLabelToDate(m),total:monthTotals[i],cumYield:cumYieldByMonth[i]}));
+  const now=new Date();
+  const liveTotal=Math.round(platNames.reduce((sum,p)=>sum+currentValueForPlatform(p),0)*100)/100;
+  if(now>anchors[anchors.length-1].date)anchors.push({date:now,total:liveTotal,cumYield:cumYieldByMonth[cumYieldByMonth.length-1]});
+  else anchors[anchors.length-1].total=liveTotal;
+  if(anchors.length===1){
+    const a=anchors[0];
+    return {labels:[a.date.toLocaleDateString('en-US',{month:'short',day:'numeric'})],dates:[a.date],totals:[a.total],newMoney:[Math.round((a.total-a.cumYield)*100)/100]};
+  }
+  const labels=[],dates=[],totals=[],newMoney=[];
+  const first=anchors[0].date.getTime(),last=anchors[anchors.length-1].date.getTime();
+  const dayMs=24*3600*1000;
+  for(let t=first;t<last;t+=dayMs){
+    let lo=anchors[0],hi=anchors[anchors.length-1];
+    for(let i=0;i<anchors.length-1;i++){
+      if(anchors[i].date.getTime()<=t&&t<=anchors[i+1].date.getTime()){lo=anchors[i];hi=anchors[i+1];break;}
+    }
+    const span=hi.date.getTime()-lo.date.getTime();
+    const frac=span>0?(t-lo.date.getTime())/span:0;
+    const total=lo.total+(hi.total-lo.total)*frac;
+    labels.push(new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    dates.push(new Date(t));
+    totals.push(Math.round(total*100)/100);
+    newMoney.push(Math.round((total-lo.cumYield)*100)/100);
+  }
+  const lastA=anchors[anchors.length-1];
+  labels.push('Now');
+  dates.push(lastA.date);
+  totals.push(Math.round(lastA.total*100)/100);
+  newMoney.push(Math.round((lastA.total-lastA.cumYield)*100)/100);
+  return {labels,dates,totals,newMoney};
+}
 function renderValueChart(){
   const canvas=document.getElementById('valueChart');
   if(!canvas)return;
   if(valueChart){valueChart.destroy();valueChart=null;}
-  const months=getMonths();
-  if(!months.length)return;
-  const totals=months.map(m=>Object.values(aggRows(RAW[m].rows)).reduce((s,d)=>s+(d.investUsd||0),0));
-  // First month's whole value is baseline capital (new money by definition — nothing existed before it).
-  // Every later month, only rows explicitly flagged with a "new money" amount count toward the new-money line;
-  // everything else in that month's delta is treated as yield/price growth.
-  let cumNew=0;
-  const cumNewMoney=months.map((m,i)=>{
-    cumNew+=(i===0)?totals[0]:RAW[m].rows.reduce((s,r)=>s+(r.newMoney||0),0);
-    return Math.min(cumNew,totals[i]);
-  });
+  const {labels,totals,newMoney}=portfolioValueHistory();
+  if(!labels.length)return;
   valueChart=new Chart(canvas.getContext('2d'),{
     type:'line',
-    data:{labels:months,datasets:[
-      {label:'New money',data:cumNewMoney,borderColor:'#3b82f6',borderWidth:1.5,backgroundColor:'rgba(59,130,246,0.28)',fill:'origin',tension:0.3,pointRadius:2},
-      {label:'Portfolio value',data:totals,borderColor:'#f59e0b',borderWidth:2,backgroundColor:'rgba(34,197,94,0.25)',fill:'-1',tension:0.3,pointRadius:2,pointBackgroundColor:'#f59e0b'}
+    data:{labels,datasets:[
+      {label:'New money',data:newMoney,borderColor:'#3b82f6',borderWidth:1.5,backgroundColor:'rgba(59,130,246,0.28)',fill:'origin',tension:0.3,pointRadius:0},
+      {label:'Portfolio value',data:totals,borderColor:'#f59e0b',borderWidth:2,backgroundColor:'rgba(34,197,94,0.25)',fill:'-1',tension:0.3,pointRadius:0}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:"'IBM Plex Mono'"},bodyFont:{family:"'IBM Plex Mono'"},callbacks:{label:c=>' '+c.dataset.label+': '+fmt(c.raw)}}},
-      scales:{y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:9},maxRotation:40,autoSkip:false},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}}}
+      scales:{y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:9},maxTicksLimit:10},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}}}
   });
+}
+
+let btcValueChart=null;
+let _btcSeriesCache=null,_btcSeriesCacheAt=0;
+const BTC_SERIES_CACHE_MS=10*60*1000; // avoid re-fetching CoinGecko history on every screen visit
+// For each portfolio-value anchor date, find the closest BTC price at-or-before that date and
+// divide — same historically-accurate approach as the coin-detail chart, not "value ÷ today's
+// BTC price" (which would just be a rescaled copy of the USD chart, not a real BTC-relative view).
+function btcAmountSeries(dates,totals,btcPrices){
+  let j=0;
+  return dates.map((d,i)=>{
+    const t=d.getTime();
+    while(j<btcPrices.length-1&&btcPrices[j+1][0]<=t)j++;
+    const price=btcPrices[j]?btcPrices[j][1]:null;
+    return price?totals[i]/price:null;
+  });
+}
+const RANGE_DAYS={'24h':1,'7d':7,'30d':30,'1y':365};
+// Trims a formatted-BTC-amount to a short, clean string like "0.5" or "0.5234" — no trailing
+// zeros, so small round numbers don't get padded into "0.50000".
+function fmtBtcAmount(v){
+  if(v==null)return '—';
+  return parseFloat(v.toFixed(4)).toString();
+}
+async function renderBtcValueChart(){
+  const canvas=document.getElementById('btcValueChart');
+  const statusEl=document.getElementById('btcValueStatus');
+  if(!canvas)return;
+  const full=portfolioValueHistory();
+  if(!full.labels.length)return;
+  try{
+    if(!_btcSeriesCache||(Date.now()-_btcSeriesCacheAt)>BTC_SERIES_CACHE_MS){
+      const days=Math.max(2,Math.ceil((Date.now()-full.dates[0].getTime())/(24*3600*1000))+2);
+      _btcSeriesCache=await fetchRawPriceSeries('bitcoin',days);
+      _btcSeriesCacheAt=Date.now();
+    }
+    // Same 24h/7d/30d/1y window as the Live Prices range buttons above, applied to the
+    // portfolio-value history instead of a single coin's price.
+    const rangeDays=RANGE_DAYS[activeRange]||365;
+    const cutoff=Date.now()-rangeDays*24*3600*1000;
+    let startIdx=full.dates.findIndex(d=>d.getTime()>=cutoff);
+    if(startIdx===-1)startIdx=full.dates.length-1;
+    const dates=full.dates.slice(startIdx),totals=full.totals.slice(startIdx);
+    const labels=dates.map(d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    if(labels.length)labels[labels.length-1]='Now';
+
+    const btcAmounts=btcAmountSeries(dates,totals,_btcSeriesCache);
+    // Mark the live point to today's actual BTC price rather than the last history point, which
+    // can lag by up to a day — same live-marking convention as the USD chart.
+    const liveBtcPrice=liveData['bitcoin']&&liveData['bitcoin'].current_price;
+    if(liveBtcPrice)btcAmounts[btcAmounts.length-1]=totals[totals.length-1]/liveBtcPrice;
+    if(statusEl)statusEl.textContent='';
+    if(btcValueChart){btcValueChart.destroy();btcValueChart=null;}
+    btcValueChart=new Chart(canvas.getContext('2d'),{
+      type:'line',
+      data:{labels,datasets:[
+        {label:'BTC',data:btcAmounts,borderColor:'#f7931a',borderWidth:2,backgroundColor:'rgba(247,147,26,0.18)',fill:'origin',tension:0.3,pointRadius:0}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.15)',borderWidth:1,padding:12,
+          displayColors:false,
+          titleFont:{family:"'IBM Plex Mono'",size:15,weight:'600'},titleColor:'#e8eaf0',
+          bodyFont:{family:"'IBM Plex Mono'",size:20,weight:'600'},bodyColor:'#f7931a',
+          callbacks:{
+            title:items=>items[0]?.label||'',
+            label:c=>fmtBtcAmount(c.raw)+' BTC'
+          }
+        }},
+        scales:{
+          y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:11},callback:v=>fmtBtcAmount(v)+' BTC'},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},
+          x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},maxTicksLimit:10},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}
+        }}
+    });
+  }catch(e){
+    if(statusEl)statusEl.textContent="Couldn't load BTC price history";
+  }
 }
 
 // ── NAV ──
@@ -1105,51 +1632,31 @@ function buildNav(){
     subWrap.style.display='none';
   }
 }
+// Replays a fade-in on a persistent (not freshly-inserted) element — CSS animations don't
+// restart just because content changed, so this briefly clears then re-sets the animation to
+// force it. Used after explicit tab clicks, never after background/automatic re-renders.
+function replayFade(el){
+  if(!el)return;
+  el.style.animation='none';
+  void el.offsetWidth;
+  el.style.animation='fadeIn 140ms ease';
+}
 function selectYear(yr){
   activeYear=yr;
   active='ALL';
   buildNav();
   renderAll('ALL');
+  replayFade(document.getElementById('kpiGrid'));
+  replayFade(document.querySelector('#screen-returns .charts-grid'));
+  replayFade(document.getElementById('protoTableWrap'));
 }
 function selectMonthTab(m){
   active=m;
   buildNav();
   renderAll(m);
-}
-
-// ── QUICK LIST MODAL — shared by "Monthly avg" breakdown and "Months" jump-picker ──
-function closeQuickList(){document.getElementById('quickListOverlay').classList.remove('open');}
-function openMonthlyAvgModal(){
-  const months=getMonthsForYear(activeYear).slice().reverse();
-  document.getElementById('quickListTitle').textContent='Monthly average return';
-  document.getElementById('quickListBody').innerHTML=months.length?months.map(m=>{
-    const d=RAW[m];
-    const inv=Object.values(aggRows(d.rows)).reduce((s,x)=>s+(x.investUsd||0),0);
-    const pct=inv>0?(d.total/inv*100):null;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px">
-      <span style="flex:1">${m}</span>
-      <span class="${d.total>=0?'pos':'neg'}" style="min-width:70px;text-align:right">${fmt(d.total)}</span>
-      <span class="${pct==null?'neu':(pct>=0?'pos':'neg')}" style="min-width:60px;text-align:right">${pct!=null?fmtPct(pct):'—'}</span>
-    </div>`;
-  }).join(''):'<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No months yet</p>';
-  document.getElementById('quickListOverlay').classList.add('open');
-}
-function openMonthsListModal(){
-  const months=getMonthsForYear(activeYear).slice().reverse();
-  document.getElementById('quickListTitle').textContent='Jump to month';
-  document.getElementById('quickListBody').innerHTML=months.length?months.map(m=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px;cursor:pointer" onclick="jumpToMonth('${m}')">
-      <span style="flex:1">${m}</span>
-      <span class="${RAW[m].total>=0?'pos':'neg'}">${fmt(RAW[m].total)}</span>
-    </div>`).join(''):'<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No months yet</p>';
-  document.getElementById('quickListOverlay').classList.add('open');
-}
-function jumpToMonth(m){
-  activeYear=getYear(m);
-  active=m;
-  closeQuickList();
-  buildNav();
-  renderAll(m);
+  replayFade(document.getElementById('kpiGrid'));
+  replayFade(document.querySelector('#screen-returns .charts-grid'));
+  replayFade(document.getElementById('protoTableWrap'));
 }
 
 // ═══════════════════════════════════════════════════
@@ -1157,14 +1664,45 @@ function jumpToMonth(m){
 // ═══════════════════════════════════════════════════
 let _rowId=0, _editMonth=null, _prevMonth=null;
 
-function openEntryModal(editMonth){
+function currentMonthLabel(){
+  const d=new Date();
+  return MONTH_ABBR[d.getMonth()]+' '+String(d.getFullYear()).slice(-2);
+}
+function toggleEntryPastMonth(showPast){
+  const mInput=document.getElementById('eMonth');
+  const nowRow=document.getElementById('eMonthNow');
+  const pastRow=document.getElementById('eMonthRow');
+  if(showPast){
+    nowRow.style.display='none';
+    pastRow.style.display='';
+    mInput.value='';
+    mInput.focus();
+  } else {
+    nowRow.style.display='flex';
+    pastRow.style.display='none';
+    mInput.value=labelToMonthInput(currentMonthLabel());
+  }
+}
+function openEntryModal(editMonth,onlyProtocol){
   _editMonth=editMonth;
   _rowId=0;
   _prevMonth=getPrevMonthFor(editMonth);
-  document.getElementById('entryTitle').textContent=editMonth?`Edit — ${editMonth}`:'Month summary';
+  document.getElementById('entryTitle').textContent=editMonth?(onlyProtocol?`Edit — ${onlyProtocol} — ${editMonth}`:`Edit — ${editMonth}`):'Month summary';
   const mInput=document.getElementById('eMonth');
-  mInput.value=editMonth?labelToMonthInput(editMonth):'';
-  mInput.disabled=!!editMonth;
+  const nowRow=document.getElementById('eMonthNow');
+  const pastRow=document.getElementById('eMonthRow');
+  if(editMonth){
+    mInput.value=labelToMonthInput(editMonth);
+    mInput.disabled=true;
+    nowRow.style.display='none';
+    pastRow.style.display='';
+  } else {
+    mInput.value=labelToMonthInput(currentMonthLabel());
+    mInput.disabled=false;
+    document.getElementById('eMonthNowLabel').textContent=currentMonthLabel();
+    nowRow.style.display='flex';
+    pastRow.style.display='none';
+  }
 
   document.getElementById('eRows').innerHTML='';
   if(editMonth&&RAW[editMonth]){
@@ -1178,7 +1716,7 @@ function openEntryModal(editMonth){
       if(r.rewardToken){merged[r.p].rewardToken=r.rewardToken;merged[r.p].rewardQty+=(r.rewardQty||0);}
       merged[r.p].newMoney+=(r.newMoney||0);
     });
-    Object.entries(merged).forEach(([p,data])=>{
+    Object.entries(merged).filter(([p])=>!onlyProtocol||p===onlyProtocol).forEach(([p,data])=>{
       addEntryRow(p,data.qty||'',data.newMoney||0);
       const lb=document.getElementById('eRows').lastElementChild;
       if(lb){
@@ -1282,7 +1820,10 @@ function calcRowValues(div){
     newMoney=investUsd;
     lastMonthUsd=investUsd;
   }
-  const v=Math.round((investUsd-lastMonthUsd-newMoney+rewardCcyUsd)*100)/100;
+  // Return is the value of the reward actually entered this month — priced today — and nothing
+  // else. It deliberately ignores any price change on the principal already held: depositing
+  // more, or the token's market price moving, ever affects Return, only the position's value.
+  const v=hasRewardCcy?rewardCcyUsd:Math.round(rewardQty*price*100)/100;
   return {p,token,qty,price,hasLivePrice,investUsd,lastMonthUsd,oldQty,rewardQty,rewardToken,rewardCcyUsd,newMoney,v};
 }
 
@@ -1369,30 +1910,35 @@ function renderPositionList(){
   if(!names.length){
     el.innerHTML='<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one below.</p>';
     if(totEl)totEl.textContent='$0';
-    const rewardsEl0=document.getElementById('portfolioTotalRewards');
     const weightedEl0=document.getElementById('portfolioWeightedApr');
-    if(rewardsEl0)rewardsEl0.textContent='$0';
     if(weightedEl0)weightedEl0.textContent='—';
     renderPositionsPie();
     return;
   }
   const months=getMonths();
-  const latest=months[months.length-1];
-  const latestAgg=latest?aggRows(RAW[latest].rows):{};
   const cgReady=typeof CG!=='undefined';
+  // All-time profit across the whole portfolio — the denominator for each position's "share of
+  // total profit" line below (same number the "Total rewards" KPI shows).
+  const totalRewardsAllTime=months.reduce((s,m)=>s+(RAW[m].total||0),0);
   let total=0,aprWeightSum=0,aprValSum=0;
-  el.innerHTML=names.map(p=>{
+  const entries=names.map((p,idx)=>{
     const plat=PLATFORMS[p]||{};
     const isFixed=plat.yieldType==='fixed';
-    const cur=latestAgg[p];
+    const cur=latestRowForPlatform(p);
     const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
     const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
     const live=cgSym?liveData[CG[cgSym].id]:null;
     const liveVal=(live&&curQty)?live.current_price*curQty:null;
     const val=liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
+    const evidenced=lastEvidencedReturnForPlatform(p);
+    const apr=evidenced?calcAPR(evidenced.v,evidenced.investUsd):null;
+    const positionAllTimeV=months.reduce((s,m)=>{const agg=aggRows(RAW[m].rows)[p];return s+(agg?agg.v:0);},0);
+    return {p,idx,plat,isFixed,cur,curQty,live,val,apr,positionAllTimeV};
+  });
+  // Largest position first, reading left-to-right / top-to-bottom like the distribution legend.
+  entries.sort((a,b)=>b.val-a.val);
+  el.innerHTML=entries.map(({p,idx,plat,isFixed,cur,curQty,live,val,apr,positionAllTimeV})=>{
     total+=val;
-    const chg30=live?getChg(live,'30d'):null;
-    const apr=cur?calcAPR(cur.v,cur.investUsd):null;
     const effectiveApr=isFixed?plat.targetApr:apr;
     if(effectiveApr!=null&&val>0){aprValSum+=effectiveApr*val;aprWeightSum+=val;}
     let aprLine='<span style="color:var(--muted)">no target set</span>';
@@ -1400,114 +1946,326 @@ function renderPositionList(){
       // Fixed yield accrues at exactly the target rate by construction — no need to derive it from a noisy monthly calc.
       if(plat.targetApr!=null)aprLine=`<span style="color:var(--green)">${plat.targetApr}% (fixed)</span>`;
     } else if(plat.targetApr!=null){
-      const meets=apr!=null&&apr>=plat.targetApr;
-      aprLine=`<span style="color:${meets?'var(--green)':'var(--red)'}">${apr!=null?fmtPct(apr):'—'} vs target ${plat.targetApr}%</span>`;
+      aprLine=`<span style="color:var(--text)">${plat.targetApr}% target</span>`;
     }
-    return `<div class="position-card">
+    const profitShare=(totalRewardsAllTime&&Math.abs(totalRewardsAllTime)>0.001)?(positionAllTimeV/totalRewardsAllTime*100):null;
+    const profitShareLine=profitShare!=null?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">${profitShare.toFixed(1)}% of total profit</div>`:'';
+    // The coin's logo now runs large across the card as a dimmed background.
+    const bgLogoHtml=(live&&live.image)?`<img src="${live.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.14;z-index:0;pointer-events:none" onerror="this.style.display='none'"/>`:'';
+    const logoDotHtml=`<span style="width:9px;height:9px;border-radius:50%;background:${gc(p)};flex-shrink:0;display:inline-block"></span>`;
+    return `<div class="position-card" style="overflow:hidden">
+      ${bgLogoHtml}
+      <div style="position:relative;z-index:1">
       <div class="position-top">
         <div class="position-name-wrap">
+          ${logoDotHtml}
           <span class="manage-name">${p}</span>
-          <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
           ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
         </div>
+        <span class="yield-badge ${isFixed?'fixed':'variable'}" style="position:absolute;top:10px;right:12px">${isFixed?'Fixed':'Variable'}</span>
       </div>
       <div class="position-value">${fmt(val)}</div>
-      <div style="font-size:10px;color:var(--muted2);font-family:var(--font-mono);margin-bottom:6px">
-        ${liveVal!=null?'● live price':'○ last snapshot'}${chg30!=null?` · 30d ${chg30>=0?'+':''}${chg30.toFixed(1)}%`:''}
-      </div>
+      ${curQty?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">${fmtQ(curQty)} ${plat.symbol||''}</div>`:''}
       <div style="font-size:11px;font-family:var(--font-mono);margin-bottom:2px">Return: ${aprLine}</div>
+      ${profitShareLine}
+      ${plat.accrualMode==='value'&&cur&&cur.impliedQty!=null?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">≈ +${fmtQ(cur.impliedQty)} ${plat.symbol||''} theoretical this month (qty unchanged)</div>`:''}
       ${plat.rewardSymbol&&plat.rewardSymbol!==plat.symbol?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">Rewards paid in ${plat.rewardSymbol}</div>`:''}
+      </div>
     </div>`;
   }).join('');
   if(totEl)totEl.textContent=fmt(total);
-  const totalRewards=getMonths().reduce((s,m)=>s+(RAW[m].total||0),0);
-  const rewardsEl=document.getElementById('portfolioTotalRewards');
   const weightedEl=document.getElementById('portfolioWeightedApr');
-  if(rewardsEl){rewardsEl.textContent=fmt(totalRewards);rewardsEl.className='kpi-value '+(totalRewards>=0?'pos':'neg');}
   if(weightedEl)weightedEl.textContent=aprWeightSum>0?fmtPct(aprValSum/aprWeightSum):'—';
   renderPositionsPie();
-  if(document.getElementById('positionsManageOverlay').classList.contains('open'))renderManagePositionsModal();
+  refreshPositionDetailEdit();
+  if(document.getElementById('positionsManageOverlay').classList.contains('open'))renderPositionsManageModal();
 }
-function toggleEditPosition(p){
-  _openPositionEdit=(_openPositionEdit===p)?null:p;
-  renderManagePositionsModal();
-}
-// ── FLOW 1b: Manage positions modal — one consolidated place to edit/remove any position ──
-function openManagePositionsModal(){renderManagePositionsModal();document.getElementById('positionsManageOverlay').classList.add('open');}
-function closeManagePositionsModal(){document.getElementById('positionsManageOverlay').classList.remove('open');_openPositionEdit=null;}
-function renderManagePositionsModal(){
+// ── One consolidated place to reach every position's edit/remove, instead of a trigger on
+// each card. Selecting a row here hands off to the existing position-detail modal/chart. ──
+function openPositionsManageModal(){renderPositionsManageModal();document.getElementById('positionsManageOverlay').classList.add('open');}
+function closePositionsManageModal(){document.getElementById('positionsManageOverlay').classList.remove('open');}
+function renderPositionsManageModal(){
   const el=document.getElementById('positionsManageList');
   if(!el)return;
   const names=allPlatformNames();
   if(!names.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one first.</p>';return;}
-  const months=getMonths();
-  const latest=months[months.length-1];
-  const latestAgg=latest?aggRows(RAW[latest].rows):{};
-  el.innerHTML=names.map((p,idx)=>{
+  el.innerHTML=names.map(p=>{
     const plat=PLATFORMS[p]||{};
     const isFixed=plat.yieldType==='fixed';
-    const cur=latestAgg[p];
-    const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
-    const open=_openPositionEdit===p;
-    const historyMonths=isFixed?[]:months.filter(m=>RAW[m].rows.some(r=>r.p===p));
-    const historyHtml=historyMonths.length?historyMonths.map(m=>{
-      const rowsForP=RAW[m].rows.filter(r=>r.p===p);
-      const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
-      const qtyDisplay=rowsForP.find(r=>r.qty!=null)?.qty;
-      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;font-family:var(--font-mono)">
-        <span style="min-width:56px">${m}</span>
-        <span style="color:var(--muted);flex:1">${qtyDisplay!=null?fmtQ(qtyDisplay):'—'} qty</span>
-        <span class="${vSum>=0?'pos':'neg'}" style="min-width:70px;text-align:right">${fmt(vSum)}</span>
-        <button class="btn" style="padding:2px 8px;font-size:10px" onclick="openEntryModal('${m}')">Edit</button>
-        <button class="btn btn-danger" style="padding:2px 8px;font-size:10px" onclick="removePositionMonth('${p}','${m}')">×</button>
-      </div>`;
-    }).join(''):'<div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono)">No monthly entries yet</div>';
-    return `<div class="manage-row" style="flex-direction:column;align-items:stretch;gap:0;padding:0;overflow:hidden">
-      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer" onclick="toggleEditPosition('${p}')">
-        <span class="manage-name" style="flex:1">${p}</span>
-        <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
-        ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
-        <span class="caret" style="display:inline-block;transform:rotate(${open?'180deg':'0deg'})">▾</span>
-      </div>
-      <div style="display:${open?'block':'none'};padding:12px 14px 14px;border-top:1px solid var(--border)">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <input class="form-input" style="max-width:100px" placeholder="Coin" value="${plat.coin||''}" onchange="setPlatformField('${p}','coin',this.value)"/>
-          <input class="form-input" style="max-width:70px" placeholder="Symbol" value="${plat.symbol||''}" onchange="setPlatformField('${p}','symbol',this.value)"/>
-          <input class="form-input" style="max-width:70px" type="number" step="any" placeholder="Target %" value="${plat.targetApr??''}" onchange="setPlatformField('${p}','targetApr',this.value)"/>
-        </div>
-        <div style="margin-bottom:8px">
-          <label class="form-label">Reward currency (if paid in a different coin)</label>
-          <input class="form-input" style="max-width:100px" placeholder="e.g. USDC" value="${plat.rewardSymbol||''}" onchange="setPlatformField('${p}','rewardSymbol',this.value)"/>
-        </div>
-        <div style="margin-bottom:8px">
-          <label class="form-label" style="display:flex;align-items:center;gap:6px">
-            <input type="checkbox" ${plat.aprAutoSync?'checked':''} onchange="setPlatformField('${p}','aprAutoSync',this.checked)"/>
-            Auto-sync Target % from a live URL
-          </label>
-          ${plat.aprAutoSync?`
-          <input class="form-input" placeholder="https://api.example.com/apr" value="${plat.aprSourceUrl||''}" onchange="setPlatformField('${p}','aprSourceUrl',this.value)"/>
-          <input class="form-input" style="margin-top:4px" placeholder="Query, e.g. data.apr or [symbol=INF].apy" value="${plat.aprSourceQuery||''}" onchange="setPlatformField('${p}','aprSourceQuery',this.value)"/>
-          <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:3px">
-            ${plat.aprSyncError?`<span style="color:var(--red)">Sync error: ${escHtml(plat.aprSyncError)}</span>`:(plat.aprSyncedAt?`Last synced ${new Date(plat.aprSyncedAt).toLocaleString()}`:'Not synced yet')}
-            <button class="btn" style="padding:2px 8px;font-size:10px;margin-left:6px" onclick="syncAllAprs(true)">Sync now</button>
-          </div>`:''}
-        </div>
-        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">
-          Current qty: ${curQty?fmtQ(curQty):'—'}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-          <span class="form-label" style="margin-bottom:0;white-space:nowrap">Deposit / withdraw (±qty)</span>
-          <input class="form-input" id="posAdj_${idx}" type="number" step="any" style="max-width:120px" placeholder="e.g. 3000 or -500"/>
-          <button class="btn" style="padding:4px 10px;font-size:11px" onclick="applyPositionAdjustment('${p}',${idx})">Apply</button>
-        </div>
-        ${!isFixed?`<div style="margin-bottom:10px">
-          <div class="form-label">Monthly history</div>
-          ${historyHtml}
-        </div>`:''}
-        <button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removePosition('${p}')">Remove position</button>
-      </div>
+    return `<div class="manage-row" style="cursor:pointer" onclick="closePositionsManageModal();openPositionDetail('${p}')">
+      <span class="manage-name" style="flex:1">${p}</span>
+      <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
+      ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+      <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Edit / remove ›</span>
     </div>`;
   }).join('');
+}
+// Builds the editable fields shown inside the position-detail modal's "Edit" panel. Standalone
+// (not tied to a specific card's idx) since only one instance is ever open at a time.
+function renderPositionEditFields(p){
+  const plat=PLATFORMS[p]||{};
+  const isFixed=plat.yieldType==='fixed';
+  const curQty=isFixed?fixedAccruedQty(p):((latestRowForPlatform(p)||{}).qty||0);
+  const months=getMonths();
+  const historyMonths=isFixed?[]:months.filter(m=>RAW[m].rows.some(r=>r.p===p));
+  const historyHtml=historyMonths.length?historyMonths.map(m=>{
+    const rowsForP=RAW[m].rows.filter(r=>r.p===p);
+    const vSum=rowsForP.reduce((s,r)=>s+r.v,0);
+    const qtyDisplay=rowsForP.find(r=>r.qty!=null)?.qty;
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;font-family:var(--font-mono)">
+      <span style="min-width:56px">${m}</span>
+      <span style="color:var(--muted);flex:1">${qtyDisplay!=null?fmtQ(qtyDisplay):'—'} qty</span>
+      <span class="${vSum>=0?'pos':'neg'}" style="min-width:70px;text-align:right">${fmt(vSum)}</span>
+      <button class="btn" style="padding:2px 8px;font-size:10px" onclick="openEntryModal('${m}')">Edit</button>
+      <button class="btn btn-danger" style="padding:2px 8px;font-size:10px" onclick="removePositionMonth('${p}','${m}')">×</button>
+    </div>`;
+  }).join(''):'<div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono)">No monthly entries yet</div>';
+  return `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <input class="form-input" style="max-width:100px" placeholder="Coin" value="${plat.coin||''}" onchange="setPlatformField('${p}','coin',this.value)"/>
+      <input class="form-input" style="max-width:70px" placeholder="Symbol" value="${plat.symbol||''}" onchange="setPlatformField('${p}','symbol',this.value)"/>
+      <input class="form-input" style="max-width:70px" type="number" step="any" placeholder="Target %" value="${plat.targetApr??''}" onchange="setPlatformField('${p}','targetApr',this.value)"/>
+    </div>
+    ${isFixed?`<div style="margin-bottom:8px">
+      <label class="form-label">How the yield shows up</label>
+      <div class="radio-group">
+        <label><input type="radio" name="accrualModeDetail" ${(!plat.accrualMode||plat.accrualMode==='qty')?'checked':''} onchange="setAccrualMode('${p}','qty')"/> Quantity grows</label>
+        <label><input type="radio" name="accrualModeDetail" ${plat.accrualMode==='value'?'checked':''} onchange="setAccrualMode('${p}','value')"/> Yield embodied in price</label>
+      </div>
+    </div>`:''}
+    <div style="margin-bottom:8px">
+      <label class="form-label">Reward currency (if paid in a different coin)</label>
+      <input class="form-input" style="max-width:100px" placeholder="e.g. USDC" value="${plat.rewardSymbol||''}" onchange="setPlatformField('${p}','rewardSymbol',this.value)"/>
+    </div>
+    <div style="margin-bottom:8px;padding:8px;background:var(--bg4);border-radius:6px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);color:var(--text);cursor:pointer;margin-bottom:${plat.aprAutoSync?'8px':'0'}">
+        <input type="checkbox" ${plat.aprAutoSync?'checked':''} onchange="setAprAutoSync('${p}',this.checked)"/> Auto-sync target yield weekly from a URL
+      </label>
+      ${plat.aprAutoSync?`
+      ${plat.aprSourceType==='chainlink-community-rate'?`
+      <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">Built-in: Chainlink staking v0.2 community variable reward rate (computed from staking.chain.link)</div>
+      `:`
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+        <input class="form-input" style="flex:2;min-width:160px" placeholder="API URL" value="${plat.aprSourceUrl||''}" onchange="setPlatformField('${p}','aprSourceUrl',this.value)"/>
+        <input class="form-input" style="flex:1;min-width:90px" placeholder="JSON path e.g. data.apr" value="${plat.aprSourceQuery||''}" onchange="setPlatformField('${p}','aprSourceQuery',this.value)"/>
+      </div>
+      `}
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;color:var(--muted);font-family:var(--font-mono)">
+        <button class="btn" style="padding:2px 8px;font-size:10px" onclick="syncPlatformApr('${p}')">↻ Sync now</button>
+        <span>${plat.aprSyncedAt?'Last synced '+new Date(plat.aprSyncedAt).toLocaleString():'Not synced yet'}</span>
+        ${plat.aprSyncError?`<span style="color:var(--red)">⚠ ${escHtml(plat.aprSyncError)}</span>`:''}
+      </div>`:''}
+    </div>
+    <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">
+      Current qty: ${curQty?fmtQ(curQty):'—'}
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+      <span class="form-label" style="margin-bottom:0;white-space:nowrap">Deposit / withdraw (±qty)</span>
+      <input class="form-input" id="posAdj_Detail" type="number" step="any" style="max-width:120px" placeholder="e.g. 3000 or -500"/>
+      <button class="btn" style="padding:4px 10px;font-size:11px" onclick="applyPositionAdjustment('${p}','Detail')">Apply</button>
+    </div>
+    ${!isFixed?`<div style="margin-bottom:10px">
+      <div class="form-label">Monthly history</div>
+      ${historyHtml}
+    </div>`:''}
+    <button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="removePosition('${p}');closePositionDetail();">Remove position</button>`;
+}
+// One position's own value history, from its first-ever recorded month to now — same carry-
+// forward + live-mark-to-market-last-point convention as the other charts in the app.
+function monthLabelToDate(label){
+  const [abbr,yy]=(label||'').split(' ');
+  const idx=MONTH_ABBR.indexOf((abbr||'').toUpperCase());
+  if(idx<0||!yy)return null;
+  return new Date(2000+parseInt(yy,10),idx,1);
+}
+// Underlying data is only ever recorded monthly, but the position-detail chart is meant to read
+// weekly — so this builds monthly anchor points (same carry-forward + live-last-point rule as
+// elsewhere) anchored to a real date, then linearly interpolates a value every 7 days between
+// them. It's an honest smoothing of known monthly snapshots, not fabricated new data.
+function positionValueHistory(p){
+  const months=getMonths();
+  let firstIdx=-1;
+  for(let i=0;i<months.length;i++){
+    if(aggRows(RAW[months[i]].rows)[p]){firstIdx=i;break;}
+  }
+  if(firstIdx<0)return [];
+  const relevant=months.slice(firstIdx);
+  const anchors=relevant.map((m,i)=>{
+    const realIdx=firstIdx+i;
+    let val=0;
+    for(let j=realIdx;j>=firstIdx;j--){
+      const agg=aggRows(RAW[months[j]].rows)[p];
+      if(agg){val=agg.investUsd||0;break;}
+    }
+    return {date:monthLabelToDate(m),val};
+  });
+  const now=new Date();
+  const liveVal=currentValueForPlatform(p);
+  if(anchors.length&&now>anchors[anchors.length-1].date)anchors.push({date:now,val:liveVal});
+  else if(anchors.length)anchors[anchors.length-1].val=liveVal;
+  if(anchors.length===1)return [{label:anchors[0].date.toLocaleDateString('en-US',{month:'short',day:'numeric'}),val:Math.round(anchors[0].val*100)/100}];
+  const points=[];
+  const first=anchors[0].date.getTime(),last=anchors[anchors.length-1].date.getTime();
+  const weekMs=7*24*3600*1000;
+  for(let t=first;t<last;t+=weekMs){
+    let lo=anchors[0],hi=anchors[anchors.length-1];
+    for(let i=0;i<anchors.length-1;i++){
+      if(anchors[i].date.getTime()<=t&&t<=anchors[i+1].date.getTime()){lo=anchors[i];hi=anchors[i+1];break;}
+    }
+    const span=hi.date.getTime()-lo.date.getTime();
+    const frac=span>0?(t-lo.date.getTime())/span:0;
+    const val=lo.val+(hi.val-lo.val)*frac;
+    points.push({label:new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric'}),val:Math.round(val*100)/100});
+  }
+  points.push({label:'Now',val:Math.round(anchors[anchors.length-1].val*100)/100});
+  return points;
+}
+let positionDetailChart=null,_positionDetailP=null,_positionDetailEditOpen=false;
+function openPositionDetail(p){
+  _positionDetailP=p;
+  _positionDetailEditOpen=false;
+  document.getElementById('positionDetailTitle').textContent=p;
+  const editWrap=document.getElementById('positionDetailEditWrap');
+  editWrap.style.display='none';editWrap.innerHTML='';
+  document.getElementById('positionDetailEditBtn').textContent='✎ Edit';
+  renderPositionDetailChart(p);
+  document.getElementById('positionDetailOverlay').classList.add('open');
+}
+function renderPositionDetailChart(p){
+  const history=positionValueHistory(p);
+  const chartWrap=document.getElementById('positionDetailChartWrap');
+  const emptyEl=document.getElementById('positionDetailEmpty');
+  if(positionDetailChart){positionDetailChart.destroy();positionDetailChart=null;}
+  if(!history.length){
+    chartWrap.style.display='none';
+    emptyEl.style.display='block';
+    return;
+  }
+  chartWrap.style.display='block';
+  emptyEl.style.display='none';
+  const color=gc(p);
+  positionDetailChart=new Chart(document.getElementById('positionDetailChart').getContext('2d'),{
+    type:'line',
+    data:{labels:history.map(h=>h.label),datasets:[{label:p,data:history.map(h=>h.val),borderColor:color,borderWidth:2,backgroundColor:color+'26',fill:true,tension:0.3,pointRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:c=>' '+fmt(c.raw)}}},
+      scales:{y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:9},maxTicksLimit:8},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}}}
+  });
+}
+function closePositionDetail(){
+  document.getElementById('positionDetailOverlay').classList.remove('open');
+  if(positionDetailChart){positionDetailChart.destroy();positionDetailChart=null;}
+  _positionDetailP=null;
+}
+function togglePositionDetailEdit(){
+  if(!_positionDetailP)return;
+  _positionDetailEditOpen=!_positionDetailEditOpen;
+  const wrap=document.getElementById('positionDetailEditWrap');
+  const btn=document.getElementById('positionDetailEditBtn');
+  if(_positionDetailEditOpen){
+    wrap.innerHTML=renderPositionEditFields(_positionDetailP);
+    wrap.style.display='block';
+    btn.textContent='✓ Done';
+  } else {
+    wrap.style.display='none';
+    wrap.innerHTML='';
+    btn.textContent='✎ Edit';
+  }
+}
+// Keeps the open position-detail modal's edit fields and chart in sync whenever the underlying
+// data changes elsewhere (deposits, target-rate edits, price refresh) — mirrors how the old
+// inline edit panel used to just re-render as part of the card.
+function refreshPositionDetailEdit(){
+  if(!_positionDetailP)return;
+  if(!document.getElementById('positionDetailOverlay').classList.contains('open'))return;
+  renderPositionDetailChart(_positionDetailP);
+  if(_positionDetailEditOpen){
+    document.getElementById('positionDetailEditWrap').innerHTML=renderPositionEditFields(_positionDetailP);
+  }
+}
+function openBreakdown(title,rows){
+  document.getElementById('breakdownTitle').textContent=title;
+  document.getElementById('breakdownList').innerHTML=rows.length?rows.join(''):'<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No positions yet.</p>';
+  document.getElementById('breakdownOverlay').classList.add('open');
+}
+function closeBreakdown(){document.getElementById('breakdownOverlay').classList.remove('open');}
+// "Total rewards" KPI, broken out by protocol — which ones actually made up that total.
+function openRewardsBreakdown(){
+  const months=getMonths();
+  const totalRewards=months.reduce((s,m)=>s+(RAW[m].total||0),0);
+  const entries=allPlatformNames().map(p=>{
+    const v=months.reduce((s,m)=>{const agg=aggRows(RAW[m].rows)[p];return s+(agg?agg.v:0);},0);
+    return {p,v};
+  }).filter(e=>Math.abs(e.v)>0.001);
+  entries.sort((a,b)=>b.v-a.v);
+  const rows=entries.map(({p,v})=>{
+    const pct=(totalRewards&&Math.abs(totalRewards)>0.001)?(v/totalRewards*100):null;
+    return `<div class="manage-row">
+      <span class="manage-name"><span style="width:8px;height:8px;border-radius:50%;background:${gc(p)};display:inline-block;margin-right:6px"></span>${p}</span>
+      <span class="${v>=0?'pos':'neg'}" style="font-family:var(--font-mono);font-size:13px;min-width:70px;text-align:right">${fmt(v)}</span>
+      ${pct!=null?`<span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);min-width:50px;text-align:right">${pct.toFixed(1)}%</span>`:''}
+    </div>`;
+  });
+  openBreakdown(`Rewards by protocol — total ${fmt(totalRewards)}`,rows);
+}
+// "Weighted avg. annual return" KPI, broken out by protocol — the exact same per-protocol rate
+// (target for Fixed, actual computed rate for Variable) and value-weight that feed the average.
+function openAprBreakdown(){
+  const cgReady=typeof CG!=='undefined';
+  const entries=allPlatformNames().map(p=>{
+    const plat=PLATFORMS[p]||{};
+    const isFixed=plat.yieldType==='fixed';
+    const cur=latestRowForPlatform(p);
+    const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
+    const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
+    const live=cgSym?liveData[CG[cgSym].id]:null;
+    const liveVal=(live&&curQty)?live.current_price*curQty:null;
+    const val=liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
+    const evidenced=lastEvidencedReturnForPlatform(p);
+    const apr=evidenced?calcAPR(evidenced.v,evidenced.investUsd):null;
+    const effectiveApr=isFixed?plat.targetApr:apr;
+    return {p,effectiveApr,val,isFixed};
+  }).filter(e=>e.effectiveApr!=null);
+  entries.sort((a,b)=>b.effectiveApr-a.effectiveApr);
+  const rows=entries.map(({p,effectiveApr,val,isFixed})=>`<div class="manage-row">
+      <span class="manage-name"><span style="width:8px;height:8px;border-radius:50%;background:${gc(p)};display:inline-block;margin-right:6px"></span>${p}${isFixed?' <span class="token-tag">fixed</span>':''}</span>
+      <span class="${effectiveApr>=0?'pos':'neg'}" style="font-family:var(--font-mono);font-size:13px;min-width:60px;text-align:right">${fmtPct(effectiveApr)}</span>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);min-width:70px;text-align:right">${fmt(val)}</span>
+    </div>`);
+  openBreakdown('Annual return by protocol',rows);
+}
+// "Monthly avg" KPI, broken out by month — the $ total already shown on the tile, plus each
+// month's % return so a $ average alone doesn't hide how uneven the months actually were.
+function openMonthlyAvgBreakdown(){
+  const months=getMonthsForYear(activeYear).slice().reverse();
+  const rows=months.map(m=>{
+    const d=RAW[m];
+    const inv=Object.values(aggRows(d.rows)).reduce((s,x)=>s+(x.investUsd||0),0);
+    const pct=inv>0?(d.total/inv*100):null;
+    return `<div class="manage-row">
+      <span class="manage-name">${m}</span>
+      <span class="${d.total>=0?'pos':'neg'}" style="font-family:var(--font-mono);font-size:13px;min-width:70px;text-align:right">${fmt(d.total)}</span>
+      <span class="${pct==null?'neu':(pct>=0?'pos':'neg')}" style="font-family:var(--font-mono);font-size:11px;min-width:55px;text-align:right">${pct!=null?fmtPct(pct):'—'}</span>
+    </div>`;
+  });
+  openBreakdown('Monthly average return',rows);
+}
+// "Months" KPI — a quick picker to jump straight into any tracked month's data.
+function openMonthsBreakdown(){
+  const months=getMonthsForYear(activeYear).slice().reverse();
+  const rows=months.map(m=>`<div class="manage-row" style="cursor:pointer" onclick="closeBreakdown();jumpToMonth('${m}')">
+      <span class="manage-name">${m}</span>
+      <span class="${RAW[m].total>=0?'pos':'neg'}" style="font-family:var(--font-mono);font-size:13px">${fmt(RAW[m].total)}</span>
+    </div>`);
+  openBreakdown('Jump to month',rows);
+}
+function jumpToMonth(m){
+  activeYear=getYear(m);
+  active=m;
+  buildNav();
+  renderAll(m);
+  replayFade(document.getElementById('kpiGrid'));
+  replayFade(document.querySelector('#screen-returns .charts-grid'));
+  replayFade(document.getElementById('protoTableWrap'));
 }
 function removePositionMonth(p,month){
   if(!confirm(`Remove ${p}'s entry for ${month}? Other positions in that month are unaffected.`))return;
@@ -1523,36 +2281,6 @@ function removePositionMonth(p,month){
   showToast(`Removed ${p} from ${month}`,'success');
 }
 
-// ── FLOW 3: News sources ──
-function openSourcesModal(){renderSourcesList();document.getElementById('sourcesOverlay').classList.add('open');}
-function closeSources(){document.getElementById('sourcesOverlay').classList.remove('open');}
-function renderSourcesList(){
-  const el=document.getElementById('sourcesPositionList');
-  if(!el)return;
-  const names=allPlatformNames();
-  if(!names.length){el.innerHTML='<p style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one via Portfolio update first.</p>';return;}
-  el.innerHTML=names.map((p,idx)=>{
-    const plat=PLATFORMS[p]||{};
-    const sources=plat.sources||[];
-    const chips=sources.length?sources.map((s,i)=>`<span class="token-tag" style="display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0">${SRC_ICON[s.type]||'🌐'} ${escHtml(s.url)}<span onclick="removePlatformSource('${p}',${i})" style="cursor:pointer;color:var(--red);font-weight:600">×</span></span>`).join('')
-      :'<span style="color:var(--muted2);font-size:10px">no sources yet</span>';
-    return `<div class="manage-row" style="flex-direction:column;align-items:stretch;gap:8px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="manage-name">${p}</span>${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
-      </div>
-      <div>${chips}</div>
-      <div style="display:flex;gap:6px">
-        <select class="form-select" id="srcType_${idx}" style="max-width:110px">
-          <option value="website">Website</option>
-          <option value="x">X</option>
-          <option value="telegram">Telegram</option>
-        </select>
-        <input class="form-input" id="srcUrl_${idx}" placeholder="https:// or @handle" style="flex:1"/>
-        <button class="btn" style="padding:4px 10px;font-size:11px" onclick="addPlatformSource('${p}',${idx})">+ Add</button>
-      </div>
-    </div>`;
-  }).join('');
-}
 function deleteMonth(month){
   if(!confirm(`Delete ${month}?`))return;
   delete RAW[month];active='ALL';
@@ -1621,9 +2349,19 @@ function showToast(msg,type='success'){
 document.getElementById('entryOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEntry();});
 document.getElementById('addPositionOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddPositionModal();});
 document.getElementById('manageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeManage();});
+document.getElementById('coinDetailOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCoinDetail();});
+document.getElementById('positionDetailOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePositionDetail();});
+document.getElementById('breakdownOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeBreakdown();});
+document.getElementById('addCoinOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddCoin();});
+document.getElementById('positionsManageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePositionsManageModal();});
 document.getElementById('sourcesOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSources();});
-document.getElementById('quickListOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeQuickList();});
-document.getElementById('positionsManageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeManagePositionsModal();});
+function openAddCoin(){
+  document.getElementById('addCoinOverlay').classList.add('open');
+  const input=document.getElementById('newCoinQuery');
+  input.value='';
+  setTimeout(()=>input.focus(),0);
+}
+function closeAddCoin(){document.getElementById('addCoinOverlay').classList.remove('open');}
 
 // ── LIVE PRICES (declared before the initial render call — renderPositionList needs CG/liveData on first paint) ──
 const DEFAULT_CG = {
@@ -1662,15 +2400,35 @@ function renderManageCoinsList(){
     <span onclick="removeCoin('${sym}')" style="cursor:pointer;color:var(--red);font-weight:600">×</span>
   </span>`).join('');
 }
-function addCoinFromForm(){
-  const sym=document.getElementById('newCoinSym').value;
-  const id=document.getElementById('newCoinId').value;
-  const name=document.getElementById('newCoinName').value;
-  if(addCoin(sym,id,name)){
-    document.getElementById('newCoinSym').value='';
-    document.getElementById('newCoinId').value='';
-    document.getElementById('newCoinName').value='';
+// Resolves a single free-text query (coin name, symbol, or CoinGecko ID — any one is enough)
+// against CoinGecko's public search, which ranks by relevance/market cap, so the top result is
+// almost always the right coin (e.g. "doge" and "SOL" both resolve correctly on their own).
+async function addCoinFromForm(){
+  const input=document.getElementById('newCoinQuery');
+  const query=(input.value||'').trim();
+  if(!query){showToast('Enter a coin name or ID','error');return;}
+  const btn=document.getElementById('newCoinBtn');
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  try{
+    const r=await fetch('https://api.coingecko.com/api/v3/search?query='+encodeURIComponent(query),{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    let match=(data.coins||[])[0];
+    if(!match){
+      // Search misses exact CoinGecko IDs that carry a disambiguation suffix (e.g. "avalanche-2")
+      // since it matches on name/symbol, not raw ID strings — fall back to a direct ID lookup.
+      const idRes=await fetch('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(query.toLowerCase())+'?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false',{signal:AbortSignal.timeout(8000)});
+      if(idRes.ok){
+        const d=await idRes.json();
+        match={id:d.id,symbol:d.symbol,name:d.name};
+      }
+    }
+    if(!match)throw new Error('No matching coin found');
+    if(addCoin(match.symbol,match.id,match.name)){input.value='';closeAddCoin();}
+  }catch(e){
+    showToast('Could not find that coin: '+((e&&e.message)||e),'error');
   }
+  if(btn){btn.textContent='+ Add';btn.disabled=false;}
 }
 function addCoin(sym,id,name){
   sym=(sym||'').trim().toUpperCase();
@@ -1686,33 +2444,15 @@ function addCoin(sym,id,name){
   return true;
 }
 function removeCoin(sym){
-  if(!CG[sym])return;
-  if(!confirm('Stop tracking '+sym+'? Any position using this symbol will lose its live price.'))return;
+  if(!CG[sym])return false;
+  if(!confirm('Stop tracking '+sym+'? Any position using this symbol will lose its live price.'))return false;
   delete CG[sym];
   saveCoins();
   SYMS=Object.keys(CG);IDS=SYMS.map(s=>CG[s].id).join(',');
   const el=document.getElementById('uc_'+sym); if(el)el.remove();
   renderManageCoinsList();
   showToast(sym+' removed','success');
-}
-
-function renderAlerts(){
-  const el=document.getElementById('alertsList');
-  const upd=document.getElementById('alertsUpdated');
-  if(!el)return;
-  const list=(typeof ALERTS!=='undefined'?ALERTS:[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
-  if(!list.length){
-    el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No alerts yet — monitoring not set up.</div>';
-    if(upd)upd.textContent='';
-    return;
-  }
-  if(upd)upd.textContent='Last checked: '+(list[0].date||'');
-  el.innerHTML=list.map(a=>`
-    <div class="alert-card severity-${a.severity||'info'}">
-      <div class="alert-meta">${escHtml(a.date||'')} · ${escHtml(a.platform||'')}${a.sourceUrl?` · <a href="${escHtml(a.sourceUrl)}" target="_blank" rel="noopener" style="color:var(--muted)">source</a>`:''}</div>
-      <div class="alert-title">${escHtml(a.title||'')}${a.actionRequired?'<span class="emergency-badge">🚨 Emergency</span>':''}</div>
-      <div class="alert-summary">${escHtml(a.summary||'')}</div>
-    </div>`).join('');
+  return true;
 }
 
 // ── SCREEN TABS ──
@@ -1724,10 +2464,10 @@ function switchScreen(name){
   // Chart.js measures canvas size at creation time — a canvas inside a display:none
   // panel gets sized 0x0, so re-render any charts on the panel we just revealed.
   if(name==='returns'){renderBar(active);renderProtoTable(active);}
-  if(name==='portfolio'){renderValueChart();}
+  if(name==='portfolio'){renderValueChart();renderBtcValueChart();}
 }
 
-loadData();loadPlatforms();activeYear=getYears().slice(-1)[0]||'ALL';buildNav();renderAll('ALL');renderAlerts();syncSourcesFromFile();syncAllAprs();
+loadData();loadPlatforms();migrateLegacyAccrualModes();migrateVariableReturnsToRewardBased();activeYear=getYears().slice(-1)[0]||'ALL';buildNav();renderAll('ALL');renderBtcValueChart();renderAlerts();syncSourcesFromFile();
 
 // ── Price formatting ──
 function fmtPrice(p){
@@ -1788,6 +2528,21 @@ function renderPriceCards(){
   const msg = document.getElementById('priceLoadMsg');
   if(msg) msg.remove();
 
+  // Only the single best and single worst performer (over whichever range is active) get a big,
+  // faded background face — smiling with a subtle green glow for the winner, sad with a subtle
+  // red glow for the loser. Recomputed fresh on every range switch (24h/7d/30d/1y), since who's
+  // best/worst can flip between ranges.
+  let bestSym=null,worstSym=null,bestChg=-Infinity,worstChg=Infinity;
+  SYMS.forEach(sym=>{
+    const d=liveData[CG[sym].id];
+    if(!d)return;
+    const chg=getChg(d,activeRange);
+    if(chg==null)return;
+    if(chg>bestChg){bestChg=chg;bestSym=sym;}
+    if(chg<worstChg){worstChg=chg;worstSym=sym;}
+  });
+  if(bestSym===worstSym){bestSym=null;worstSym=null;} // fewer than 2 comparable coins — nothing to rank
+
   SYMS.forEach(function(sym){
     const d = liveData[CG[sym].id];
     if(!d) return;
@@ -1796,35 +2551,130 @@ function renderPriceCards(){
     const pos = chg == null || chg >= 0;
     const ps  = fmtPrice(d.current_price);
     const pct = chg != null ? (pos?'+':'')+chg.toFixed(2)+'% '+activeRange : '—';
+    const face = sym===bestSym?'😊':(sym===worstSym?'😢':'');
+    const glowClass = sym===bestSym?'pos-glow':(sym===worstSym?'neg-glow':'');
 
     const existing = document.getElementById('uc_'+sym);
     if(!existing){
       const div = document.createElement('div');
-      div.className = 'ucrd'; div.id = 'uc_'+sym;
+      div.className = ('ucrd '+glowClass).trim(); div.id = 'uc_'+sym;
+      div.onclick = () => openCoinDetail(sym);
+      const logoImg = d.image?('<img src="'+d.image+'" style="width:22px;height:22px;border-radius:50%;flex-shrink:0" onerror="this.style.display=\'none\'"/>'):('<span style="width:14px;height:14px;border-radius:50%;background:'+CG[sym].color+';flex-shrink:0;display:inline-block"></span>');
       div.innerHTML =
-        '<div class="ucrd-top">'
-          +'<div style="display:flex;align-items:center;gap:5px">'
-          +'<span style="width:8px;height:8px;border-radius:50%;background:'+CG[sym].color+';flex-shrink:0"></span>'
+        '<span class="ucrd-face-bg" id="uface_'+sym+'">'+face+'</span>'
+        +'<div class="ucrd-body">'
+        +'<div class="ucrd-top">'
+          +'<div style="display:flex;align-items:center;gap:7px">'
+          +logoImg
           +'<span class="ucrd-sym">'+sym+'</span></div>'
           +'<span class="ucrd-name">'+CG[sym].name+'</span>'
         +'</div>'
         +'<div class="ucrd-price '+(pos?'pos':'neg')+'" id="upr_'+sym+'">'+ps+'</div>'
         +'<div class="ucrd-chg  '+(pos?'pos':'neg')+'" id="uch_'+sym+'">'+pct+'</div>'
+        +'</div>'
         ;
       grid.appendChild(div);
     } else {
       const pp = document.getElementById('upr_'+sym);
       const cc = document.getElementById('uch_'+sym);
+      const ff = document.getElementById('uface_'+sym);
       if(pp){ pp.textContent = ps;  pp.className = 'ucrd-price '+(pos?'pos':'neg'); }
       if(cc){ cc.textContent = pct; cc.className = 'ucrd-chg  '+(pos?'pos':'neg'); }
+      if(ff){ ff.textContent = face; }
+      existing.className = ('ucrd '+glowClass).trim();
     }
   });
 
   const fixedChanged=refreshFixedPositions();
   const pendingChanged=flushPendingAdjustments();
   if(fixedChanged||pendingChanged){buildNav();renderAll(active);} else renderPositionList();
+  renderBtcValueChart(); // cheap once cached — just picks up the freshly-loaded live BTC price
 }
 
+// Dollar value, by month, of every tracked position denominated in this coin — same carry-
+// forward rule as the main portfolio chart (a position not re-entered in a given month still
+// held its prior value), plus the current point marked to live price like everywhere else.
+// Raw daily/hourly price series for one coin over the given number of days — used for the pure
+// price chart (Live Prices → click a coin). CoinGecko's free tier is rate-limited (a few
+// requests/min); one short retry clears most transient 429s without the user noticing.
+async function fetchRawPriceSeries(coinId,days){
+  const url=`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+  let r;
+  try{
+    r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+    if(r.status===429)throw new Error('HTTP 429');
+  }catch(e){
+    await new Promise(res=>setTimeout(res,1500));
+    r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+  }
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const data=await r.json();
+  const prices=data.prices||[];
+  if(!prices.length)throw new Error('no price history returned');
+  return prices;
+}
+let coinDetailChart=null,_coinDetailSym=null,_coinDetailReq=null,_coinDetailRange='7';
+function openCoinDetail(sym){
+  _coinDetailSym=sym;
+  _coinDetailRange='7';
+  document.querySelectorAll('#coinDetailRangeBtns .range-btn').forEach((b,i)=>b.classList.toggle('active',i===1));
+  document.getElementById('coinDetailTitle').textContent=(CG[sym]&&CG[sym].name)?`${CG[sym].name} (${sym})`:sym;
+  document.getElementById('coinDetailRemoveBtn').onclick=()=>{ if(removeCoin(sym))closeCoinDetail(); };
+  document.getElementById('coinDetailOverlay').classList.add('open');
+  loadCoinDetailChart(sym);
+}
+async function loadCoinDetailChart(sym){
+  const reqId=sym+'_'+_coinDetailRange+'_'+Date.now(); // guards a slower older request from clobbering a newer one
+  _coinDetailReq=reqId;
+  const chartWrap=document.getElementById('coinDetailChartWrap');
+  const emptyEl=document.getElementById('coinDetailEmpty');
+  const priceNote=document.getElementById('coinDetailPriceNote');
+  priceNote.style.display='none';
+  const coinId=CG[sym]&&CG[sym].id;
+  if(!coinId){chartWrap.style.display='none';emptyEl.style.display='block';return;}
+  const daysMap={'1':1,'7':7,'30':30,'365':365};
+  const days=daysMap[_coinDetailRange]||7;
+  let prices=null,err=null;
+  try{ prices=await fetchRawPriceSeries(coinId,days); }
+  catch(e){ err=(e&&e.message)||String(e); }
+  if(_coinDetailReq!==reqId)return; // a newer request has since taken over
+  if(coinDetailChart){coinDetailChart.destroy();coinDetailChart=null;}
+  if(!prices){
+    chartWrap.style.display='none';
+    emptyEl.style.display='none';
+    priceNote.style.display='flex';
+    priceNote.innerHTML=`<span>⚠ Couldn't load price history (${escHtml(err)}) — likely a temporary rate limit.</span><button class="btn" style="padding:2px 10px;font-size:10px;flex-shrink:0" onclick="loadCoinDetailChart('${sym}')">↻ Retry</button>`;
+    return;
+  }
+  chartWrap.style.display='block';
+  emptyEl.style.display='none';
+  const fmtLabel=ts=>{
+    const d=new Date(ts);
+    return days<=1?d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  };
+  const isUp=prices[prices.length-1][1]>=prices[0][1];
+  const lineColor=isUp?'#22c55e':'#ef4444';
+  coinDetailChart=new Chart(document.getElementById('coinDetailChart').getContext('2d'),{
+    type:'line',
+    data:{labels:prices.map(([ts])=>fmtLabel(ts)),datasets:[{label:sym,data:prices.map(([,p])=>p),borderColor:lineColor,borderWidth:2,backgroundColor:lineColor+'1f',fill:true,tension:0.25,pointRadius:0}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:c=>' '+fmtPrice(c.raw)}}},
+      scales:{
+        y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},callback:v=>fmtPrice(v)},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},
+        x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:9},maxTicksLimit:8},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}
+      }}
+  });
+}
+function setCoinDetailRange(range,btn){
+  _coinDetailRange=range;
+  document.querySelectorAll('#coinDetailRangeBtns .range-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  loadCoinDetailChart(_coinDetailSym);
+}
+function closeCoinDetail(){
+  document.getElementById('coinDetailOverlay').classList.remove('open');
+  if(coinDetailChart){coinDetailChart.destroy();coinDetailChart=null;}
+}
 function getChg(d, range){
   if(range === '24h') return d.price_change_percentage_24h;
   if(range === '7d')  return d.price_change_percentage_7d_in_currency;
@@ -1839,6 +2689,7 @@ function setRange(range, btn){
   document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   renderPriceCards();   // update % labels immediately
+  renderBtcValueChart(); // same range window applied to the portfolio-in-BTC chart
   // Reload sparklines for new range
 
 }
@@ -1854,22 +2705,22 @@ function renderPositionsPie(){
   if(!canvas)return;
   if(distPieChart)distPieChart.destroy();
   const names=allPlatformNames();
-  const months=getMonths();
-  const latest=months[months.length-1];
-  const latestAgg=latest?aggRows(RAW[latest].rows):{};
   const cgReady=typeof CG!=='undefined';
-  const labels=[],values=[],colors=[];
+  const entries=[];
   names.forEach(p=>{
     const plat=PLATFORMS[p]||{};
     const isFixed=plat.yieldType==='fixed';
-    const cur=latestAgg[p];
+    const cur=latestRowForPlatform(p);
     const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
     const cgSym=(cgReady&&plat.symbol&&CG[plat.symbol.toUpperCase()])?plat.symbol.toUpperCase():null;
     const live=cgSym?liveData[CG[cgSym].id]:null;
     const liveVal=(live&&curQty)?live.current_price*curQty:null;
     const val=liveVal!=null?liveVal:(cur?cur.investUsd||0:0);
-    if(val>0){labels.push(p);values.push(Math.round(val));colors.push(gc(p));}
+    if(val>0)entries.push({p,val});
   });
+  // Largest position first — the legend should read as a ranking, not an alphabetical list.
+  entries.sort((a,b)=>b.val-a.val);
+  const labels=entries.map(e=>e.p),values=entries.map(e=>Math.round(e.val)),colors=entries.map(e=>gc(e.p));
   if(!values.length){
     canvas.style.opacity='0.3';
     if(legEl)legEl.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">No valued positions yet</div>';
@@ -1896,7 +2747,7 @@ function renderPositionsPie(){
   });
 }
 
-window.addEventListener('load', ()=>{ setTimeout(loadPrices, 500); });
+window.addEventListener('load', ()=>{ setTimeout(loadPrices, 500); setTimeout(checkWeeklyAprSyncs, 800); });
 
 </script>
 </body>
