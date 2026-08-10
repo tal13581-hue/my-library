@@ -284,7 +284,7 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
     <!-- PORTFOLIO VALUE IN BTC -->
     <div class="chart-card" style="margin-bottom:28px">
       <div class="chart-header">
-        <span class="chart-title">Portfolio value in ₿BTC</span>
+        <span class="chart-title">Portfolio in BTC</span>
         <span id="btcValueStatus" style="font-size:10px;font-family:var(--font-mono);color:var(--muted)"></span>
       </div>
       <div style="position:relative;flex:1;min-height:240px"><canvas id="btcValueChart"></canvas></div>
@@ -1582,10 +1582,24 @@ async function renderBtcValueChart(){
     if(liveBtcPrice)btcAmounts[btcAmounts.length-1]=totals[totals.length-1]/liveBtcPrice;
     if(statusEl)statusEl.textContent='';
     if(btcValueChart){btcValueChart.destroy();btcValueChart=null;}
+    // Only a couple of reference levels on the Y axis — the low and high of what's on screen
+    // (plus "now" if it isn't already one of those) — so it reads as "here's the band, and here's
+    // where you are in it" instead of a dense, hard-to-scan tick ladder.
+    const validAmounts=btcAmounts.filter(v=>v!=null);
+    const dataMin=Math.min(...validAmounts),dataMax=Math.max(...validAmounts);
+    const lastVal=btcAmounts[btcAmounts.length-1];
+    const span=dataMax-dataMin;
+    const yTickVals=new Set([dataMin,dataMax]);
+    if(lastVal!=null&&span>0&&Math.abs(lastVal-dataMax)>span*0.03&&Math.abs(lastVal-dataMin)>span*0.03)yTickVals.add(lastVal);
+    const yTicks=[...yTickVals].sort((a,b)=>a-b);
+    // Highlight only the current/last point on the line — a single clear marker for "where the
+    // portfolio is right now" rather than a dot on every interpolated point.
+    const pointRadii=btcAmounts.map((_,i)=>i===btcAmounts.length-1?6:0);
     btcValueChart=new Chart(canvas.getContext('2d'),{
       type:'line',
       data:{labels,datasets:[
-        {label:'BTC',data:btcAmounts,borderColor:'#f7931a',borderWidth:2,backgroundColor:'rgba(247,147,26,0.18)',fill:'origin',tension:0.3,pointRadius:0}
+        {label:'BTC',data:btcAmounts,borderColor:'#f7931a',borderWidth:2,backgroundColor:'rgba(247,147,26,0.18)',fill:'origin',tension:0.3,
+          pointRadius:pointRadii,pointHoverRadius:7,pointBackgroundColor:'#f7931a',pointBorderColor:'#fff',pointBorderWidth:2}
       ]},
       options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
         plugins:{legend:{display:false},tooltip:{
@@ -1599,7 +1613,9 @@ async function renderBtcValueChart(){
           }
         }},
         scales:{
-          y:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:11},callback:v=>fmtBtcAmount(v)+' BTC'},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'rgba(255,255,255,0.07)'}},
+          y:{afterBuildTicks:scale=>{scale.ticks=yTicks.map(v=>({value:v}));},
+            ticks:{color:'#c8cdd6',font:{family:"'IBM Plex Mono'",size:13,weight:'700'},callback:v=>fmtBtcAmount(v)+' BTC'},
+            grid:{color:'rgba(255,255,255,0.1)'},border:{color:'rgba(255,255,255,0.07)'}},
           x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},maxTicksLimit:10},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}
         }}
     });
