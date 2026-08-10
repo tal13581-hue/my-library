@@ -1567,12 +1567,40 @@ async function renderBtcValueChart(){
     }
     // Same 24h/7d/30d/1y window as the Live Prices range buttons above, applied to the
     // portfolio-value history instead of a single coin's price.
-    const rangeDays=RANGE_DAYS[activeRange]||365;
-    const cutoff=Date.now()-rangeDays*24*3600*1000;
-    let startIdx=full.dates.findIndex(d=>d.getTime()>=cutoff);
-    if(startIdx===-1)startIdx=full.dates.length-1;
-    const dates=full.dates.slice(startIdx),totals=full.totals.slice(startIdx);
-    const labels=dates.map(d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    let dates,totals;
+    if(activeRange==='24h'){
+      // portfolioValueHistory() only anchors one point per day, so a plain 24h slice is just
+      // two points — a dead straight line. Sample several evenly-spaced moments across the last
+      // 24h instead: the portfolio $ total is interpolated linearly between yesterday's and
+      // today's anchor (same as everywhere else), but each sample is divided by the REAL BTC
+      // price at that exact moment (from the cached intraday series), so genuine intraday BTC
+      // price movement — not fabricated noise — is what puts the wiggle in the line.
+      const SEGMENTS=6;
+      const nowMs=Date.now(),startMs=nowMs-24*3600*1000;
+      const endTotal=full.totals[full.totals.length-1];
+      let startTotal=full.totals[0];
+      for(let i=0;i<full.dates.length-1;i++){
+        const t0=full.dates[i].getTime(),t1=full.dates[i+1].getTime();
+        if(t0<=startMs&&startMs<=t1){
+          const frac=t1>t0?(startMs-t0)/(t1-t0):0;
+          startTotal=full.totals[i]+(full.totals[i+1]-full.totals[i])*frac;
+          break;
+        }
+      }
+      dates=[];totals=[];
+      for(let i=0;i<=SEGMENTS;i++){
+        const frac=i/SEGMENTS;
+        dates.push(new Date(startMs+frac*24*3600*1000));
+        totals.push(startTotal+(endTotal-startTotal)*frac);
+      }
+    } else {
+      const rangeDays=RANGE_DAYS[activeRange]||365;
+      const cutoff=Date.now()-rangeDays*24*3600*1000;
+      let startIdx=full.dates.findIndex(d=>d.getTime()>=cutoff);
+      if(startIdx===-1)startIdx=full.dates.length-1;
+      dates=full.dates.slice(startIdx);totals=full.totals.slice(startIdx);
+    }
+    const labels=dates.map(d=>activeRange==='24h'?d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
     if(labels.length)labels[labels.length-1]='Now';
 
     const btcAmounts=btcAmountSeries(dates,totals,_btcSeriesCache);
@@ -1582,16 +1610,22 @@ async function renderBtcValueChart(){
     if(liveBtcPrice)btcAmounts[btcAmounts.length-1]=totals[totals.length-1]/liveBtcPrice;
     if(statusEl)statusEl.textContent='';
     if(btcValueChart){btcValueChart.destroy();btcValueChart=null;}
-    // Only a couple of reference levels on the Y axis — the low and high of what's on screen
-    // (plus "now" if it isn't already one of those) — so it reads as "here's the band, and here's
-    // where you are in it" instead of a dense, hard-to-scan tick ladder.
+    // Only a couple of reference levels on the Y axis — the low and high of what's on screen —
+    // plus the current value as its own small, distinctly-coloured marker (not merged into
+    // min/max just because it's numerically close to one of them; only skipped if it would
+    // literally display the same rounded number).
     const validAmounts=btcAmounts.filter(v=>v!=null);
     const dataMin=Math.min(...validAmounts),dataMax=Math.max(...validAmounts);
     const lastVal=btcAmounts[btcAmounts.length-1];
-    const span=dataMax-dataMin;
-    const yTickVals=new Set([dataMin,dataMax]);
-    if(lastVal!=null&&span>0&&Math.abs(lastVal-dataMax)>span*0.03&&Math.abs(lastVal-dataMin)>span*0.03)yTickVals.add(lastVal);
-    const yTicks=[...yTickVals].sort((a,b)=>a-b);
+    const tickMeta=new Map();
+    const usedLabels=new Set();
+    [dataMin,dataMax].forEach(v=>{const lbl=fmtBtcAmount(v);if(!usedLabels.has(lbl)){usedLabels.add(lbl);tickMeta.set(v,false);}});
+    if(lastVal!=null){
+      const lbl=fmtBtcAmount(lastVal);
+      if(!usedLabels.has(lbl)){usedLabels.add(lbl);tickMeta.set(lastVal,true);}
+    }
+    const yTicks=[...tickMeta.keys()].sort((a,b)=>a-b);
+    const CURRENT_LINE_COLOR='#60a5fa';
     // Highlight only the current/last point on the line — a single clear marker for "where the
     // portfolio is right now" rather than a dot on every interpolated point.
     const pointRadii=btcAmounts.map((_,i)=>i===btcAmounts.length-1?6:0);
@@ -1614,8 +1648,16 @@ async function renderBtcValueChart(){
         }},
         scales:{
           y:{afterBuildTicks:scale=>{scale.ticks=yTicks.map(v=>({value:v}));},
-            ticks:{color:'#c8cdd6',font:{family:"'IBM Plex Mono'",size:13,weight:'700'},callback:v=>fmtBtcAmount(v)+' BTC'},
-            grid:{color:'rgba(255,255,255,0.1)'},border:{color:'rgba(255,255,255,0.07)'}},
+            ticks:{
+              color:ctx=>tickMeta.get(ctx.tick.value)?CURRENT_LINE_COLOR:'#c8cdd6',
+              font:ctx=>tickMeta.get(ctx.tick.value)?{family:"'IBM Plex Mono'",size:10,weight:'500'}:{family:"'IBM Plex Mono'",size:13,weight:'700'},
+              callback:v=>fmtBtcAmount(v)+' BTC'
+            },
+            grid:{
+              color:ctx=>tickMeta.get(ctx.tick.value)?CURRENT_LINE_COLOR:'rgba(255,255,255,0.1)',
+              lineWidth:1
+            },
+            border:{color:'rgba(255,255,255,0.07)'}},
           x:{ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:10},maxTicksLimit:10},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}}
         }}
     });
