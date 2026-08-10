@@ -79,16 +79,20 @@ main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);color:var(--muted)}
 .legend-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 
-/* ── PROTOCOL TABLE ── */
-.proto-table{width:100%;border-collapse:collapse;font-size:11px}
-.proto-table th{font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);padding:0 6px 6px;text-align:right;font-weight:400}
-.proto-table th:first-child{text-align:left}
-.proto-table td{padding:4px 6px;font-family:var(--font-mono);border-top:1px solid var(--border);text-align:right;vertical-align:middle}
-.proto-table td:first-child{text-align:left}
-.proto-table tr:hover td{background:var(--bg3)}
-.proto-dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle}
-.proto-icon{width:16px;height:16px;border-radius:50%;margin-right:6px;vertical-align:middle;object-fit:cover}
-.token-tag{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;display:inline-block}
+/* ── PROTOCOL BREAKDOWN LIST ── */
+.proto-row-header{display:grid;grid-template-columns:2.1fr .68fr .68fr .68fr;gap:8px;padding:0 12px 8px;font-size:9px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted2)}
+.proto-row-header span{text-align:right}
+.proto-row-header span:first-child{text-align:left}
+.proto-list{display:flex;flex-direction:column;gap:3px}
+.proto-row{display:grid;grid-template-columns:2.1fr .68fr .68fr .68fr;gap:8px;align-items:center;padding:9px 12px;border-radius:8px;font-family:var(--font-mono);font-size:12px;transition:background .15s}
+.proto-row:hover{background:var(--bg3)}
+.proto-row>span{text-align:right}
+.proto-row-name{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;text-align:left!important}
+.proto-row-name .pname{overflow-wrap:break-word}
+.proto-dot{display:inline-block;width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.proto-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;object-fit:cover}
+.token-tag{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;display:inline-block;flex-shrink:0}
+@media(max-width:480px){.proto-row,.proto-row-header{grid-template-columns:1.9fr .6fr .6fr .6fr;gap:5px;font-size:11px}}
 
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
@@ -235,7 +239,8 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       <div class="kpi"><div class="kpi-label">Total rewards (all months)</div><div class="kpi-value neu" id="portfolioTotalRewards">$0</div></div>
       <div class="kpi"><div class="kpi-label">Weighted avg. annual return</div><div class="kpi-value neu" id="portfolioWeightedApr">—</div></div>
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px">
+      <button class="btn" onclick="openManagePositionsModal()">⚙ Manage positions</button>
       <button class="btn btn-accent" onclick="openAddPositionModal()">💼 Add position</button>
     </div>
     <div id="positionsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:28px"></div>
@@ -418,6 +423,37 @@ footer{border-top:1px solid var(--border);padding:16px 32px;display:flex;align-i
       <button class="btn" onclick="closeAddPositionModal()">Cancel</button>
       <button class="btn btn-accent" onclick="addPosition()">+ Add position</button>
     </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     QUICK LIST MODAL — shared by "Monthly avg" breakdown and "Months" jump-picker
+     ══════════════════════════════════════════════════ -->
+<div class="overlay" id="quickListOverlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title" id="quickListTitle">List</span>
+      <button class="modal-close" onclick="closeQuickList()">×</button>
+    </div>
+    <div class="modal-body" id="quickListBody" style="padding:10px 20px"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeQuickList()">Close</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MANAGE POSITIONS MODAL — single place to edit/remove any position
+     ══════════════════════════════════════════════════ -->
+<div class="overlay" id="positionsManageOverlay">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <span class="modal-title">Manage positions</span>
+      <button class="modal-close" onclick="closeManagePositionsModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:16px">Click a position to edit its details, adjust its quantity, or remove it.</p>
+      <div id="positionsManageList"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeManagePositionsModal()">Close</button></div>
   </div>
 </div>
 
@@ -922,10 +958,10 @@ function renderKPI(month){
     if(last)Object.values(aggRows(RAW[last].rows)).forEach(d=>{inv+=d.investUsd||0;});
     el.innerHTML=`
       <div class="kpi"><div class="kpi-label">Total return</div><div class="kpi-value ${sum>=0?'pos':'neg'}">${fmt(sum)}</div><div class="kpi-sub">${activeYear==='ALL'?'all time':'20'+activeYear}</div></div>
-      <div class="kpi"><div class="kpi-label">Monthly avg</div><div class="kpi-value neu">${fmt(Math.round(sum/(months.length||1)))}</div><div class="kpi-sub">per month</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="openMonthlyAvgModal()"><div class="kpi-label">Monthly avg</div><div class="kpi-value neu">${fmt(Math.round(sum/(months.length||1)))}</div><div class="kpi-sub">per month · click for %</div></div>
       <div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-value neu" style="font-size:18px">${fmt(inv)}</div><div class="kpi-sub">latest snapshot</div></div>
       <div class="kpi"><div class="kpi-label">Worst month</div><div class="kpi-value neg" style="font-size:16px">${months.length?fmt(wV):'—'}</div><div class="kpi-sub">${wM||'—'}</div></div>
-      <div class="kpi"><div class="kpi-label">Months</div><div class="kpi-value neu">${months.length}</div><div class="kpi-sub">months</div></div>`;
+      <div class="kpi" style="cursor:pointer" onclick="openMonthsListModal()"><div class="kpi-label">Months</div><div class="kpi-value neu">${months.length}</div><div class="kpi-sub">click to jump to one</div></div>`;
   } else {
     const d=RAW[month];
     const aggd=aggRows(d.rows);
@@ -978,16 +1014,12 @@ function renderProtoTable(month){
     type:'doughnut',data:{labels:posSorted.map(e=>e[0]),datasets:[{data:posSorted.map(e=>Math.round(e[1].v)),backgroundColor:posSorted.map(e=>gc(e[0])),borderWidth:0,hoverOffset:4}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1f26',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:"'IBM Plex Mono'"},bodyFont:{family:"'IBM Plex Mono'"},callbacks:{label:c=>` ${fmt(c.raw)} (${posTotal>0?((c.raw/posTotal)*100).toFixed(1):0}%)`}}}}
   });
-  const isAll=month==='ALL';
   document.getElementById('protoTableWrap').innerHTML=`
-    <table class="proto-table"><thead><tr>
-      <th>Protocol</th>${!isAll?'<th>Holdings</th>':''}${!isAll?'<th>Invested</th>':''}${!isAll?'<th>Reward</th>':''}
-      <th>Return</th><th>APR</th><th>Target</th>${!isAll?'<th></th>':''}
-    </tr></thead><tbody>
+    <div class="proto-row-header"><span>Protocol</span><span>Return</span><span>APR</span><span>Target</span></div>
+    <div class="proto-list">
     ${sorted.map(([p,d])=>{
       const apr=calcAPR(d.v,d.investUsd);
       const bc=apr!==null?(apr>=0?'var(--green)':'var(--red)'):'var(--muted)';
-      const tok=d.qty&&d.token?`${fmtQ(d.qty)} <span class="token-tag">${d.token}</span>`:'—';
       const plat=PLATFORMS[p]||{};
       const target=plat.targetApr;
       const isFixedRow=plat.yieldType==='fixed';
@@ -999,18 +1031,14 @@ function renderProtoTable(month){
       const cgSymRow=(d.token||'').toUpperCase();
       const liveRow=(typeof CG!=='undefined'&&CG[cgSymRow])?liveData[CG[cgSymRow].id]:null;
       const iconHtml=liveRow&&liveRow.image?`<img class="proto-icon" src="${liveRow.image}" alt=""/>`:`<span class="proto-dot" style="background:${gc(p)}"></span>`;
-      return `<tr>
-        <td>${iconHtml}${p}${d.token?` <span class="token-tag">${d.token}</span>`:''}${d.leverageRisk?' <span title="סיכון מינוף נלווה" style="color:#f59e0b;font-size:13px;cursor:help">⚠</span>':''}</td>
-        ${!isAll?`<td style="color:var(--muted)">${tok}</td>`:''}
-        ${!isAll?`<td>${d.investUsd?fmt(d.investUsd):'—'}</td>`:''}
-        ${!isAll?`<td style="color:var(--muted)">${d.rewardQty?('+'+fmtQ(d.rewardQty)+' '+(d.rewardToken||d.token||'')):'—'}</td>`:''}
-        <td class="${d.v>=0?'pos':'neg'}">${fmt(d.v)}</td>
-        <td style="color:${bc}">${apr!==null?fmtPct(apr):'—'}</td>
-        <td>${targetCell}</td>
-        ${!isAll?`<td><div style="display:flex;gap:4px;justify-content:flex-end"><button class="btn" style="padding:2px 7px;font-size:10px" onclick="openEntryModal('${month}')">✎</button><button class="btn btn-danger" style="padding:2px 7px;font-size:10px" onclick="removePositionMonth('${p}','${month}')">×</button></div></td>`:''}
-      </tr>`;
+      return `<div class="proto-row">
+        <div class="proto-row-name">${iconHtml}<span class="pname" title="${escHtml(p)}">${p}</span>${d.token?`<span class="token-tag">${d.token}</span>`:''}${d.leverageRisk?' <span title="סיכון מינוף נלווה" style="color:#f59e0b;font-size:13px;cursor:help">⚠</span>':''}</div>
+        <span class="${d.v>=0?'pos':'neg'}">${fmt(d.v)}</span>
+        <span style="color:${bc}">${apr!==null?fmtPct(apr):'—'}</span>
+        <span>${targetCell}</span>
+      </div>`;
     }).join('')}
-    </tbody></table>`;
+    </div>`;
 }
 
 function renderLegend(month){
@@ -1085,6 +1113,41 @@ function selectYear(yr){
 }
 function selectMonthTab(m){
   active=m;
+  buildNav();
+  renderAll(m);
+}
+
+// ── QUICK LIST MODAL — shared by "Monthly avg" breakdown and "Months" jump-picker ──
+function closeQuickList(){document.getElementById('quickListOverlay').classList.remove('open');}
+function openMonthlyAvgModal(){
+  const months=getMonthsForYear(activeYear).slice().reverse();
+  document.getElementById('quickListTitle').textContent='Monthly average return';
+  document.getElementById('quickListBody').innerHTML=months.length?months.map(m=>{
+    const d=RAW[m];
+    const inv=Object.values(aggRows(d.rows)).reduce((s,x)=>s+(x.investUsd||0),0);
+    const pct=inv>0?(d.total/inv*100):null;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px">
+      <span style="flex:1">${m}</span>
+      <span class="${d.total>=0?'pos':'neg'}" style="min-width:70px;text-align:right">${fmt(d.total)}</span>
+      <span class="${pct==null?'neu':(pct>=0?'pos':'neg')}" style="min-width:60px;text-align:right">${pct!=null?fmtPct(pct):'—'}</span>
+    </div>`;
+  }).join(''):'<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No months yet</p>';
+  document.getElementById('quickListOverlay').classList.add('open');
+}
+function openMonthsListModal(){
+  const months=getMonthsForYear(activeYear).slice().reverse();
+  document.getElementById('quickListTitle').textContent='Jump to month';
+  document.getElementById('quickListBody').innerHTML=months.length?months.map(m=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px;cursor:pointer" onclick="jumpToMonth('${m}')">
+      <span style="flex:1">${m}</span>
+      <span class="${RAW[m].total>=0?'pos':'neg'}">${fmt(RAW[m].total)}</span>
+    </div>`).join(''):'<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No months yet</p>';
+  document.getElementById('quickListOverlay').classList.add('open');
+}
+function jumpToMonth(m){
+  activeYear=getYear(m);
+  active=m;
+  closeQuickList();
   buildNav();
   renderAll(m);
 }
@@ -1318,7 +1381,7 @@ function renderPositionList(){
   const latestAgg=latest?aggRows(RAW[latest].rows):{};
   const cgReady=typeof CG!=='undefined';
   let total=0,aprWeightSum=0,aprValSum=0;
-  el.innerHTML=names.map((p,idx)=>{
+  el.innerHTML=names.map(p=>{
     const plat=PLATFORMS[p]||{};
     const isFixed=plat.yieldType==='fixed';
     const cur=latestAgg[p];
@@ -1340,6 +1403,52 @@ function renderPositionList(){
       const meets=apr!=null&&apr>=plat.targetApr;
       aprLine=`<span style="color:${meets?'var(--green)':'var(--red)'}">${apr!=null?fmtPct(apr):'—'} vs target ${plat.targetApr}%</span>`;
     }
+    return `<div class="position-card">
+      <div class="position-top">
+        <div class="position-name-wrap">
+          <span class="manage-name">${p}</span>
+          <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
+          ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+        </div>
+      </div>
+      <div class="position-value">${fmt(val)}</div>
+      <div style="font-size:10px;color:var(--muted2);font-family:var(--font-mono);margin-bottom:6px">
+        ${liveVal!=null?'● live price':'○ last snapshot'}${chg30!=null?` · 30d ${chg30>=0?'+':''}${chg30.toFixed(1)}%`:''}
+      </div>
+      <div style="font-size:11px;font-family:var(--font-mono);margin-bottom:2px">Return: ${aprLine}</div>
+      ${plat.rewardSymbol&&plat.rewardSymbol!==plat.symbol?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">Rewards paid in ${plat.rewardSymbol}</div>`:''}
+    </div>`;
+  }).join('');
+  if(totEl)totEl.textContent=fmt(total);
+  const totalRewards=getMonths().reduce((s,m)=>s+(RAW[m].total||0),0);
+  const rewardsEl=document.getElementById('portfolioTotalRewards');
+  const weightedEl=document.getElementById('portfolioWeightedApr');
+  if(rewardsEl){rewardsEl.textContent=fmt(totalRewards);rewardsEl.className='kpi-value '+(totalRewards>=0?'pos':'neg');}
+  if(weightedEl)weightedEl.textContent=aprWeightSum>0?fmtPct(aprValSum/aprWeightSum):'—';
+  renderPositionsPie();
+  if(document.getElementById('positionsManageOverlay').classList.contains('open'))renderManagePositionsModal();
+}
+function toggleEditPosition(p){
+  _openPositionEdit=(_openPositionEdit===p)?null:p;
+  renderManagePositionsModal();
+}
+// ── FLOW 1b: Manage positions modal — one consolidated place to edit/remove any position ──
+function openManagePositionsModal(){renderManagePositionsModal();document.getElementById('positionsManageOverlay').classList.add('open');}
+function closeManagePositionsModal(){document.getElementById('positionsManageOverlay').classList.remove('open');_openPositionEdit=null;}
+function renderManagePositionsModal(){
+  const el=document.getElementById('positionsManageList');
+  if(!el)return;
+  const names=allPlatformNames();
+  if(!names.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">No positions yet — add one first.</p>';return;}
+  const months=getMonths();
+  const latest=months[months.length-1];
+  const latestAgg=latest?aggRows(RAW[latest].rows):{};
+  el.innerHTML=names.map((p,idx)=>{
+    const plat=PLATFORMS[p]||{};
+    const isFixed=plat.yieldType==='fixed';
+    const cur=latestAgg[p];
+    const curQty=isFixed?fixedAccruedQty(p):(cur?cur.qty:0);
+    const open=_openPositionEdit===p;
     const historyMonths=isFixed?[]:months.filter(m=>RAW[m].rows.some(r=>r.p===p));
     const historyHtml=historyMonths.length?historyMonths.map(m=>{
       const rowsForP=RAW[m].rows.filter(r=>r.p===p);
@@ -1353,22 +1462,14 @@ function renderPositionList(){
         <button class="btn btn-danger" style="padding:2px 8px;font-size:10px" onclick="removePositionMonth('${p}','${m}')">×</button>
       </div>`;
     }).join(''):'<div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono)">No monthly entries yet</div>';
-    return `<div class="position-card">
-      <div class="position-top">
-        <div class="position-name-wrap">
-          <span class="manage-name">${p}</span>
-          <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
-          ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
-          <button class="btn" style="padding:3px 9px;font-size:10px" onclick="toggleEditPosition('${p}')">✎ Edit</button>
-        </div>
+    return `<div class="manage-row" style="flex-direction:column;align-items:stretch;gap:0;padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer" onclick="toggleEditPosition('${p}')">
+        <span class="manage-name" style="flex:1">${p}</span>
+        <span class="yield-badge ${isFixed?'fixed':'variable'}">${isFixed?'Fixed':'Variable'}</span>
+        ${plat.symbol?`<span class="token-tag">${plat.symbol}</span>`:''}
+        <span class="caret" style="display:inline-block;transform:rotate(${open?'180deg':'0deg'})">▾</span>
       </div>
-      <div class="position-value">${fmt(val)}</div>
-      <div style="font-size:10px;color:var(--muted2);font-family:var(--font-mono);margin-bottom:6px">
-        ${liveVal!=null?'● live price':'○ last snapshot'}${chg30!=null?` · 30d ${chg30>=0?'+':''}${chg30.toFixed(1)}%`:''}
-      </div>
-      <div style="font-size:11px;font-family:var(--font-mono);margin-bottom:2px">Return: ${aprLine}</div>
-      ${plat.rewardSymbol&&plat.rewardSymbol!==plat.symbol?`<div style="font-size:10px;color:var(--muted);font-family:var(--font-mono)">Rewards paid in ${plat.rewardSymbol}</div>`:''}
-      <div id="posEdit_${idx}" style="display:${_openPositionEdit===p?'block':'none'};margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <div style="display:${open?'block':'none'};padding:12px 14px 14px;border-top:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
           <input class="form-input" style="max-width:100px" placeholder="Coin" value="${plat.coin||''}" onchange="setPlatformField('${p}','coin',this.value)"/>
           <input class="form-input" style="max-width:70px" placeholder="Symbol" value="${plat.symbol||''}" onchange="setPlatformField('${p}','symbol',this.value)"/>
@@ -1407,17 +1508,6 @@ function renderPositionList(){
       </div>
     </div>`;
   }).join('');
-  if(totEl)totEl.textContent=fmt(total);
-  const totalRewards=getMonths().reduce((s,m)=>s+(RAW[m].total||0),0);
-  const rewardsEl=document.getElementById('portfolioTotalRewards');
-  const weightedEl=document.getElementById('portfolioWeightedApr');
-  if(rewardsEl){rewardsEl.textContent=fmt(totalRewards);rewardsEl.className='kpi-value '+(totalRewards>=0?'pos':'neg');}
-  if(weightedEl)weightedEl.textContent=aprWeightSum>0?fmtPct(aprValSum/aprWeightSum):'—';
-  renderPositionsPie();
-}
-function toggleEditPosition(p){
-  _openPositionEdit=(_openPositionEdit===p)?null:p;
-  renderPositionList();
 }
 function removePositionMonth(p,month){
   if(!confirm(`Remove ${p}'s entry for ${month}? Other positions in that month are unaffected.`))return;
@@ -1532,6 +1622,8 @@ document.getElementById('entryOverlay').addEventListener('click',e=>{if(e.target
 document.getElementById('addPositionOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddPositionModal();});
 document.getElementById('manageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeManage();});
 document.getElementById('sourcesOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSources();});
+document.getElementById('quickListOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeQuickList();});
+document.getElementById('positionsManageOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeManagePositionsModal();});
 
 // ── LIVE PRICES (declared before the initial render call — renderPositionList needs CG/liveData on first paint) ──
 const DEFAULT_CG = {
