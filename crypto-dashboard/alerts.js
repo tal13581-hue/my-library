@@ -31,5 +31,14 @@ const ALERTS = [
     title: 'Weekly gauge voting replaced by "Predictive Allocation" (effective July 26, 2026)',
     summary: 'Aerodrome has replaced its weekly veAERO gauge-voting mechanism with an automated system that allocates incentives based on predicted future liquidity demand rather than votes. This changes how your veAERO voting power translates into rewards/bribes going forward — no action needed now, but the familiar weekly voting workflow no longer applies.',
     sourceUrl: 'https://cryptobriefing.com/aerodrome-predictive-allocation-dex-liquidity/'
+  },
+  {
+    date: '2026-08-11',
+    platform: 'Pyth',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Pyth ends free price-feed access, moves to paid API subscriptions',
+    summary: 'Pyth rolled out an infrastructure upgrade (announced July 31, 2026) that requires every application pulling Pyth price feeds to hold a paid subscription and API key — Starter plans start at $500/month, with Pro bundles up to $10,000/month. Pyth says the new subscription revenue will flow into PYTH buybacks, a tokenomics-relevant change for your position even though no action is needed on your end.',
+    sourceUrl: 'https://www.bitrue.com/blog/pyth-core-upgrade-july-2026'
   }
 ];
