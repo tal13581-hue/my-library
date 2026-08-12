@@ -123,6 +123,10 @@
   .field-label:first-of-type { margin-top: 0; }
   .field-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-med); border-radius: var(--radius-sm); font-size: 16px; font-family: inherit; color: var(--text); background: var(--bg); }
   .field-input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(99,85,220,.12); }
+  .photo-picker-row { display: flex; align-items: center; gap: 8px; }
+  .photo-picker-row .field-input { flex: 1; }
+  .photo-preview { width: 44px; height: 44px; border-radius: 50%; background: var(--purple-light); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; overflow: hidden; border: 2px solid var(--border-med); }
+  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
   .sheet-actions { display: flex; gap: 12px; margin-top: 24px; }
   .sheet-actions .btn { flex: 1; }
   .verify-box { margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; display: none; }
@@ -328,9 +332,41 @@ function renderBooks() {
   return `<div id="book-list">${list}</div>`;
 }
 
+let pendingPhotoDataUrl = null;
 function openAdd() { editId = null; showSheet('הוסף ספר','','',''); }
 function openEdit(id) { const b = books.find(x=>x.id===id); if (b) { editId = id; showSheet('עריכת ספר', b.title, b.author, getManualPhoto(b.author)); } }
-function showSheet(title, t, a, photoUrl) { const ov = document.getElementById('overlay'); ov.style.display = 'flex'; ov.innerHTML = `<div class="sheet"><div class="sheet-handle"></div><div class="sheet-title">${title}</div><div class="field-label">שם הספר *</div><input class="field-input" id="f-t" type="text" placeholder="שם הספר" value="${esc(t)}"><div class="field-label">שם הסופר *</div><input class="field-input" id="f-a" type="text" placeholder="שם הסופר" oninput="scheduleVerify()" value="${esc(a)}"><div id="verify-box" class="verify-box"></div><div class="field-label">קישור לתמונת הסופר (אופציונלי)</div><input class="field-input" id="f-photo" type="url" placeholder="https://..." value="${esc(photoUrl||'')}"><div class="sheet-actions"><button class="btn btn-outline" onclick="closeSheet()">ביטול</button><button class="btn btn-primary" id="save-btn" onclick="saveBook()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>שמור</button></div></div>`; ov.onclick = e => { if (e.target===ov) closeSheet(); }; setTimeout(() => document.getElementById('f-t').focus(), 50); if (a) scheduleVerify(); }
+function showSheet(title, t, a, photoUrl) {
+  pendingPhotoDataUrl = null;
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `<div class="sheet"><div class="sheet-handle"></div><div class="sheet-title">${title}</div><div class="field-label">שם הספר *</div><input class="field-input" id="f-t" type="text" placeholder="שם הספר" value="${esc(t)}"><div class="field-label">שם הסופר *</div><input class="field-input" id="f-a" type="text" placeholder="שם הסופר" oninput="scheduleVerify()" value="${esc(a)}"><div id="verify-box" class="verify-box"></div><div class="field-label">תמונת הסופר (אופציונלי)</div><div class="photo-picker-row"><div class="photo-preview" id="photo-preview">${photoUrl ? `<img src="${esc(photoUrl)}">` : '👤'}</div><input class="field-input" id="f-photo" type="url" placeholder="https://..." value="${esc(photoUrl||'')}" oninput="onPhotoUrlInput()"><button type="button" class="icon-btn" onclick="document.getElementById('f-photo-file').click()">📷</button><input type="file" id="f-photo-file" accept="image/*" style="display:none" onchange="onPhotoFileChosen(event)"></div><div class="sheet-actions"><button class="btn btn-outline" onclick="closeSheet()">ביטול</button><button class="btn btn-primary" id="save-btn" onclick="saveBook()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>שמור</button></div></div>`;
+  ov.onclick = e => { if (e.target===ov) closeSheet(); };
+  setTimeout(() => document.getElementById('f-t').focus(), 50);
+  if (a) scheduleVerify();
+}
+function updatePhotoPreview(src) { const el = document.getElementById('photo-preview'); if (!el) return; el.innerHTML = src ? `<img src="${esc(src)}" onerror="this.parentElement.textContent='👤'">` : '👤'; }
+function onPhotoUrlInput() { pendingPhotoDataUrl = null; updatePhotoPreview(document.getElementById('f-photo').value.trim()); }
+function onPhotoFileChosen(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size / img.width, size / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      pendingPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      updatePhotoPreview(pendingPhotoDataUrl);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
 function closeSheet() { document.getElementById('overlay').style.display = 'none'; clearTimeout(verifyTimer); }
 function scheduleVerify() { clearTimeout(verifyTimer); const box = document.getElementById('verify-box'); if (box) { box.className = 'verify-box'; box.textContent = ''; } verifyResult = null; verifyTimer = setTimeout(verifyAuthor, 800); }
 
@@ -365,7 +401,7 @@ async function checkWikiquote(wikiName) {
 async function saveBook() {
   const title = document.getElementById('f-t').value.trim();
   const author = document.getElementById('f-a').value.trim();
-  const photoUrl = document.getElementById('f-photo').value.trim();
+  const photoUrl = pendingPhotoDataUrl || document.getElementById('f-photo').value.trim();
   if (!title || !author) { alert('נא למלא שם ספר וסופר'); return; }
   const prevAuthors = new Set(books.map(b=>b.author));
   let wikiName = verifyResult?.wikiName || getWikiName(author) || null;
