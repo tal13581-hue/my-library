@@ -248,10 +248,15 @@ function translateWord(raw) {
     .catch(() => toast('שגיאה בתרגום'));
 }
 document.addEventListener('click', e => { const t = e.target.closest('.tword'); if (t) translateWord(t.dataset.word); });
-function getWikiName(author) { if (WIKI_MAP[author]) return WIKI_MAP[author]; const b = books.find(x=>x.author===author); if (b?.wikiName) return b.wikiName; if (/^[A-Za-z\s\-\.]+$/.test(author)) return author.replace(/ /g,'_'); return null; }
+function normalizeName(s) { return String(s||'').replace(/[‘’`´]/g, "'").replace(/\s+/g,' ').trim(); }
+function getWikiName(author) { const norm = normalizeName(author); if (WIKI_MAP[norm]) return WIKI_MAP[norm]; const b = books.find(x=>x.author===author); if (b?.wikiName) return b.wikiName; if (/^[A-Za-z\s\-\.']+$/.test(norm)) return norm.replace(/ /g,'_'); return null; }
 
+const MANUAL_PHOTO_KEY = 'library-manual-photos-v1';
+function loadManualPhotos() { try { return JSON.parse(localStorage.getItem(MANUAL_PHOTO_KEY) || '{}'); } catch(e) { return {}; } }
+function getManualPhoto(author) { return loadManualPhotos()[author] || ''; }
+function setManualPhoto(author, url) { const map = loadManualPhotos(); if (url) map[author] = url; else delete map[author]; localStorage.setItem(MANUAL_PHOTO_KEY, JSON.stringify(map)); }
 function photoKey(author) { return getWikiName(author) || author; }
-function getCachedPhoto(author) { return photoCache[photoKey(author)]; }
+function getCachedPhoto(author) { return getManualPhoto(author) || photoCache[photoKey(author)]; }
 
 async function wikiThumbnail(host, title) {
   try {
@@ -323,9 +328,9 @@ function renderBooks() {
   return `<div id="book-list">${list}</div>`;
 }
 
-function openAdd() { editId = null; showSheet('הוסף ספר','',''); }
-function openEdit(id) { const b = books.find(x=>x.id===id); if (b) { editId = id; showSheet('עריכת ספר', b.title, b.author); } }
-function showSheet(title, t, a) { const ov = document.getElementById('overlay'); ov.style.display = 'flex'; ov.innerHTML = `<div class="sheet"><div class="sheet-handle"></div><div class="sheet-title">${title}</div><div class="field-label">שם הספר *</div><input class="field-input" id="f-t" type="text" placeholder="שם הספר" value="${esc(t)}"><div class="field-label">שם הסופר *</div><input class="field-input" id="f-a" type="text" placeholder="שם הסופר" oninput="scheduleVerify()" value="${esc(a)}"><div id="verify-box" class="verify-box"></div><div class="sheet-actions"><button class="btn btn-outline" onclick="closeSheet()">ביטול</button><button class="btn btn-primary" id="save-btn" onclick="saveBook()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>שמור</button></div></div>`; ov.onclick = e => { if (e.target===ov) closeSheet(); }; setTimeout(() => document.getElementById('f-t').focus(), 50); if (a) scheduleVerify(); }
+function openAdd() { editId = null; showSheet('הוסף ספר','','',''); }
+function openEdit(id) { const b = books.find(x=>x.id===id); if (b) { editId = id; showSheet('עריכת ספר', b.title, b.author, getManualPhoto(b.author)); } }
+function showSheet(title, t, a, photoUrl) { const ov = document.getElementById('overlay'); ov.style.display = 'flex'; ov.innerHTML = `<div class="sheet"><div class="sheet-handle"></div><div class="sheet-title">${title}</div><div class="field-label">שם הספר *</div><input class="field-input" id="f-t" type="text" placeholder="שם הספר" value="${esc(t)}"><div class="field-label">שם הסופר *</div><input class="field-input" id="f-a" type="text" placeholder="שם הסופר" oninput="scheduleVerify()" value="${esc(a)}"><div id="verify-box" class="verify-box"></div><div class="field-label">קישור לתמונת הסופר (אופציונלי)</div><input class="field-input" id="f-photo" type="url" placeholder="https://..." value="${esc(photoUrl||'')}"><div class="sheet-actions"><button class="btn btn-outline" onclick="closeSheet()">ביטול</button><button class="btn btn-primary" id="save-btn" onclick="saveBook()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>שמור</button></div></div>`; ov.onclick = e => { if (e.target===ov) closeSheet(); }; setTimeout(() => document.getElementById('f-t').focus(), 50); if (a) scheduleVerify(); }
 function closeSheet() { document.getElementById('overlay').style.display = 'none'; clearTimeout(verifyTimer); }
 function scheduleVerify() { clearTimeout(verifyTimer); const box = document.getElementById('verify-box'); if (box) { box.className = 'verify-box'; box.textContent = ''; } verifyResult = null; verifyTimer = setTimeout(verifyAuthor, 800); }
 
@@ -360,11 +365,13 @@ async function checkWikiquote(wikiName) {
 async function saveBook() {
   const title = document.getElementById('f-t').value.trim();
   const author = document.getElementById('f-a').value.trim();
+  const photoUrl = document.getElementById('f-photo').value.trim();
   if (!title || !author) { alert('נא למלא שם ספר וסופר'); return; }
   const prevAuthors = new Set(books.map(b=>b.author));
   let wikiName = verifyResult?.wikiName || getWikiName(author) || null;
   let wikiVerified = verifyResult ? verifyResult.found : undefined;
   if (editId) { const b = books.find(x=>x.id===editId); if (b) { b.title=title; b.author=author; b.wikiName=wikiName; if (wikiVerified!==undefined) b.wikiVerified=wikiVerified; } } else { books.push({ id:Date.now(), title, author, wikiName, wikiVerified }); }
+  setManualPhoto(author, photoUrl);
   save();
   closeSheet();
   authorQueue = [];
