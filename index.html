@@ -76,14 +76,14 @@
   .tile-decor.d2 { bottom: 12px; left: 18px; transform: rotate(10deg); }
   .tile-icon { position: relative; z-index: 1; }
   .empty-link { color: #fff; background: linear-gradient(135deg, var(--purple), var(--purple2)); border: none; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; margin-top: 16px; cursor: pointer; font-family: inherit; }
-  .quote-card { background: linear-gradient(135deg, var(--purple-light) 0%, #faf5ff 100%); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; border: 1px solid var(--border); }
+  .quote-card { background: linear-gradient(135deg, var(--purple-light) 0%, #faf5ff 100%); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; border: 1px solid rgba(201,138,62,.3); }
   @media (prefers-color-scheme: dark) { .quote-card { background: linear-gradient(135deg,#1e1a3a 0%,#16122e 100%); } }
   .quote-mark { font-size: 52px; color: var(--purple-mid); line-height: 0.7; margin-bottom: 14px; font-family: Georgia,serif; }
   .quote-text { font-family: var(--font-serif); font-size: 19px; line-height: 1.7; color: var(--text); font-style: italic; margin-bottom: 16px; }
   .quote-text.ltr { direction: ltr; text-align: left; }
   .quote-text.rtl { direction: rtl; text-align: right; }
   .quote-author-row { display: flex; align-items: center; gap: 12px; }
-  .quote-author { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--purple); }
+  .quote-author { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--gold-text); }
   .quote-book { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
   .quote-source { font-size: 11px; color: var(--teal); margin-top: 10px; display: flex; align-items: center; gap: 4px; }
   .quote-placeholder { text-align: center; padding: 24px 0; }
@@ -96,7 +96,7 @@
   .btn-outline { background: none; border: 1.5px solid var(--border-med); color: var(--text); }
   .book-card { background: var(--bg); border: 1px solid rgba(201,138,62,.3); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
   .book-card:active { background: var(--bg-secondary); }
-  .book-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-light); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--gold-text); flex-shrink: 0; }
+  .book-num { min-width: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--gold-text); flex-shrink: 0; }
   .author-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--purple-light); border: 2px solid var(--border-med); }
   .author-avatar-placeholder { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--purple-light), #ddd8fe); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: var(--purple); flex-shrink: 0; border: 2px solid var(--border-med); }
   .book-info { flex: 1; min-width: 0; }
