@@ -40,5 +40,23 @@ const ALERTS = [
     title: 'Pyth ends free price-feed access, moves to paid API subscriptions',
     summary: 'Pyth rolled out an infrastructure upgrade (announced July 31, 2026) that requires every application pulling Pyth price feeds to hold a paid subscription and API key — Starter plans start at $500/month, with Pro bundles up to $10,000/month. Pyth says the new subscription revenue will flow into PYTH buybacks, a tokenomics-relevant change for your position even though no action is needed on your end.',
     sourceUrl: 'https://www.bitrue.com/blog/pyth-core-upgrade-july-2026'
+  },
+  {
+    date: '2026-08-12',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Lido deploys Curated Module v2, migrating validators to 0x02 withdrawal credentials',
+    summary: 'Lido DAO approved and began deploying Curated Module v2 (CMv2) to mainnet in late July 2026, letting validators consolidate up to 2,048 ETH (vs. 32 ETH) under Ethereum\'s new 0x02 withdrawal credentials. This is an ~8M ETH (~$16.5B) infrastructure migration handled entirely at the protocol level — stETH holders (your position) don\'t need to do anything.',
+    sourceUrl: 'https://blog.lido.fi'
+  },
+  {
+    date: '2026-08-12',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Lido "NEST" governance vote live: automated LDO buybacks from protocol revenue',
+    summary: 'An on-chain DAO vote for NEST (Network Economic Support Tokenomics) went live August 5, 2026, proposing that a share of Lido\'s eligible revenue surplus fund automated LDO buybacks and DAO-owned liquidity. Purely a tokenomics/governance matter — no action needed unless you actively want to vote with LDO.',
+    sourceUrl: 'https://crypto.news/lido-dao-price-rebounds-5-as-nest-vote-goes-live/'
   }
 ];
