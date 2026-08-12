@@ -49,16 +49,13 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system,'Helvetica Neue',Arial,sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
   .app { display: flex; flex-direction: column; min-height: 100dvh; }
-  .header { padding: 48px 18px 0; background: radial-gradient(120% 140% at 85% -10%, #2a1a3d 0%, #000 55%), linear-gradient(160deg, #000000 0%, #0d0d14 60%, #000000 100%); position: sticky; top: 0; z-index: 10; overflow: hidden; }
-  .header-books-bg { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; opacity: 0.05; pointer-events: none; }
-  .header-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; padding-bottom: 14px; }
-  .header-mascot { flex-shrink: 0; filter: drop-shadow(0 0 14px rgba(236,72,153,.35)); }
-  .header-text { flex: 1; }
-  .header-title { font-family: var(--font-display); font-size: 26px; font-weight: 400; line-height: 1.2; letter-spacing: .5px; background: linear-gradient(90deg, var(--pink) 0%, var(--orange) 35%, var(--yellow) 60%, var(--cyan) 85%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .header-sub { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 5px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-  .count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 21px; height: 19px; padding: 0 6px; border-radius: 10px; font-weight: 800; font-size: 12px; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
-  .badge-books { background: linear-gradient(135deg, var(--orange), var(--yellow)); }
-  .badge-authors { background: linear-gradient(135deg, var(--pink), var(--purple2)); }
+  .header { padding: max(9px, env(safe-area-inset-top)) 16px 8px; background: linear-gradient(135deg, #241207 0%, #000000 80%); position: sticky; top: 0; z-index: 10; }
+  .header-inner { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .header-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; letter-spacing: .4px; background: linear-gradient(90deg, #D9A441 0%, #C1622D 55%, #8B4A2B 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 16px; padding: 0 6px; border-radius: 8px; font-weight: 800; font-size: 11px; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  .badge-books { background: linear-gradient(135deg, #A6592C, #C98A3E); }
+  .badge-authors { background: linear-gradient(135deg, #4A5D23, #8A9A5B); }
   .section-bar { display: flex; align-items: center; gap: 10px; background: #0d0d14; padding: 10px 14px; }
   .back-btn { background: rgba(255,255,255,.12); border: none; color: #fff; width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .back-btn:active { background: rgba(255,255,255,.22); }
@@ -85,6 +82,7 @@
   .quote-text { font-family: var(--font-serif); font-size: 19px; line-height: 1.7; color: var(--text); font-style: italic; margin-bottom: 16px; }
   .quote-text.ltr { direction: ltr; text-align: left; }
   .quote-text.rtl { direction: rtl; text-align: right; }
+  .quote-author-row { display: flex; align-items: center; gap: 12px; }
   .quote-author { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--purple); }
   .quote-book { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
   .quote-source { font-size: 11px; color: var(--teal); margin-top: 10px; display: flex; align-items: center; gap: 4px; }
@@ -145,27 +143,9 @@
 <body>
 <div class="app">
   <div class="header">
-    <svg class="header-books-bg" viewBox="0 0 400 80" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="60" width="400" height="4" fill="white"/>
-      <rect x="8" y="28" width="18" height="32" rx="2" fill="white"/><rect x="28" y="34" width="14" height="26" rx="2" fill="white"/><rect x="44" y="22" width="20" height="38" rx="2" fill="white"/><rect x="66" y="30" width="16" height="30" rx="2" fill="white"/><rect x="84" y="18" width="22" height="42" rx="2" fill="white"/><rect x="108" y="32" width="14" height="28" rx="2" fill="white"/><rect x="124" y="24" width="18" height="36" rx="2" fill="white"/><rect x="144" y="36" width="12" height="24" rx="2" fill="white"/><rect x="158" y="20" width="20" height="40" rx="2" fill="white"/><rect x="180" y="30" width="16" height="30" rx="2" fill="white"/><rect x="198" y="26" width="18" height="34" rx="2" fill="white"/><rect x="218" y="38" width="14" height="22" rx="2" fill="white"/><rect x="234" y="16" width="22" height="44" rx="2" fill="white"/><rect x="258" y="28" width="16" height="32" rx="2" fill="white"/><rect x="276" y="34" width="14" height="26" rx="2" fill="white"/><rect x="292" y="22" width="20" height="38" rx="2" fill="white"/><rect x="314" y="30" width="16" height="30" rx="2" fill="white"/><rect x="332" y="20" width="18" height="40" rx="2" fill="white"/><rect x="352" y="32" width="14" height="28" rx="2" fill="white"/><rect x="368" y="24" width="20" height="36" rx="2" fill="white"/>
-    </svg>
     <div class="header-inner">
-      <svg class="header-mascot" width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="30" r="17" fill="#F2C79E"/>
-        <path d="M14 27c0-11 8-19 18-19s18 8 18 19c-4-3-9-5-18-5s-14 2-18 5z" fill="#2b2130"/>
-        <circle cx="23" cy="30" r="7.5" fill="var(--purple-mid)" fill-opacity=".4" stroke="#1a1a2e" stroke-width="2.5"/>
-        <circle cx="41" cy="30" r="7.5" fill="var(--pink)" fill-opacity=".4" stroke="#1a1a2e" stroke-width="2.5"/>
-        <line x1="30.5" y1="30" x2="33.5" y2="30" stroke="#1a1a2e" stroke-width="2.5"/>
-        <line x1="15.5" y1="28" x2="15.5" y2="32" stroke="#1a1a2e" stroke-width="2.5"/>
-        <line x1="48.5" y1="28" x2="48.5" y2="32" stroke="#1a1a2e" stroke-width="2.5"/>
-        <path d="M26 39q6 5 12 0" stroke="#7a4a2e" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <path d="M17 49c5-3 25-3 30 0v6c-5-3-25-3-30 0z" fill="var(--orange)"/>
-        <line x1="32" y1="48.5" x2="32" y2="56.5" stroke="#fff" stroke-width="1.4"/>
-      </svg>
-      <div class="header-text">
-        <div class="header-title">הספרייה שלי</div>
-        <div class="header-sub" id="header-sub">0 ספרים</div>
-      </div>
+      <div class="header-title">הספרייה שלי</div>
+      <div class="header-sub" id="header-sub">0 ספרים</div>
     </div>
   </div>
   <div class="section-bar" id="section-bar" style="display:none"></div>
@@ -270,26 +250,47 @@ function translateWord(raw) {
 document.addEventListener('click', e => { const t = e.target.closest('.tword'); if (t) translateWord(t.dataset.word); });
 function getWikiName(author) { if (WIKI_MAP[author]) return WIKI_MAP[author]; const b = books.find(x=>x.author===author); if (b?.wikiName) return b.wikiName; if (/^[A-Za-z\s\-\.]+$/.test(author)) return author.replace(/ /g,'_'); return null; }
 
-async function fetchAuthorPhoto(wikiName) {
-  if (!wikiName) return null;
-  if (photoCache[wikiName] !== undefined) return photoCache[wikiName];
-  if (PHOTO_OVERRIDE[wikiName]) { photoCache[wikiName] = PHOTO_OVERRIDE[wikiName]; return PHOTO_OVERRIDE[wikiName]; }
+function photoKey(author) { return getWikiName(author) || author; }
+function getCachedPhoto(author) { return photoCache[photoKey(author)]; }
+
+async function wikiThumbnail(host, title) {
   try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(wikiName)}&prop=pageimages&pithumbsize=80&format=json&origin=*`;
+    const url = `https://${host}/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=160&format=json&origin=*`;
     const d = await (await fetch(url)).json();
     const page = Object.values(d.query.pages)[0];
-    const src = page?.thumbnail?.source || null;
-    photoCache[wikiName] = src;
-    return src;
-  } catch(e) { photoCache[wikiName] = null; return null; }
+    return page?.thumbnail?.source || null;
+  } catch(e) { return null; }
+}
+
+async function wikidataImage(name) {
+  try {
+    const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(name)}&language=he&format=json&origin=*&type=item&limit=1`;
+    const s = await (await fetch(searchUrl)).json();
+    const id = s?.search?.[0]?.id;
+    if (!id) return null;
+    const claimUrl = `https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=${id}&property=P18&format=json&origin=*`;
+    const c = await (await fetch(claimUrl)).json();
+    const filename = c?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+    if (!filename) return null;
+    return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(filename)}?width=160`;
+  } catch(e) { return null; }
+}
+
+async function fetchAuthorPhoto(wikiName, author) {
+  const key = wikiName || author;
+  if (!key) return null;
+  if (photoCache[key] !== undefined) return photoCache[key];
+  if (wikiName && PHOTO_OVERRIDE[wikiName]) { photoCache[key] = PHOTO_OVERRIDE[wikiName]; return PHOTO_OVERRIDE[wikiName]; }
+  let src = wikiName ? await wikiThumbnail('en.wikipedia.org', wikiName) : null;
+  if (!src && author) src = await wikiThumbnail('he.wikipedia.org', author.replace(/ /g,'_'));
+  if (!src && author) src = await wikidataImage(author);
+  photoCache[key] = src;
+  return src;
 }
 
 async function preloadPhotos() {
   const authors = [...new Set(books.map(b => b.author))];
-  await Promise.all(authors.map(a => {
-    const wn = getWikiName(a);
-    return wn ? fetchAuthorPhoto(wn) : Promise.resolve(null);
-  }));
+  await Promise.all(authors.map(a => fetchAuthorPhoto(getWikiName(a), a)));
 }
 
 function renderQuotes() {
@@ -297,7 +298,11 @@ function renderQuotes() {
   let card;
   if (quote) {
     const rtl = isHebrew(quote.text);
-    card = `<div class="quote-card"><div class="quote-mark">"</div><div class="quote-text ${rtl?'rtl':'ltr'}" dir="${rtl?'rtl':'ltr'}">${wrapWords(quote.text)}</div><div class="quote-author">— ${esc(quote.author)}</div>${quote.book ? `<div class="quote-book">${esc(quote.book)}</div>` : ''}<div class="quote-source"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${esc(quote.source)}</div></div>`;
+    const photo = getCachedPhoto(quote.author);
+    const initials = quote.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const avatarImg = photo ? `<img class="author-avatar" src="${esc(photo)}" alt="${esc(quote.author)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+    const avatarPlaceholder = `<div class="author-avatar-placeholder" style="${photo?'display:none':''}">${initials}</div>`;
+    card = `<div class="quote-card"><div class="quote-mark">"</div><div class="quote-text ${rtl?'rtl':'ltr'}" dir="${rtl?'rtl':'ltr'}">${wrapWords(quote.text)}</div><div class="quote-author-row">${avatarImg}${avatarPlaceholder}<div><div class="quote-author">— ${esc(quote.author)}</div>${quote.book ? `<div class="quote-book">${esc(quote.book)}</div>` : ''}</div></div><div class="quote-source"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${esc(quote.source)}</div></div>`;
   } else {
     card = `<div class="quote-card"><div class="quote-placeholder"><div class="big-icon">💬</div><p>לחץ לקבל ציטוט אקראי<br>מהסופרים בספרייתך</p></div></div>`;
   }
@@ -307,8 +312,7 @@ function renderQuotes() {
 function renderBooks() {
   if (!books.length) return `<div class="empty"><div class="big-icon">📖</div><p>אין ספרים עדיין</p><small>לחץ + להוסיף את הספר הראשון</small></div>`;
   const list = books.map((b, i) => {
-    const wn = getWikiName(b.author);
-    const photo = wn ? photoCache[wn] : null;
+    const photo = getCachedPhoto(b.author);
     const initials = b.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const avatarHtml = photo ? `<img class="author-avatar" src="${esc(photo)}" alt="${esc(b.author)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
     const placeholderStyle = photo ? 'display:none' : '';
@@ -398,6 +402,7 @@ async function getQuote() {
   const author = nextAuthor();
   if (!author) { render(); return; }
   const wn = getWikiName(author);
+  await fetchAuthorPhoto(wn, author);
   let found = null;
   for (const src of nextSourceOrder()) {
     if (src === 'wikiquote') found = wn ? await fromWikiquote(wn, author) : null;
