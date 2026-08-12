@@ -71,8 +71,8 @@
   .home-tiles { display: flex; flex-direction: column; gap: 18px; flex: 1; }
   .home-tile { flex: 1; border: none; border-radius: 28px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: #fff; font-family: inherit; position: relative; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,.2); transition: transform .15s, box-shadow .15s; min-height: 130px; }
   .home-tile:active { transform: scale(.96); }
-  .tile-quotes { background: linear-gradient(135deg, #4338CA 0%, #A21CAF 55%, #F97316 100%); }
-  .tile-books { background: linear-gradient(135deg, #0D9488 0%, #06B6D4 55%, #22C55E 100%); }
+  .tile-quotes { background: linear-gradient(135deg, #6B4226 0%, #A6592C 55%, #C98A3E 100%); }
+  .tile-books { background: linear-gradient(135deg, #3F4A2B 0%, #6B7A3A 55%, #A9915A 100%); }
   .tile-label { font-family: var(--font-display); font-size: 26px; font-weight: 400; letter-spacing: .5px; position: relative; z-index: 1; }
   .tile-decor { position: absolute; font-size: 30px; opacity: .3; z-index: 0; }
   .tile-decor.d1 { top: 12px; right: 16px; transform: rotate(-12deg); }
@@ -131,6 +131,8 @@
   .verify-box.ok { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; display: block; }
   .verify-box.err { background: #fff1f0; color: #7f1d1d; border: 1px solid #fca5a5; display: block; }
   .verify-box.loading { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); display: block; }
+  .tword { cursor: pointer; border-bottom: 1.5px dashed currentColor; padding-bottom: 1px; }
+  .tword:active { background: var(--purple-light); border-radius: 3px; }
   .toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--purple-dark); color: #fff; padding: 13px 22px; border-radius: var(--radius-sm); font-size: 15px; z-index: 300; opacity: 0; transition: opacity .2s,transform .2s; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .dots { display: inline-flex; gap: 5px; align-items: center; }
@@ -195,7 +197,7 @@ function updateSub() {
     ? `<span class="count-badge badge-books">${books.length}</span> ספרים · <span class="count-badge badge-authors">${n}</span> סופר${n!==1?'ים':''}`
     : '0 ספרים';
 }
-function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3200); }
+function toast(msg, duration) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), duration || 3200); }
 
 function goHome() { view = 'home'; render(); }
 function openSection(v) { view = v; if (v !== 'books') editMode = false; render(); if (v === 'quotes' && books.length) getQuote(); }
@@ -246,6 +248,26 @@ function renderHome() {
 }
 function isHebrew(text) { return (text.match(/[\u0590-\u05FF]/g)||[]).length > text.length*0.2; }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function wrapWords(text) { return esc(text).split(/(\s+)/).map(part => part.trim() ? `<span class="tword" data-word="${part}">${part}</span>` : part).join(''); }
+
+const TRANSLATE_CACHE = {};
+function translateWord(raw) {
+  const clean = String(raw||'').replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '');
+  if (!clean) return;
+  if (TRANSLATE_CACHE[clean]) { toast(TRANSLATE_CACHE[clean], 4500); return; }
+  const langpair = isHebrew(clean) ? 'he|en' : 'en|he';
+  toast('מתרגם...');
+  fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=${langpair}`)
+    .then(r => r.json())
+    .then(d => {
+      const translated = d?.responseData?.translatedText;
+      const msg = translated ? `${clean} = ${translated}` : 'לא נמצא תרגום';
+      TRANSLATE_CACHE[clean] = msg;
+      toast(msg, 4500);
+    })
+    .catch(() => toast('שגיאה בתרגום'));
+}
+document.addEventListener('click', e => { const t = e.target.closest('.tword'); if (t) translateWord(t.dataset.word); });
 function getWikiName(author) { if (WIKI_MAP[author]) return WIKI_MAP[author]; const b = books.find(x=>x.author===author); if (b?.wikiName) return b.wikiName; if (/^[A-Za-z\s\-\.]+$/.test(author)) return author.replace(/ /g,'_'); return null; }
 
 async function fetchAuthorPhoto(wikiName) {
@@ -275,7 +297,7 @@ function renderQuotes() {
   let card;
   if (quote) {
     const rtl = isHebrew(quote.text);
-    card = `<div class="quote-card"><div class="quote-mark">"</div><div class="quote-text ${rtl?'rtl':'ltr'}" dir="${rtl?'rtl':'ltr'}">${esc(quote.text)}</div><div class="quote-author">— ${esc(quote.author)}</div>${quote.book ? `<div class="quote-book">${esc(quote.book)}</div>` : ''}<div class="quote-source"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${esc(quote.source)}</div></div>`;
+    card = `<div class="quote-card"><div class="quote-mark">"</div><div class="quote-text ${rtl?'rtl':'ltr'}" dir="${rtl?'rtl':'ltr'}">${wrapWords(quote.text)}</div><div class="quote-author">— ${esc(quote.author)}</div>${quote.book ? `<div class="quote-book">${esc(quote.book)}</div>` : ''}<div class="quote-source"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${esc(quote.source)}</div></div>`;
   } else {
     card = `<div class="quote-card"><div class="quote-placeholder"><div class="big-icon">💬</div><p>לחץ לקבל ציטוט אקראי<br>מהסופרים בספרייתך</p></div></div>`;
   }
@@ -361,15 +383,28 @@ function nextAuthor() {
   return books[0].author;
 }
 
+const SOURCE_ROTATION_KEY = 'library-source-rotation-v1';
+function nextSourceOrder() {
+  const sources = ['wikiquote', 'goodreads', 'brainyquote'];
+  let idx = parseInt(localStorage.getItem(SOURCE_ROTATION_KEY) || '0', 10);
+  if (isNaN(idx) || idx < 0 || idx > 2) idx = 0;
+  localStorage.setItem(SOURCE_ROTATION_KEY, String((idx + 1) % sources.length));
+  return [...sources.slice(idx), ...sources.slice(0, idx)];
+}
+
 async function getQuote() {
   const btn = document.getElementById('qbtn');
   if (btn) { btn.disabled=true; btn.innerHTML='<span class="dots"><span></span><span></span><span></span></span> מחפש...'; }
   const author = nextAuthor();
   if (!author) { render(); return; }
   const wn = getWikiName(author);
-  let found = wn ? await fromWikiquote(wn, author) : null;
-  if (!found) found = await fromGoodreads(author);
-  if (!found) found = await fromBrainyQuote(author);
+  let found = null;
+  for (const src of nextSourceOrder()) {
+    if (src === 'wikiquote') found = wn ? await fromWikiquote(wn, author) : null;
+    else if (src === 'goodreads') found = await fromGoodreads(author);
+    else if (src === 'brainyquote') found = await fromBrainyQuote(author);
+    if (found) break;
+  }
   if (!found) found = await fromClaude(author);
   if (!found) found = await fromClaudeSimple(author);
   if (found) rememberQuote(author, found.text);
