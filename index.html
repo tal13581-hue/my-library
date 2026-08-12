@@ -26,6 +26,8 @@
     --purple-light: #EDE9FE;
     --purple-mid: #A78BFA;
     --purple-dark: #312E81;
+    --gold-light: #F3E0AC;
+    --gold-text: #6B4226;
     --text: #1a1a2e;
     --text-secondary: #5b5b7b;
     --text-tertiary: #9b9bb5;
@@ -44,6 +46,7 @@
       --bg: #0f0e1a; --bg-secondary: #1a1730;
       --border: rgba(167,139,250,0.13); --border-med: rgba(167,139,250,0.22);
       --purple-light: #2e2760;
+      --gold-light: #4a3418; --gold-text: #F3E0AC;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -60,9 +63,6 @@
   .back-btn { background: rgba(255,255,255,.12); border: none; color: #fff; width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .back-btn:active { background: rgba(255,255,255,.22); }
   .section-title { flex: 1; font-family: var(--font-display); font-weight: 400; font-size: 18px; letter-spacing: .3px; display: flex; align-items: center; gap: 8px; background: linear-gradient(90deg, var(--pink), var(--yellow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .edit-toggle { background: rgba(255,255,255,.12); border: none; color: #fff; padding: 9px 14px; border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; flex-shrink: 0; }
-  .edit-toggle.active { background: linear-gradient(135deg, var(--coral), var(--pink)); }
-  .edit-toggle:active { opacity: .8; }
   .content { padding: 18px; padding-bottom: 20px; flex: 1; display: flex; flex-direction: column; }
   .content.with-fab { padding-bottom: 110px; }
   .home-tiles { display: flex; flex-direction: column; gap: 18px; flex: 1; }
@@ -94,8 +94,9 @@
   .btn-primary { background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%); color: #fff; }
   .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
   .btn-outline { background: none; border: 1.5px solid var(--border-med); color: var(--text); }
-  .book-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
-  .book-num { width: 28px; height: 28px; border-radius: 50%; background: var(--purple-light); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--purple); flex-shrink: 0; }
+  .book-card { background: var(--bg); border: 1px solid rgba(201,138,62,.3); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  .book-card:active { background: var(--bg-secondary); }
+  .book-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-light); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--gold-text); flex-shrink: 0; }
   .author-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--purple-light); border: 2px solid var(--border-med); }
   .author-avatar-placeholder { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--purple-light), #ddd8fe); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: var(--purple); flex-shrink: 0; border: 2px solid var(--border-med); }
   .book-info { flex: 1; min-width: 0; }
@@ -104,11 +105,6 @@
   .book-wiki-status { font-size: 11px; margin-top: 3px; }
   .status-ok { color: var(--teal); }
   .status-err { color: var(--coral); }
-  .book-btns { display: flex; gap: 6px; flex-shrink: 0; }
-  .icon-btn { background: none; border: 1px solid var(--border); cursor: pointer; color: var(--text-secondary); padding: 9px; border-radius: 10px; display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; }
-  .icon-btn:active { background: var(--bg-secondary); }
-  .icon-btn.del { border-color: rgba(232,93,74,.25); }
-  .icon-btn.del:active { color: var(--coral); }
   .empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
   .empty .big-icon { font-size: 56px; margin-bottom: 16px; }
   .empty p { font-size: 16px; font-weight: 500; }
@@ -164,7 +160,7 @@ const STORE_KEY = 'library-books-v3';
 const PHOTO_OVERRIDE = {'Cathy_O%27Neil':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Cathy_O%27Neil_at_Google_Cambridge.jpg/240px-Cathy_O%27Neil_at_Google_Cambridge.jpg','Chris_Voss':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Chris_Voss_-_2019_%2848710852258%29.jpg/240px-Chris_Voss_-_2019_%2848710852258%29.jpg',};
 const WIKI_MAP = {'פרנץ קפקא':'Franz_Kafka','אלברט קאמי':'Albert_Camus','ארנסט המינגוויי':'Ernest_Hemingway','אוסקר ויילד':'Oscar_Wilde','ליאו טולסטוי':'Leo_Tolstoy','פיודור דוסטויבסקי':'Fyodor_Dostoyevsky','פבלו נרודה':'Pablo_Neruda','ויקטור הוגו':'Victor_Hugo','מרק טוויין':'Mark_Twain','אלברט איינשטיין':'Albert_Einstein','סיגמונד פרויד':'Sigmund_Freud','לורנס קראוס':'Lawrence_Krauss','Lawrence Krauss':'Lawrence_Krauss',"Cathy O'Neil":'Cathy_O%27Neil','Cathy ONeil':'Cathy_O%27Neil','קתי אונייל':'Cathy_O%27Neil','Chris Voss':'Chris_Voss','Christopher Voss':'Chris_Voss','כריס ווס':'Chris_Voss','Michael Pollan':'Michael_Pollan','Steven Pinker':'Steven_Pinker','Dan Ariely':'Dan_Ariely','Daniel Kahneman':'Daniel_Kahneman','David Deida':'David_Deida','Joby Warrick':'Joby_Warrick','Yuval Noah Harari':'Yuval_Noah_Harari','יובל נוח הררי':'Yuval_Noah_Harari','Malcolm Gladwell':'Malcolm_Gladwell','Simon Sinek':'Simon_Sinek','Tim Ferriss':'Tim_Ferriss','James Clear':'James_Clear','Jordan Peterson':'Jordan_Peterson','Sam Harris':'Sam_Harris',};
 
-let books = [], view = 'home', editMode = false, editId = null, quote = null, authorQueue = [], photoCache = {}, verifyTimer = null, lastVerifiedAuthor = '', verifyResult = null;
+let books = [], view = 'home', editId = null, quote = null, authorQueue = [], photoCache = {}, verifyTimer = null, lastVerifiedAuthor = '', verifyResult = null;
 
 const RECENT_KEY = 'library-recent-quotes-v1';
 const RECENT_LIMIT = 8;
@@ -184,8 +180,7 @@ function updateSub() {
 function toast(msg, duration) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), duration || 3200); }
 
 function goHome() { view = 'home'; render(); }
-function openSection(v) { view = v; if (v !== 'books') editMode = false; render(); if (v === 'quotes' && books.length) getQuote(); }
-function toggleEditMode() { editMode = !editMode; render(); }
+function openSection(v) { view = v; render(); if (v === 'quotes' && books.length) getQuote(); }
 
 const QUOTES_ICON = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>`;
 const BOOKS_ICON = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
@@ -208,8 +203,7 @@ function render() {
     content.innerHTML = renderQuotes();
   } else {
     bar.style.display = 'flex';
-    const editBtn = books.length ? `<button class="edit-toggle ${editMode?'active':''}" onclick="toggleEditMode()">${editMode ? 'סיום' : 'ערוך רשימה'}</button>` : '';
-    bar.innerHTML = `<button class="back-btn" onclick="goHome()" aria-label="חזרה">${BACK_ICON}</button><div class="section-title">${BOOKS_ICON}ספרים</div>${editBtn}`;
+    bar.innerHTML = `<button class="back-btn" onclick="goHome()" aria-label="חזרה">${BACK_ICON}</button><div class="section-title">${BOOKS_ICON}ספרים</div>`;
     fab.style.display = 'flex';
     content.classList.add('with-fab');
     content.innerHTML = renderBooks();
@@ -326,8 +320,7 @@ function renderBooks() {
     const avatarHtml = photo ? `<img class="author-avatar" src="${esc(photo)}" alt="${esc(b.author)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
     const placeholderStyle = photo ? 'display:none' : '';
     const statusHtml = b.wikiVerified === true ? `<span class="book-wiki-status status-ok">✓ ציטוטים זמינים</span>` : b.wikiVerified === false ? `<span class="book-wiki-status status-err">⚠ ציטוטים דרך Claude</span>` : '';
-    const btnsHtml = editMode ? `<div class="book-btns"><button class="icon-btn" onclick="openEdit(${b.id})"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="icon-btn del" onclick="deleteBook(${b.id})"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>` : '';
-    return `<div class="book-card"><div class="book-num">${i+1}</div>${avatarHtml}<div class="author-avatar-placeholder" style="${placeholderStyle}">${initials}</div><div class="book-info"><div class="book-title">${esc(b.title)}</div><div class="book-author">${esc(b.author)}</div>${statusHtml}</div>${btnsHtml}</div>`;
+    return `<div class="book-card" onclick="openBookActions(${b.id})"><div class="book-num">${i+1}</div>${avatarHtml}<div class="author-avatar-placeholder" style="${placeholderStyle}">${initials}</div><div class="book-info"><div class="book-title">${esc(b.title)}</div><div class="book-author">${esc(b.author)}</div>${statusHtml}</div></div>`;
   }).join('');
   return `<div id="book-list">${list}</div>`;
 }
@@ -418,6 +411,15 @@ async function saveBook() {
 }
 
 function deleteBook(id) { if (!confirm('למחוק את הספר?')) return; books = books.filter(x=>x.id!==id); authorQueue = []; save(); render(); }
+
+function openBookActions(id) {
+  const b = books.find(x=>x.id===id);
+  if (!b) return;
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `<div class="sheet"><div class="sheet-handle"></div><div class="sheet-title">${esc(b.title)}</div><button class="btn btn-outline" onclick="closeSheet();openEdit(${id})"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>ערוך</button><button class="btn btn-outline" style="color:var(--coral);border-color:rgba(232,93,74,.35);margin-top:10px" onclick="closeSheet();deleteBook(${id})"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>מחק</button><button class="btn btn-outline" style="margin-top:10px" onclick="closeSheet()">ביטול</button></div>`;
+  ov.onclick = e => { if (e.target===ov) closeSheet(); };
+}
 
 function nextAuthor() {
   if (!books.length) return null;
