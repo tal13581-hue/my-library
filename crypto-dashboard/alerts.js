@@ -58,5 +58,14 @@ const ALERTS = [
     title: 'Lido "NEST" governance vote live: automated LDO buybacks from protocol revenue',
     summary: 'An on-chain DAO vote for NEST (Network Economic Support Tokenomics) went live August 5, 2026, proposing that a share of Lido\'s eligible revenue surplus fund automated LDO buybacks and DAO-owned liquidity. Purely a tokenomics/governance matter — no action needed unless you actively want to vote with LDO.',
     sourceUrl: 'https://crypto.news/lido-dao-price-rebounds-5-as-nest-vote-goes-live/'
+  },
+  {
+    date: '2026-08-14',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'SharpLink to stake $200M in ETH through Lido',
+    summary: 'Nasdaq-listed SharpLink (SBET), one of the largest corporate holders of ETH, announced on August 13, 2026 that it will stake $200M of ETH through Lido, receiving wstETH custodied with Anchorage Digital. Large institutional inflows like this reinforce Lido\'s dominant position in liquid staking (~$16.5B staked) and are a healthy signal for your stETH position, though no action is needed on your end.',
+    sourceUrl: 'https://www.globenewswire.com/news-release/2026/08/13/3344459/0/en/sharplink-to-deploy-200m-eth-staking-allocation-with-lido.html'
   }
 ];
