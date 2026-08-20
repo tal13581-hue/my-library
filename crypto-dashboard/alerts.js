@@ -67,5 +67,14 @@ const ALERTS = [
     title: 'SharpLink to stake $200M in ETH through Lido',
     summary: 'Nasdaq-listed SharpLink (SBET), one of the largest corporate holders of ETH, announced on August 13, 2026 that it will stake $200M of ETH through Lido, receiving wstETH custodied with Anchorage Digital. Large institutional inflows like this reinforce Lido\'s dominant position in liquid staking (~$16.5B staked) and are a healthy signal for your stETH position, though no action is needed on your end.',
     sourceUrl: 'https://www.globenewswire.com/news-release/2026/08/13/3344459/0/en/sharplink-to-deploy-200m-eth-staking-allocation-with-lido.html'
+  },
+  {
+    date: '2026-08-20',
+    platform: 'GMX',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'GMX finalizes $44M compensation plan for GLP holders hit by the V1 exploit — claim now open',
+    summary: 'GMX completed its compensation program for the GLP/V1 vulnerability, distributing roughly $44M (recovered funds plus ~$2M from the GMX treasury) to affected Arbitrum GLP liquidity providers as of August 13, 2026. If you held GLP on Arbitrum, check the GMX app for a claimable balance — payouts are issued as GLV tokens and require you to actively claim them.',
+    sourceUrl: 'https://crypto.news/gmx-44m-payout-glp-holders-v1-exploit-2025/'
   }
 ];
