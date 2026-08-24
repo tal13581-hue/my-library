@@ -76,5 +76,23 @@ const ALERTS = [
     title: 'GMX finalizes $44M compensation plan for GLP holders hit by the V1 exploit — claim now open',
     summary: 'GMX completed its compensation program for the GLP/V1 vulnerability, distributing roughly $44M (recovered funds plus ~$2M from the GMX treasury) to affected Arbitrum GLP liquidity providers as of August 13, 2026. If you held GLP on Arbitrum, check the GMX app for a claimable balance — payouts are issued as GLV tokens and require you to actively claim them.',
     sourceUrl: 'https://crypto.news/gmx-44m-payout-glp-holders-v1-exploit-2025/'
+  },
+  {
+    date: '2026-08-24',
+    platform: 'Lido',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'Bitfinex delists LDO — withdrawal deadline Aug 31, 2026',
+    summary: 'Bitfinex delisted LDO on August 17, 2026 (among 13 tokens), giving users until 10:00 UTC on August 31 to withdraw before standard withdrawals are disabled. If any of your LDO is held on Bitfinex, move it before the deadline — after that, retrieval is only through a discretionary, fee-bearing process with no fixed timeline.',
+    sourceUrl: 'https://cryptoslate.com/bitfinex-gives-users-14-days-to-withdraw-13-delisted-tokens-or-face-fees-and-uncertain-recovery/'
+  },
+  {
+    date: '2026-08-24',
+    platform: 'Jupiter / JLP',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'Bitfinex delists JUP — withdrawal deadline Aug 31, 2026',
+    summary: 'Bitfinex delisted JUP on August 17, 2026 (among 13 tokens, alongside LDO), giving users until 10:00 UTC on August 31 to withdraw before standard withdrawals are disabled. If any of your JUP is held on Bitfinex, move it before the deadline — after that, retrieval is only through a discretionary, fee-bearing process with no fixed timeline.',
+    sourceUrl: 'https://cryptoslate.com/bitfinex-gives-users-14-days-to-withdraw-13-delisted-tokens-or-face-fees-and-uncertain-recovery/'
   }
 ];
