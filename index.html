@@ -424,22 +424,15 @@ function openBookActions(id) {
 function nextAuthor() {
   if (!books.length) return null;
   if (!authorQueue.length || authorQueue.every(a => a.done)) {
-    const weighted = [...books].map(b => b.author);
-    for (let i = weighted.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [weighted[i], weighted[j]] = [weighted[j], weighted[i]]; }
-    authorQueue = weighted.map(name => ({ name, done: false }));
+    // One slot per unique author, regardless of how many books they have in
+    // the library, so an author with several books doesn't get picked more.
+    const uniqueAuthors = [...new Set(books.map(b => b.author))];
+    for (let i = uniqueAuthors.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [uniqueAuthors[i], uniqueAuthors[j]] = [uniqueAuthors[j], uniqueAuthors[i]]; }
+    authorQueue = uniqueAuthors.map(name => ({ name, done: false }));
   }
   const next = authorQueue.find(a => !a.done);
   if (next) { next.done = true; return next.name; }
   return books[0].author;
-}
-
-const SOURCE_ROTATION_KEY = 'library-source-rotation-v1';
-function nextSourceOrder() {
-  const sources = ['wikiquote', 'goodreads', 'brainyquote'];
-  let idx = parseInt(localStorage.getItem(SOURCE_ROTATION_KEY) || '0', 10);
-  if (isNaN(idx) || idx < 0 || idx > 2) idx = 0;
-  localStorage.setItem(SOURCE_ROTATION_KEY, String((idx + 1) % sources.length));
-  return [...sources.slice(idx), ...sources.slice(0, idx)];
 }
 
 async function getQuote() {
@@ -449,12 +442,22 @@ async function getQuote() {
   if (!author) { render(); return; }
   const wn = getWikiName(author);
   await fetchAuthorPhoto(wn, author);
+
+  const [wikiquote, goodreads, brainyquote] = await Promise.all([
+    wn ? wikiquoteCandidates(wn) : Promise.resolve([]),
+    goodreadsCandidates(author),
+    brainyquoteCandidates(author)
+  ]);
+  const bySource = { Wikiquote: wikiquote, Goodreads: goodreads, BrainyQuote: brainyquote };
+  const availableSources = Object.keys(bySource).filter(k => bySource[k].length);
+
   let found = null;
-  for (const src of nextSourceOrder()) {
-    if (src === 'wikiquote') found = wn ? await fromWikiquote(wn, author) : null;
-    else if (src === 'goodreads') found = await fromGoodreads(author);
-    else if (src === 'brainyquote') found = await fromBrainyQuote(author);
-    if (found) break;
+  if (availableSources.length) {
+    // Pick uniformly among the sources that actually have something, so a
+    // source with fewer quotes isn't drowned out by one with more.
+    const chosenSource = availableSources[Math.floor(Math.random() * availableSources.length)];
+    const picked = pickUnseen(author, bySource[chosenSource]);
+    if (picked) found = { text: picked.text, author, book: picked.book || '', source: chosenSource };
   }
   if (!found) found = await fromClaude(author);
   if (!found) found = await fromClaudeSimple(author);
@@ -463,42 +466,34 @@ async function getQuote() {
   render();
 }
 
-async function fromWikiquote(wikiName, displayAuthor) {
+async function wikiquoteCandidates(wikiName) {
   try {
     const url = `https://en.wikiquote.org/w/api.php?action=query&titles=${encodeURIComponent(wikiName)}&prop=revisions&rvprop=content&format=json&origin=*`;
     const d = await (await fetch(url)).json();
     const page = Object.values(d.query.pages)[0];
-    if (!page || !page.revisions) return null;
+    if (!page || !page.revisions) return [];
     const raw = page.revisions[0]['*'] || page.revisions[0]?.slots?.main?.['*'] || '';
     const lines = raw.split('\n').filter(l => { if (!l.startsWith('*') || l.startsWith('**')) return false; if (l.length < 30 || l.length > 500) return false; const c = l.replace(/\[\[.*?\]\]/g,'').replace(/\{\{.*?\}\}/g,''); if (/^[*\s]*[—–\-]{2}/.test(c)) return false; if (/\b(said|wrote|noted|remarked|stated|according to|attributed|described)\b/i.test(c)) return false; return true; });
-    const candidates = lines.map(line => line.replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g,'$1').replace(/\{\{[^}]*\}\}/g,'').replace(/[*\[\]|]/g,'').replace(/'{2,3}/g,'').replace(/<!--.*?-->/g,'').trim()).filter(c => c.length > 25).map(text => ({ text, book:'' }));
-    if (!candidates.length) return null;
-    const picked = pickUnseen(displayAuthor, candidates);
-    if (picked) return { text: picked.text, author: displayAuthor, book:'', source:'Wikiquote' };
-  } catch(e) {}
-  return null;
+    return lines.map(line => line.replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g,'$1').replace(/\{\{[^}]*\}\}/g,'').replace(/[*\[\]|]/g,'').replace(/'{2,3}/g,'').replace(/<!--.*?-->/g,'').trim()).filter(c => c.length > 25).map(text => ({ text, book:'' }));
+  } catch(e) { return []; }
 }
 
-async function fromGoodreads(author) {
+async function goodreadsCandidates(author) {
   try {
     const response = await fetch('https://my-library-eosin-pi.vercel.app/api/goodreads?author=' + encodeURIComponent(author));
     const data = await response.json();
-    if (data.error || !data.quotes || !data.quotes.length) return null;
-    const picked = pickUnseen(author, data.quotes);
-    if (picked) return { text: picked.text, author, book: picked.book || '', source: 'Goodreads' };
-  } catch(e) { console.warn('fromGoodreads error:', e.message); }
-  return null;
+    if (data.error || !data.quotes) return [];
+    return data.quotes;
+  } catch(e) { console.warn('goodreadsCandidates error:', e.message); return []; }
 }
 
-async function fromBrainyQuote(author) {
+async function brainyquoteCandidates(author) {
   try {
     const response = await fetch('https://my-library-eosin-pi.vercel.app/api/brainyquote?author=' + encodeURIComponent(author));
     const data = await response.json();
-    if (data.error || !data.quotes || !data.quotes.length) return null;
-    const picked = pickUnseen(author, data.quotes);
-    if (picked) return { text: picked.text, author, book: picked.book || '', source: 'BrainyQuote' };
-  } catch(e) { console.warn('fromBrainyQuote error:', e.message); }
-  return null;
+    if (data.error || !data.quotes) return [];
+    return data.quotes;
+  } catch(e) { console.warn('brainyquoteCandidates error:', e.message); return []; }
 }
 
 async function fromClaude(author) {
