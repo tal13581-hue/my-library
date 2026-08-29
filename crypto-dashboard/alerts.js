@@ -94,5 +94,41 @@ const ALERTS = [
     title: 'Bitfinex delists JUP — withdrawal deadline Aug 31, 2026',
     summary: 'Bitfinex delisted JUP on August 17, 2026 (among 13 tokens, alongside LDO), giving users until 10:00 UTC on August 31 to withdraw before standard withdrawals are disabled. If any of your JUP is held on Bitfinex, move it before the deadline — after that, retrieval is only through a discretionary, fee-bearing process with no fixed timeline.',
     sourceUrl: 'https://cryptoslate.com/bitfinex-gives-users-14-days-to-withdraw-13-delisted-tokens-or-face-fees-and-uncertain-recovery/'
+  },
+  {
+    date: '2026-08-29',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Lido NEST automated LDO buyback program goes live',
+    summary: 'Following execution of Dual Governance Proposal #13 on August 14, 2026, Lido\'s NEST mechanism is now fully active: up to $50K/day (capped at $10M/year) of protocol staking revenue above a $109K/day threshold is used to buy back LDO, currently routed to the DAO treasury. This confirms the governance vote flagged earlier this month has passed and gone live — no action needed for your stETH/LDO position.',
+    sourceUrl: 'https://ambcrypto.com/lido-launches-10m-ldo-buyback-but-nest-may-remain-idle-until/'
+  },
+  {
+    date: '2026-08-29',
+    platform: 'Kamino',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Large KMNO token unlock (229.17M tokens) scheduled for Aug 30, 2026',
+    summary: 'Kamino\'s next scheduled unlock releases 229.17M KMNO (83.33M to core contributors, 145.83M to stakeholders/advisors) on August 30, 2026 — a sizeable release that could add sell pressure and short-term price volatility around KMNO. This doesn\'t affect your lending/vault principal directly, but is worth watching if you hold or are evaluating KMNO exposure.',
+    sourceUrl: 'https://tokenomist.ai/kamino'
+  },
+  {
+    date: '2026-08-29',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'info',
+    actionRequired: false,
+    title: 'NEAR Protocol launches AI-focused staking models (IronClaw, NEAR AI staking)',
+    summary: 'On August 19, 2026 NEAR rolled out two new staking products that convert token commitments into AI compute/hosting credits instead of validator rewards, covering 43 AI models including ones from Anthropic, OpenAI and Google. This is a new, optional use case for staked NEAR alongside standard validator staking through Hot Wallet — no action needed, but worth knowing the protocol is diversifying what staked NEAR can be used for.',
+    sourceUrl: 'https://en.cryptonomist.ch/2026/08/19/near-protocol-staking-ai/'
+  },
+  {
+    date: '2026-08-29',
+    platform: 'Sanctum',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Sanctum becomes Solana\'s top-TVL protocol, surpassing Jupiter (~$1.66B)',
+    summary: 'Sanctum\'s liquid staking TVL climbed to roughly $1.66B in late August 2026, overtaking Jupiter\'s DEX aggregation business to become the top protocol by TVL on Solana — reportedly the first time a liquid staking protocol has done so. This is a strong health/adoption signal for the protocol underlying your Sanctum position; no action needed.',
+    sourceUrl: 'https://en.cryptonomist.ch/2026/08/28/sanctum-top-protocol-solana/'
   }
 ];
