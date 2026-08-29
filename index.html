@@ -162,11 +162,44 @@ const WIKI_MAP = {'פרנץ קפקא':'Franz_Kafka','אלברט קאמי':'Alber
 
 let books = [], view = 'home', editId = null, quote = null, authorQueue = [], photoCache = {}, verifyTimer = null, lastVerifiedAuthor = '', verifyResult = null;
 
-const RECENT_KEY = 'library-recent-quotes-v1';
-const RECENT_LIMIT = 8;
-function loadRecent() { try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '{}'); } catch(e) { return {}; } }
-function rememberQuote(author, text) { const map = loadRecent(); const list = map[author] || []; list.push(text); map[author] = list.slice(-RECENT_LIMIT); localStorage.setItem(RECENT_KEY, JSON.stringify(map)); }
-function pickUnseen(author, candidates) { if (!candidates || !candidates.length) return null; const seen = new Set(loadRecent()[author] || []); const fresh = candidates.filter(c => !seen.has(c.text)); const pool = fresh.length ? fresh : candidates; return pool[Math.floor(Math.random() * pool.length)]; }
+// Per (author, source) shuffled "deck" of quote texts still owed before any
+// repeat is allowed — like nextAuthor()'s queue, but for quotes. Persisted
+// so it survives reloads.
+const QUOTE_QUEUE_KEY = 'library-quote-queue-v2';
+const QUOTE_LAST_KEY = 'library-quote-last-v1';
+function loadQuoteQueues() { try { return JSON.parse(localStorage.getItem(QUOTE_QUEUE_KEY) || '{}'); } catch(e) { return {}; } }
+function saveQuoteQueues(map) { localStorage.setItem(QUOTE_QUEUE_KEY, JSON.stringify(map)); }
+function loadLastShown() { try { return JSON.parse(localStorage.getItem(QUOTE_LAST_KEY) || '{}'); } catch(e) { return {}; } }
+function saveLastShown(map) { localStorage.setItem(QUOTE_LAST_KEY, JSON.stringify(map)); }
+function shuffledTexts(candidates) {
+  const arr = candidates.map(c => c.text);
+  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+  return arr;
+}
+function pickFromSource(author, source, candidates) {
+  if (!candidates || !candidates.length) return null;
+  const key = author + '|' + source;
+  const queues = loadQuoteQueues();
+  const candidateTexts = new Set(candidates.map(c => c.text));
+  let remaining = (queues[key] || []).filter(t => candidateTexts.has(t));
+  if (!remaining.length) {
+    remaining = shuffledTexts(candidates);
+    // Avoid the deck's first card matching the very last one shown, so
+    // reshuffling at the end of a cycle can't produce a back-to-back repeat.
+    const lastShown = loadLastShown()[key];
+    if (remaining.length > 1 && remaining[0] === lastShown) {
+      const swapWith = 1 + Math.floor(Math.random() * (remaining.length - 1));
+      [remaining[0], remaining[swapWith]] = [remaining[swapWith], remaining[0]];
+    }
+  }
+  const text = remaining.shift();
+  queues[key] = remaining;
+  saveQuoteQueues(queues);
+  const lastMap = loadLastShown();
+  lastMap[key] = text;
+  saveLastShown(lastMap);
+  return candidates.find(c => c.text === text) || { text, book: '' };
+}
 
 function load() { try { books = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { books = []; } updateSub(); }
 function save() { localStorage.setItem(STORE_KEY, JSON.stringify(books)); updateSub(); }
@@ -456,12 +489,11 @@ async function getQuote() {
     // Pick uniformly among the sources that actually have something, so a
     // source with fewer quotes isn't drowned out by one with more.
     const chosenSource = availableSources[Math.floor(Math.random() * availableSources.length)];
-    const picked = pickUnseen(author, bySource[chosenSource]);
+    const picked = pickFromSource(author, chosenSource, bySource[chosenSource]);
     if (picked) found = { text: picked.text, author, book: picked.book || '', source: chosenSource };
   }
   if (!found) found = await fromClaude(author);
   if (!found) found = await fromClaudeSimple(author);
-  if (found) rememberQuote(author, found.text);
   quote = found || { text: 'לא הצלחנו למצוא ציטוט — נסה שוב', author, book:'', source:'נסה שוב' };
   render();
 }
