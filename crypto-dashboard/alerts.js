@@ -130,5 +130,23 @@ const ALERTS = [
     title: 'Sanctum becomes Solana\'s top-TVL protocol, surpassing Jupiter (~$1.66B)',
     summary: 'Sanctum\'s liquid staking TVL climbed to roughly $1.66B in late August 2026, overtaking Jupiter\'s DEX aggregation business to become the top protocol by TVL on Solana — reportedly the first time a liquid staking protocol has done so. This is a strong health/adoption signal for the protocol underlying your Sanctum position; no action needed.',
     sourceUrl: 'https://en.cryptonomist.ch/2026/08/28/sanctum-top-protocol-solana/'
+  },
+  {
+    date: '2026-09-04',
+    platform: 'GMX',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'GMX V2.2 upgrade overhauls price-impact and liquidation mechanics',
+    summary: 'GMX shipped V2.2 to its synthetics contracts on September 3, 2026, redesigning how price impact is calculated (impact from position increases is now stored and charged when the position closes, instead of immediately) and splitting liquidation thresholds from leverage limits. If you trade perps or hold GM/GLV liquidity, acceptablePrice settings now need more slack than before, and GM token pricing accounts for a new "lendable" impact-pool buffer.',
+    sourceUrl: 'https://github.com/gmx-io/gmx-synthetics/blob/main/changelogs/v2.2.md'
+  },
+  {
+    date: '2026-09-04',
+    platform: 'Sanctum',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'CLOUD-008 proposal: burn 259M CLOUD tokens (25% of supply) and rename ticker to SANC',
+    summary: 'A governance proposal posted September 2, 2026 on Sanctum\'s forum would burn the entire 259M-token Community Reserve (cutting max supply by roughly 25%, to ~741M) and rename the CLOUD ticker to SANC for better exchange searchability. It\'s still in forum-review stage with no on-chain vote scheduled yet, so no action is needed now, but it would meaningfully change CLOUD tokenomics if it passes.',
+    sourceUrl: 'https://research.sanctum.so/t/cloud-008-should-sanctum-burn-1-4-of-total-cloud-supply/2001'
   }
 ];
