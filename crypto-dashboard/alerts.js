@@ -148,5 +148,14 @@ const ALERTS = [
     title: 'CLOUD-008 proposal: burn 259M CLOUD tokens (25% of supply) and rename ticker to SANC',
     summary: 'A governance proposal posted September 2, 2026 on Sanctum\'s forum would burn the entire 259M-token Community Reserve (cutting max supply by roughly 25%, to ~741M) and rename the CLOUD ticker to SANC for better exchange searchability. It\'s still in forum-review stage with no on-chain vote scheduled yet, so no action is needed now, but it would meaningfully change CLOUD tokenomics if it passes.',
     sourceUrl: 'https://research.sanctum.so/t/cloud-008-should-sanctum-burn-1-4-of-total-cloud-supply/2001'
+  },
+  {
+    date: '2026-09-08',
+    platform: 'Aerodrome / veAERO',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Aero (unified Ethereum liquidity layer) opens $400K public audit contest ahead of September mainnet launch',
+    summary: 'Aerodrome/Velodrome\'s merged "Aero" protocol released its Ethereum-layer codebase and kicked off a 3-week, $400K public audit contest with Sherlock (Aug 31 - Sept 11, 2026), the last security checkpoint before its planned September mainnet launch. This is the concrete next step toward the token/veNFT migration flagged earlier this month for your veAERO position — no action yet since migration tooling still hasn\'t shipped, but worth watching closely as launch approaches.',
+    sourceUrl: 'https://cryptobriefing.com/aerodrome-finance-400k-audit-contest-sherlock/'
   }
 ];
