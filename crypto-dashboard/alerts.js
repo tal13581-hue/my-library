@@ -157,5 +157,14 @@ const ALERTS = [
     title: 'Aero (unified Ethereum liquidity layer) opens $400K public audit contest ahead of September mainnet launch',
     summary: 'Aerodrome/Velodrome\'s merged "Aero" protocol released its Ethereum-layer codebase and kicked off a 3-week, $400K public audit contest with Sherlock (Aug 31 - Sept 11, 2026), the last security checkpoint before its planned September mainnet launch. This is the concrete next step toward the token/veNFT migration flagged earlier this month for your veAERO position — no action yet since migration tooling still hasn\'t shipped, but worth watching closely as launch approaches.',
     sourceUrl: 'https://cryptobriefing.com/aerodrome-finance-400k-audit-contest-sherlock/'
+  },
+  {
+    date: '2026-09-15',
+    platform: 'Aerodrome / veAERO',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Aero audit contest concludes with no critical or high-severity vulnerabilities found',
+    summary: 'The $400K public Sherlock audit contest for Aero\'s core contracts concluded September 11, 2026, and alongside months of prior private reviews (ChainSecurity, Sherlock), no critical or high-severity vulnerabilities were identified. This clears the last announced security checkpoint before the reported September mainnet launch, meaning the veNFT/token migration for your locked veAERO position could become actionable soon — migration tooling still hasn\'t shipped, so no action is needed today, but watch for the official migration announcement.',
+    sourceUrl: 'https://cryptobriefing.com/aero-core-contracts-audits-conclude/'
   }
 ];
