@@ -166,5 +166,23 @@ const ALERTS = [
     title: 'Aero audit contest concludes with no critical or high-severity vulnerabilities found',
     summary: 'The $400K public Sherlock audit contest for Aero\'s core contracts concluded September 11, 2026, and alongside months of prior private reviews (ChainSecurity, Sherlock), no critical or high-severity vulnerabilities were identified. This clears the last announced security checkpoint before the reported September mainnet launch, meaning the veNFT/token migration for your locked veAERO position could become actionable soon — migration tooling still hasn\'t shipped, so no action is needed today, but watch for the official migration announcement.',
     sourceUrl: 'https://cryptobriefing.com/aero-core-contracts-audits-conclude/'
+  },
+  {
+    date: '2026-09-19',
+    platform: 'Sanctum',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'CLOUD-008 burn/rename vote goes live via MetaDAO futarchy, resolves today',
+    summary: 'The CLOUD-008 proposal (burn the 259M-token Community Reserve, cut supply ~25%, rename ticker to SANC) moved from forum review straight to a live on-chain vote: a 72-hour MetaDAO futarchy market opened Sept 16 at 08:12 UTC and resolves around Sept 19, decided by whichever conditional market is priced higher at expiry. No action is needed for your Sanctum position, but CLOUD/SANC tokenomics could change as soon as the market resolves today.',
+    sourceUrl: 'https://solanacompass.com/news/sanctum-opens-72-hour-metadao-vote-to-burn-259-million-cloud-tokens'
+  },
+  {
+    date: '2026-09-19',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'NEST LDO buyback mechanism hits negative budget, skips a scheduled purchase',
+    summary: 'Lido\'s NEST buyback contract recorded a negative cumulative budget of roughly $517,000 at 00:00 UTC on Sept 9 and skipped that day\'s scheduled LDO purchase, since the mechanism must rebuild its reserve from future revenue surplus before buying again. This shows the buyback program (live since Aug 29) is more fragile than advertised amid Lido\'s slowing share of new ETH staking growth — a tokenomics detail worth knowing for your stETH/LDO position, though no action is needed.',
+    sourceUrl: 'https://cryptoslate.com/ethereums-institutional-staking-boom-is-growing-but-lidos-share-is-shrinking/'
   }
 ];
