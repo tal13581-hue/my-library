@@ -184,5 +184,41 @@ const ALERTS = [
     title: 'NEST LDO buyback mechanism hits negative budget, skips a scheduled purchase',
     summary: 'Lido\'s NEST buyback contract recorded a negative cumulative budget of roughly $517,000 at 00:00 UTC on Sept 9 and skipped that day\'s scheduled LDO purchase, since the mechanism must rebuild its reserve from future revenue surplus before buying again. This shows the buyback program (live since Aug 29) is more fragile than advertised amid Lido\'s slowing share of new ETH staking growth — a tokenomics detail worth knowing for your stETH/LDO position, though no action is needed.',
     sourceUrl: 'https://cryptoslate.com/ethereums-institutional-staking-boom-is-growing-but-lidos-share-is-shrinking/'
+  },
+  {
+    date: '2026-09-24',
+    platform: 'Sanctum',
+    severity: 'info',
+    actionRequired: false,
+    title: 'CLOUD-008 burn/rename vote passes: 259M CLOUD burned, ticker renamed to SANC',
+    summary: 'The MetaDAO futarchy vote flagged last week resolved on Sept 19, 2026: Sanctum permanently burned its entire 259.32M-token Community Reserve, cutting total CLOUD supply from ~1B to ~741M, and the ticker will be renamed to SANC (a metadata-only change with no effect on the mint address or your holdings). This confirms a meaningful deflationary tokenomics change for your Sanctum position — no action is needed.',
+    sourceUrl: 'https://solanacompass.com/news/sanctum-governance-vote-passes-259m-cloud-tokens-to-be-burned-ticker-renames-to-sanc'
+  },
+  {
+    date: '2026-09-24',
+    platform: 'Kamino',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Next KMNO token unlock scheduled for Sept 30, 2026',
+    summary: 'Kamino\'s next scheduled cliff unlock releases roughly 229.17M KMNO (~$8.41M, ~2.3% of supply) on September 30, 2026, per Tokenomist\'s vesting schedule. As with the equivalent Aug 30 unlock already flagged, this doesn\'t affect your lending/vault principal directly but could add short-term sell pressure/volatility if you hold or are evaluating KMNO exposure.',
+    sourceUrl: 'https://tokenomist.ai/kamino/unlock-events'
+  },
+  {
+    date: '2026-09-24',
+    platform: 'Kamino',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Kamino appoints Michael Weisz as CEO',
+    summary: 'Kamino Finance named Michael Weisz, who brings fintech industry experience, as CEO on September 15, 2026. A leadership change at a protocol you hold lending/vault positions with is worth knowing about even though it requires no action from you today.',
+    sourceUrl: 'https://coinmarketcap.com/cmc-ai/kamino-finance/latest-updates/'
+  },
+  {
+    date: '2026-09-24',
+    platform: 'GMX',
+    severity: 'info',
+    actionRequired: false,
+    title: 'GMX launches 24/7 QQQ/USD and SPY/USD perps (TradFi expansion wave 1)',
+    summary: 'GMX went live with perpetual futures on the Invesco QQQ Trust and SPDR S&P 500 ETF, tradable 24/7 including outside US market hours, as the first wave of a TradFi asset expansion on Arbitrum. This broadens what GM/GLV liquidity providers are exposed to and signals GMX diversifying beyond crypto-native perps — no action needed for your position.',
+    sourceUrl: 'https://gmxio.substack.com/p/247-qqqusd-and-spyusd-perps-are-now'
   }
 ];
