@@ -220,5 +220,32 @@ const ALERTS = [
     title: 'GMX launches 24/7 QQQ/USD and SPY/USD perps (TradFi expansion wave 1)',
     summary: 'GMX went live with perpetual futures on the Invesco QQQ Trust and SPDR S&P 500 ETF, tradable 24/7 including outside US market hours, as the first wave of a TradFi asset expansion on Arbitrum. This broadens what GM/GLV liquidity providers are exposed to and signals GMX diversifying beyond crypto-native perps — no action needed for your position.',
     sourceUrl: 'https://gmxio.substack.com/p/247-qqqusd-and-spyusd-perps-are-now'
+  },
+  {
+    date: '2026-09-25',
+    platform: 'Kamino',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Switchboard oracle shutdown forces Kamino to migrate price feeds by Sept 25 (today)',
+    summary: 'Switchboard announced Sept 19, 2026 that its entire oracle network is deprecated, with support ending Sept 25 — Kamino Finance was explicitly named among affected protocols (alongside Jito, MarginFi, Drift) that rely on its feeds and must cut over to Pyth or RedStone in time. A rushed oracle migration is a real risk for a lending protocol since stale or incorrect prices can trigger bad liquidations, so it is worth confirming Kamino completed a clean migration; nothing for you to do directly since this is protocol-side infrastructure.',
+    sourceUrl: 'https://solanacompass.com/news/switchboard-oracle-protocol-shuts-down-giving-solana-defi-six-days-to-migrate'
+  },
+  {
+    date: '2026-09-25',
+    platform: 'Kamino',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Kamino expands into institutional and fixed-rate lending products',
+    summary: 'In mid-September 2026 Kamino launched two new product lines: Galaxy-curated institutional USDC/USDT vaults (live Sept 17) with professional risk management, and its first Fixed Rate Multiply vault (live Sept 21, built with Figure/HastraFi) offering a locked 5.3% 30-day borrow rate on an AUTO/wYLDS strategy. This broadens what is available on the protocol your lending/vault position sits on — no action needed, but the new vault types may be worth evaluating.',
+    sourceUrl: 'https://solanacompass.com/news/galaxy-digital-launches-institutional-usdc-and-usdt-vaults-on-kamino-finance'
+  },
+  {
+    date: '2026-09-25',
+    platform: 'Pyth',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Pyth approved as external distributor of Nasdaq Basic real-time equity data',
+    summary: 'On Sept 22, 2026 Pyth was approved to distribute Nasdaq Basic real-time U.S. equity data through its Data Marketplace — its second Nasdaq data deal after a June 2026 TotalView agreement — and PYTH rose over 8% on the news. This is a strong institutional-adoption signal for the oracle network underlying your Pyth position, arriving right as Switchboard\'s shutdown pushes more Solana protocols toward Pyth as well; no action is needed.',
+    sourceUrl: 'https://www.kucoin.com/blog/pyth-network-nasdaq-basic-blockchain-market-data-partnership'
   }
 ];
