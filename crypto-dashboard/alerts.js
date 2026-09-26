@@ -247,5 +247,23 @@ const ALERTS = [
     title: 'Pyth approved as external distributor of Nasdaq Basic real-time equity data',
     summary: 'On Sept 22, 2026 Pyth was approved to distribute Nasdaq Basic real-time U.S. equity data through its Data Marketplace — its second Nasdaq data deal after a June 2026 TotalView agreement — and PYTH rose over 8% on the news. This is a strong institutional-adoption signal for the oracle network underlying your Pyth position, arriving right as Switchboard\'s shutdown pushes more Solana protocols toward Pyth as well; no action is needed.',
     sourceUrl: 'https://www.kucoin.com/blog/pyth-network-nasdaq-basic-blockchain-market-data-partnership'
+  },
+  {
+    date: '2026-09-26',
+    platform: 'Pyth',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'Gate exchange delists PYTH staking product — deadline Oct 8, 2026',
+    summary: 'Gate announced it is delisting its PYTH (along with ZETA and DYDX) staking/earn product effective October 8, 2026, with new subscriptions already suspended. If you have PYTH staked through Gate\'s earn product, manually redeem it before the deadline to avoid being swept into automatic redemption and temporary illiquidity.',
+    sourceUrl: 'https://www.gate.com/announcements/article/51533'
+  },
+  {
+    date: '2026-09-26',
+    platform: 'Aerodrome / veAERO',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Aero confirms mainnet launch date: October 21, 2026, across seven chains',
+    summary: 'Aerodrome/Velodrome\'s merged "Aero" protocol confirmed a concrete multi-chain launch date of October 21, 2026 (8pm EDT), deploying to seven chains including Base, Ethereum Mainnet, Arbitrum, and the newly-added Robinhood Chain. This is the clearest signal yet that the veNFT/token migration for your locked veAERO position could go live around this date — migration tooling still hasn\'t been announced, so no action is needed yet, but this is the date to watch.',
+    sourceUrl: 'https://cryptobriefing.com/defi-protocol-aero-set-to-launch-on-oct-21-across-seven-chains/'
   }
 ];
