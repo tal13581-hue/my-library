@@ -265,5 +265,14 @@ const ALERTS = [
     title: 'Aero confirms mainnet launch date: October 21, 2026, across seven chains',
     summary: 'Aerodrome/Velodrome\'s merged "Aero" protocol confirmed a concrete multi-chain launch date of October 21, 2026 (8pm EDT), deploying to seven chains including Base, Ethereum Mainnet, Arbitrum, and the newly-added Robinhood Chain. This is the clearest signal yet that the veNFT/token migration for your locked veAERO position could go live around this date — migration tooling still hasn\'t been announced, so no action is needed yet, but this is the date to watch.',
     sourceUrl: 'https://cryptobriefing.com/defi-protocol-aero-set-to-launch-on-oct-21-across-seven-chains/'
+  },
+  {
+    date: '2026-09-28',
+    platform: '40acres.finance',
+    severity: 'info',
+    actionRequired: false,
+    title: '40acres hits TVL all-time high, adds Open Cover insurance and a position marketplace',
+    summary: '40acres\' "Autumn Harvest" update (Sept 8, 2026) reported all-time-high TVL and loans outstanding, and added a partnership with Open Cover offering up to $600K of insurance coverage on user positions — a new safety net worth considering for your veNFT-backed loan. It also joined the Circle Alliance and is shipping a vote-optimization tool plus a marketplace to buy/sell positions (even with an active loan) across Base and OP. No action is needed, but opting into Open Cover coverage may be worth evaluating.',
+    sourceUrl: 'https://40acresfinance.substack.com/p/autumn-harvest-is-here'
   }
 ];
