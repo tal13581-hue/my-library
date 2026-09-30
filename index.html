@@ -417,7 +417,7 @@ async function verifyAuthor() {
 async function resolveWikiName(hebrewName) {
   const local = getWikiName(hebrewName);
   if (local) return local;
-  try { const r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:100, messages:[{role:'user', content:`What is the exact English Wikipedia page title for the author "${hebrewName}"? Reply ONLY with the Wikipedia page title (e.g. "Franz_Kafka"), nothing else. If unknown, reply "UNKNOWN".`}] }) }); const d = await r.json(); const txt = (d.content?.[0]?.text||'').trim().replace(/\s+/g,'_'); if (txt && txt !== 'UNKNOWN' && txt.length > 1) return txt; } catch(e) {}
+  try { const r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ model:'claude-sonnet-5', max_tokens:100, messages:[{role:'user', content:`What is the exact English Wikipedia page title for the author "${hebrewName}"? Reply ONLY with the Wikipedia page title (e.g. "Franz_Kafka"), nothing else. If unknown, reply "UNKNOWN".`}] }) }); const d = await r.json(); const txt = (d.content?.[0]?.text||'').trim().replace(/\s+/g,'_'); if (txt && txt !== 'UNKNOWN' && txt.length > 1) return txt; } catch(e) {}
   return null;
 }
 
