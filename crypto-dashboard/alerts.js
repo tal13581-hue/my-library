@@ -274,5 +274,23 @@ const ALERTS = [
     title: '40acres hits TVL all-time high, adds Open Cover insurance and a position marketplace',
     summary: '40acres\' "Autumn Harvest" update (Sept 8, 2026) reported all-time-high TVL and loans outstanding, and added a partnership with Open Cover offering up to $600K of insurance coverage on user positions — a new safety net worth considering for your veNFT-backed loan. It also joined the Circle Alliance and is shipping a vote-optimization tool plus a marketplace to buy/sell positions (even with an active loan) across Base and OP. No action is needed, but opting into Open Cover coverage may be worth evaluating.',
     sourceUrl: 'https://40acresfinance.substack.com/p/autumn-harvest-is-here'
+  },
+  {
+    date: '2026-10-01',
+    platform: 'Lido',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Security incident at MetaMask Staking forces emergency exit of Lido-operated ETH validators',
+    summary: 'MetaMask disclosed on Oct 1, 2026 a security incident inside its MetaMask Staking (formerly Consensys Staking) validator business and, as a precaution, began exiting its Ethereum validators within the Lido protocol, with withdrawals expected to complete by Oct 7 and full re-entry taking up to ~45 days. MetaMask says it found no direct threat to user wallets and does not hold withdrawal keys, so no action is needed for your stETH position, but it is a real security incident at one of Lido\'s node operators worth watching closely.',
+    sourceUrl: 'https://cointelegraph.com/news/metamask-exits-lido-validators-as-it-investigates-security-incident'
+  },
+  {
+    date: '2026-10-01',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Lido Dual Governance framework goes live on Ethereum mainnet (Vote #214)',
+    summary: 'Lido DAO\'s on-chain Vote #214 passed Sept 27, 2026 with 58.2M LDO participating, activating the Dual Governance framework on mainnet. This gives stETH holders like you a new formal mechanism to contest or delay DAO-approved actions affecting the protocol\'s smart contracts, adding a safeguard layer beyond ordinary LDO voting — no action is needed on your end.',
+    sourceUrl: 'https://bitcoinist.com/lido-vote-214-passes-as-dual-governance-moves-onto-ethereum-mainnet/'
   }
 ];
