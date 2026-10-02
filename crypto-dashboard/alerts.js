@@ -292,5 +292,32 @@ const ALERTS = [
     title: 'Lido Dual Governance framework goes live on Ethereum mainnet (Vote #214)',
     summary: 'Lido DAO\'s on-chain Vote #214 passed Sept 27, 2026 with 58.2M LDO participating, activating the Dual Governance framework on mainnet. This gives stETH holders like you a new formal mechanism to contest or delay DAO-approved actions affecting the protocol\'s smart contracts, adding a safeguard layer beyond ordinary LDO voting — no action is needed on your end.',
     sourceUrl: 'https://bitcoinist.com/lido-vote-214-passes-as-dual-governance-moves-onto-ethereum-mainnet/'
+  },
+  {
+    date: '2026-10-02',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'NEAR Intents (separate NEAR-ecosystem protocol) hit by $3.8M exploit, NEAR dips ~7.5%',
+    summary: 'On Oct 1, 2026, NEAR Intents — a cross-chain swap protocol built on NEAR but unrelated to the Hot Wallet app — disclosed a $3.8M exploit of its own BSC hot-wallet infrastructure and paused cross-chain services, sending NEAR down roughly 7.5%. Your staked NEAR and the Hot Wallet app itself are not implicated, but it is a real security incident in the broader NEAR ecosystem worth knowing about; no action is needed.',
+    sourceUrl: 'https://www.coindesk.com/tech/2026/10/01/near-intents-hit-by-usd3-8-million-exploit-as-crypto-s-rough-year-of-hacks-continues'
+  },
+  {
+    date: '2026-10-02',
+    platform: 'Sanctum',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Sanctum launches App 2.0 with Squads multisig protection for user funds',
+    summary: 'Sanctum shipped a ground-up rebuild of its mobile rewards app on Oct 1, 2026, moving user funds behind a Squads multisig and adding per-second reward tracking plus treasury/supply transparency. This is a meaningful security upgrade for anyone holding a Sanctum position through the app, though no action is needed — existing balances are unaffected.',
+    sourceUrl: 'https://solanacompass.com/news/solanas-sanctum-app-20-launches-with-squads-multisig-protection-on-ios-android-and-seeker'
+  },
+  {
+    date: '2026-10-02',
+    platform: 'Sanctum',
+    severity: 'info',
+    actionRequired: false,
+    title: 'CLOUD/SANC token burn now confirmed to execute Oct 6, 2026',
+    summary: 'The CLOUD-008 burn approved by the Sept 19 MetaDAO vote is now confirmed to execute on-chain on October 6, 2026, permanently removing 259M tokens (~25% of supply) and completing the ticker rename to SANC. This firms up the exact execution date for the governance change already flagged for your Sanctum position — no action needed.',
+    sourceUrl: 'https://www.kucoin.com/news/insight/CLOUD/6ab7021b74fd460007c56dae'
   }
 ];
