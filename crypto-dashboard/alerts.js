@@ -319,5 +319,41 @@ const ALERTS = [
     title: 'CLOUD/SANC token burn now confirmed to execute Oct 6, 2026',
     summary: 'The CLOUD-008 burn approved by the Sept 19 MetaDAO vote is now confirmed to execute on-chain on October 6, 2026, permanently removing 259M tokens (~25% of supply) and completing the ticker rename to SANC. This firms up the exact execution date for the governance change already flagged for your Sanctum position — no action needed.',
     sourceUrl: 'https://www.kucoin.com/news/insight/CLOUD/6ab7021b74fd460007c56dae'
+  },
+  {
+    date: '2026-10-04',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'info',
+    actionRequired: false,
+    title: 'NEAR Intents exploit fully resolved — full $3.8M recovered from attacker',
+    summary: 'Following up on the Oct 1 NEAR Intents exploit already flagged for this position: NEAR Intents GM Alex Shevchenko confirmed on Oct 2-3, 2026 that the attacker returned the entire $3.8M after a 48-hour ultimatum, and the engineering team has closed the investigation. This resolves cleanly and faster than typical DeFi hacks, reinforcing that your staked NEAR and the Hot Wallet app itself were never implicated — no action needed.',
+    sourceUrl: 'https://cointelegraph.com/news/near-intents-recovers-entire-stolen-38m-after-ultimatum-to-exploiter'
+  },
+  {
+    date: '2026-10-04',
+    platform: 'Aerodrome / veAERO',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Aero sets Oct 15 xVELO bridge deadline ahead of Oct 21 cross-chain launch',
+    summary: 'Ahead of the confirmed Oct 21, 2026 Aero mainnet launch already flagged for your veAERO position, the team set an Oct 15 deadline for xVELO (wrapped VELO) holders to bridge back to OP Mainnet before the merge. This specifically concerns xVELO/VELO holders rather than Base-side veAERO lockers, but it is the first concrete migration deadline tied to the merger — if you hold any VELO/xVELO alongside your veAERO position, bridge before Oct 15.',
+    sourceUrl: 'https://www.tokenpost.com/news/business/25133'
+  },
+  {
+    date: '2026-10-04',
+    platform: 'Aerodrome / veAERO',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Coinbase to support AERO/VELO token migration Nov 2-4, 2026',
+    summary: 'Coinbase announced it will support the post-merger AERO/VELO token migration for a three-day window, Nov 2-4, 2026, following the Oct 21 Aero mainnet launch already flagged for your veAERO position. This only matters if you hold AERO or VELO directly on Coinbase (your locked veAERO NFT position is unaffected) — no action needed yet, but worth noting the window if you do.',
+    sourceUrl: 'https://cryptobriefing.com/coinbase-aero-velo-token-migration/'
+  },
+  {
+    date: '2026-10-04',
+    platform: 'Kamino',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Next KMNO token unlock scheduled for Oct 30, 2026',
+    summary: 'Kamino\'s next scheduled cliff unlock releases roughly 229.17M KMNO (~$9.27M, ~2.3% of supply) on October 30, 2026, continuing the same monthly unlock pattern already flagged for Aug 30 and Sept 30. This doesn\'t affect your lending/vault principal directly but could add short-term sell pressure/volatility if you hold or are evaluating KMNO exposure.',
+    sourceUrl: 'https://cryptobriefing.com/solana-ecosystem-token-unlocks-october-2026/'
   }
 ];
