@@ -355,5 +355,14 @@ const ALERTS = [
     title: 'Next KMNO token unlock scheduled for Oct 30, 2026',
     summary: 'Kamino\'s next scheduled cliff unlock releases roughly 229.17M KMNO (~$9.27M, ~2.3% of supply) on October 30, 2026, continuing the same monthly unlock pattern already flagged for Aug 30 and Sept 30. This doesn\'t affect your lending/vault principal directly but could add short-term sell pressure/volatility if you hold or are evaluating KMNO exposure.',
     sourceUrl: 'https://cryptobriefing.com/solana-ecosystem-token-unlocks-october-2026/'
+  },
+  {
+    date: '2026-10-10',
+    platform: 'Sanctum',
+    severity: 'info',
+    actionRequired: false,
+    title: 'CLOUD-008 burn executed on-chain: ~250M CLOUD burned, ticker now shows as SANC',
+    summary: 'The CLOUD-008 burn confirmed for Oct 6, 2026 has now actually executed: Sanctum burned roughly 250M CLOUD from its Community Reserve (slightly under the 259M originally approved), cutting total supply to about 740.7M, and Solscan now shows the token under the renamed SANC ticker. This completes the deflationary tokenomics change already flagged for your Sanctum position — no action needed.',
+    sourceUrl: 'https://solanacompass.com/news/sanctum-burns-its-cloud-community-reserve-cutting-token-supply-to-7407-million-as-sanc-ticker-appears'
   }
 ];
