@@ -364,5 +364,23 @@ const ALERTS = [
     title: 'CLOUD-008 burn executed on-chain: ~250M CLOUD burned, ticker now shows as SANC',
     summary: 'The CLOUD-008 burn confirmed for Oct 6, 2026 has now actually executed: Sanctum burned roughly 250M CLOUD from its Community Reserve (slightly under the 259M originally approved), cutting total supply to about 740.7M, and Solscan now shows the token under the renamed SANC ticker. This completes the deflationary tokenomics change already flagged for your Sanctum position — no action needed.',
     sourceUrl: 'https://solanacompass.com/news/sanctum-burns-its-cloud-community-reserve-cutting-token-supply-to-7407-million-as-sanc-ticker-appears'
+  },
+  {
+    date: '2026-10-16',
+    platform: 'Aerodrome / veAERO',
+    severity: 'critical',
+    actionRequired: true,
+    title: 'Aero sets Oct 20 deadline to pull veNFTs out of Relays/vaults before Oct 21 merger',
+    summary: 'Aero\'s official migration hub says any veAERO (or veVELO) sitting in a Relay, vault, or other third-party contract must be withdrawn into your own wallet by October 20 — a veNFT held by another protocol cannot be upgraded in place, and votes need resetting before upgrading. On migration your current veAERO NFT is burned and a new sAERO position is minted, ahead of the confirmed October 21 (8pm EDT) Aero mainnet launch already flagged for this position.',
+    sourceUrl: 'https://aero.xyz/aero-upgrade/'
+  },
+  {
+    date: '2026-10-16',
+    platform: '40acres.finance',
+    severity: 'critical',
+    actionRequired: true,
+    title: '40acres: relayer-only veNFT positions need manual Aero migration before Oct 20; active loans migrate automatically',
+    summary: '40acres published exact steps for the Aero merger: if your locked veNFT only uses 40acres\' relayer for voting/swap automation with no active loan, 40acres will NOT migrate it for you — you must withdraw it from the relayer, migrate it yourself via aero.xyz, then redeposit, all before Aero\'s October 20 withdrawal cutoff. If you instead have an active loan against the veNFT, 40acres says it migrates it to sAERO automatically and loan repayments continue uninterrupted — but Aerodrome\'s Relay auto-voting product is reportedly being replaced by a new "Autopilot" service, so confirm how automated voting works once migration completes.',
+    sourceUrl: 'https://40acresfinance.substack.com/p/aero-migration-what-40acres-users'
   }
 ];
