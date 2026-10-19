@@ -382,5 +382,14 @@ const ALERTS = [
     title: '40acres: relayer-only veNFT positions need manual Aero migration before Oct 20; active loans migrate automatically',
     summary: '40acres published exact steps for the Aero merger: if your locked veNFT only uses 40acres\' relayer for voting/swap automation with no active loan, 40acres will NOT migrate it for you — you must withdraw it from the relayer, migrate it yourself via aero.xyz, then redeposit, all before Aero\'s October 20 withdrawal cutoff. If you instead have an active loan against the veNFT, 40acres says it migrates it to sAERO automatically and loan repayments continue uninterrupted — but Aerodrome\'s Relay auto-voting product is reportedly being replaced by a new "Autopilot" service, so confirm how automated voting works once migration completes.',
     sourceUrl: 'https://40acresfinance.substack.com/p/aero-migration-what-40acres-users'
+  },
+  {
+    date: '2026-10-19',
+    platform: 'Lido',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Lido enables one-transaction ETH staking directly from Arbitrum, Base, Linea, and Optimism',
+    summary: 'On October 15, 2026 Lido launched direct ETH staking from four Ethereum L2s via stake.lido.fi, letting users stake ETH on Arbitrum, Base, Linea, or Optimism in a single transaction and receive wstETH immediately (the ETH is bridged to mainnet, staked, wrapped, and routed back over Chainlink CCIP). This gives existing stETH/wstETH holders on those L2s an easier way to add to their position without manually bridging, and Lido\'s protocol fee stays at 10% of staking rewards — no action needed for your current position.',
+    sourceUrl: 'https://cryptobriefing.com/lido-direct-eth-staking-layer-2s/'
   }
 ];
