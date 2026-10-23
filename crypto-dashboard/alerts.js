@@ -391,5 +391,14 @@ const ALERTS = [
     title: 'Lido enables one-transaction ETH staking directly from Arbitrum, Base, Linea, and Optimism',
     summary: 'On October 15, 2026 Lido launched direct ETH staking from four Ethereum L2s via stake.lido.fi, letting users stake ETH on Arbitrum, Base, Linea, or Optimism in a single transaction and receive wstETH immediately (the ETH is bridged to mainnet, staked, wrapped, and routed back over Chainlink CCIP). This gives existing stETH/wstETH holders on those L2s an easier way to add to their position without manually bridging, and Lido\'s protocol fee stays at 10% of staking rewards — no action needed for your current position.',
     sourceUrl: 'https://cryptobriefing.com/lido-direct-eth-staking-layer-2s/'
+  },
+  {
+    date: '2026-10-23',
+    platform: 'Aerodrome / veAERO',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'Aero mainnet merger confirmed live (Oct 21) — veAERO now converts to sAERO; AERO down ~6% at launch',
+    summary: 'The Aerodrome/Velodrome merger into the unified "Aero" DEX went live as scheduled on October 21, 2026 across seven chains (Base, Ethereum, Arbitrum, OP Mainnet, and others); AERO converts 1:1 and veAERO/veVELO locks become sAERO. AERO traded down roughly 6% right after launch, and the new "Predictive Allocation" rewards mechanism replacing weekly gauge voting is untested at launch. If your veNFT was not pulled out of a Relay/vault into your own wallet by the Oct 20 cutoff already flagged, check your position now — a veNFT still sitting in a third-party contract could not be upgraded in place.',
+    sourceUrl: 'https://cryptobriefing.com/aero-launches-seven-chains-arbitrum/'
   }
 ];
