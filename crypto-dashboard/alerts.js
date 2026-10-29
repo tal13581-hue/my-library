@@ -400,5 +400,23 @@ const ALERTS = [
     title: 'Aero mainnet merger confirmed live (Oct 21) — veAERO now converts to sAERO; AERO down ~6% at launch',
     summary: 'The Aerodrome/Velodrome merger into the unified "Aero" DEX went live as scheduled on October 21, 2026 across seven chains (Base, Ethereum, Arbitrum, OP Mainnet, and others); AERO converts 1:1 and veAERO/veVELO locks become sAERO. AERO traded down roughly 6% right after launch, and the new "Predictive Allocation" rewards mechanism replacing weekly gauge voting is untested at launch. If your veNFT was not pulled out of a Relay/vault into your own wallet by the Oct 20 cutoff already flagged, check your position now — a veNFT still sitting in a third-party contract could not be upgraded in place.',
     sourceUrl: 'https://cryptobriefing.com/aero-launches-seven-chains-arbitrum/'
+  },
+  {
+    date: '2026-10-29',
+    platform: 'Pyth',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Pyth DAO adopts "100% Rule" (OP-PIP-136): all eligible product revenue now funds PYTH buybacks',
+    summary: 'On Oct 8, 2026 the Pyth DAO passed OP-PIP-136, replacing the prior treasury-balance/monthly-vote buyback rule with a standing rule routing 100% of eligible product revenue (Pyth Pro subscriptions, Listing as a Service, Data Marketplace, Pyth Indices) into open-market PYTH purchases for the DAO treasury. Purchased tokens aren\'t burned or distributed without a further vote, so this is a tokenomics-strengthening change for your Pyth position rather than something requiring action.',
+    sourceUrl: 'https://www.cryptotimes.io/2026/10/08/pyth-gains-6-as-pyth-dao-adopts-100-revenue-buyback-rule/'
+  },
+  {
+    date: '2026-10-29',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'warning',
+    actionRequired: true,
+    title: 'NEAR governance vote HSP-029 would cut max annual issuance from 2.5% to 1.6% — voting open through Nov 2, 2026',
+    summary: 'A House of Stake proposal (HSP-029) opened for voting around Oct 19-20, 2026 and closes Nov 2, proposing to lower NEAR\'s maximum annual token issuance from 2.5% to 1.6% (phased over 24 months with a 90-day grace period after ratification), which would also pull staking yield down toward roughly 3.37%. If you want a say in how this affects future rewards on your staked NEAR, cast your House of Stake vote before the Nov 2 deadline — passing the vote alone doesn\'t change the rate until validators also adopt a follow-up protocol upgrade.',
+    sourceUrl: 'https://thedefiant.io/news/blockchains/near-opens-vote-to-cut-token-issuance-to-1-6'
   }
 ];
