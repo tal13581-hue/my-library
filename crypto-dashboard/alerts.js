@@ -418,5 +418,32 @@ const ALERTS = [
     title: 'NEAR governance vote HSP-029 would cut max annual issuance from 2.5% to 1.6% — voting open through Nov 2, 2026',
     summary: 'A House of Stake proposal (HSP-029) opened for voting around Oct 19-20, 2026 and closes Nov 2, proposing to lower NEAR\'s maximum annual token issuance from 2.5% to 1.6% (phased over 24 months with a 90-day grace period after ratification), which would also pull staking yield down toward roughly 3.37%. If you want a say in how this affects future rewards on your staked NEAR, cast your House of Stake vote before the Nov 2 deadline — passing the vote alone doesn\'t change the rate until validators also adopt a follow-up protocol upgrade.',
     sourceUrl: 'https://thedefiant.io/news/blockchains/near-opens-vote-to-cut-token-issuance-to-1-6'
+  },
+  {
+    date: '2026-11-12',
+    platform: '40acres.finance',
+    severity: 'critical',
+    actionRequired: true,
+    title: '40acres USDC lending vaults report no cash available for withdrawals; TVL down ~96% from October high',
+    summary: '40acres\' Aerodrome, Velodrome and Pharaoh USDC lending vaults had zero cash available for immediate withdrawals as of Nov 2, 2026, and Blackhole USDC had only ~1,581 USDC liquid against 635,055 USDC of reported assets, per a documentation update from a DeFi risk-tracking project. DefiLlama shows 40acres\' TVL collapsed from a $58.17M all-time high on Oct 12 to about $2.4M now (down ~96% in 30 days) while active loans still total ~$7.7M — check whether you have USDC lender exposure here and review the counterparty risk to your veNFT-backed loan now.',
+    sourceUrl: 'https://github.com/tradingstrategy-ai/web3-ethereum-defi/pull/1712'
+  },
+  {
+    date: '2026-11-12',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'NEAR HSP-029 issuance-cut vote passes (~99.96%); Security Council veto window open until Nov 16',
+    summary: 'NEAR\'s House of Stake approved HSP-029 on Nov 2-3, 2026, cutting max annual token issuance from 2.5% to 1.6%, which models suggest would pull gross staking yield down from ~5.27% to ~3.37% once fully phased in. It isn\'t final yet — NEAR\'s Security Council can still veto it through Nov 16, 2026, and validators must separately adopt a protocol upgrade before it takes effect — so no action is needed from you now, but expect lower staking rewards on your NEAR over time if it stands.',
+    sourceUrl: 'https://www.cryptopolitan.com/near-stakers-3-37-yield-issuance-cut-vote/'
+  },
+  {
+    date: '2026-11-12',
+    platform: 'GMX',
+    severity: 'info',
+    actionRequired: false,
+    title: 'GMX launches USDG "Dollar Vault" spanning BTC, ETH, NEAR, SOL, XRP, ZEC and HYPE',
+    summary: 'GMX rolled out a new Dollar Vault where depositors supply USDG and earn a share of trading-volume revenue across seven markets, with a launch incentive running through Nov 30, 2026, alongside a governance proposal for Phase 2 of its $10M Market-Making Fund. This is a new optional product alongside your existing GM/GLV liquidity position, not a change to it — no action needed, but it adds USDG/stablecoin exposure if you choose to use it.',
+    sourceUrl: 'https://coinalertnews.com/news/2026/11/06/gmx-dollar-vault-fund-phase2'
   }
 ];
