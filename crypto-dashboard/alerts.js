@@ -445,5 +445,32 @@ const ALERTS = [
     title: 'GMX launches USDG "Dollar Vault" spanning BTC, ETH, NEAR, SOL, XRP, ZEC and HYPE',
     summary: 'GMX rolled out a new Dollar Vault where depositors supply USDG and earn a share of trading-volume revenue across seven markets, with a launch incentive running through Nov 30, 2026, alongside a governance proposal for Phase 2 of its $10M Market-Making Fund. This is a new optional product alongside your existing GM/GLV liquidity position, not a change to it — no action needed, but it adds USDG/stablecoin exposure if you choose to use it.',
     sourceUrl: 'https://coinalertnews.com/news/2026/11/06/gmx-dollar-vault-fund-phase2'
+  },
+  {
+    date: '2026-11-14',
+    platform: 'Pyth',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Pyth approved to distribute real-time NYSE equity data, extending its Nasdaq deal',
+    summary: 'Pyth Network was approved on Nov 11, 2026 as a distributor of real-time NYSE Best Quote and Trades data from five NYSE Group exchanges through its Data Marketplace, just weeks after a similar Nasdaq Basic deal flagged earlier. This continues the institutional-adoption trend for your Pyth position and adds another recurring revenue stream that, under the DAO\'s 100% buyback rule passed in October, flows into open-market PYTH purchases — no action is needed.',
+    sourceUrl: 'https://coinalertnews.com/news/2026/11/11/pyth-network-nyse-data-integration'
+  },
+  {
+    date: '2026-11-14',
+    platform: 'Kamino',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Kamino commits $20M to expand tokenized/RWA lending after launching equity-collateral Backpack Market',
+    summary: 'Kamino Foundation CEO Michael Weisz committed $20M (to be deployed over 24 months) to expand tokenized-asset lending in a Nov 2, 2026 letter to KMNO holders, days after Kamino launched the "Backpack Market" (Oct 28) letting users borrow USDC against tokenized equities like Micron and SpaceX shares. This is a further build-out of the RWA/institutional lending push already flagged for your Kamino position — no action is needed, but it broadens what the protocol is exposed to.',
+    sourceUrl: 'https://cryptobriefing.com/kamino-commits-20m-tokenized-assets/'
+  },
+  {
+    date: '2026-11-14',
+    platform: 'Kamino',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Kamino Foundation clarifies KMNO holders have no claim on foundation revenue or equity',
+    summary: 'The Kamino Foundation stated on Nov 3, 2026 that owning KMNO does not entitle holders to protocol revenue, foundation distributions, or equity in the organization. This directly clarifies KMNO\'s tokenomics, worth knowing if you hold or are evaluating KMNO exposure alongside your Kamino lending/vault position — no action is needed since it doesn\'t change your existing lending terms.',
+    sourceUrl: 'https://pro.edgex.exchange/en-US/news/article/kamino-kmno-holders-no-foundation-revenue-claims'
   }
 ];
