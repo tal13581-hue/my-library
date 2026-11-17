@@ -472,5 +472,14 @@ const ALERTS = [
     title: 'Kamino Foundation clarifies KMNO holders have no claim on foundation revenue or equity',
     summary: 'The Kamino Foundation stated on Nov 3, 2026 that owning KMNO does not entitle holders to protocol revenue, foundation distributions, or equity in the organization. This directly clarifies KMNO\'s tokenomics, worth knowing if you hold or are evaluating KMNO exposure alongside your Kamino lending/vault position — no action is needed since it doesn\'t change your existing lending terms.',
     sourceUrl: 'https://pro.edgex.exchange/en-US/news/article/kamino-kmno-holders-no-foundation-revenue-claims'
+  },
+  {
+    date: '2026-11-17',
+    platform: 'Lido',
+    severity: 'warning',
+    actionRequired: false,
+    title: 'Lido Earn adds "Firelight" loss-protection layer — depositors still bear residual risk',
+    summary: 'On Nov 5, 2026 Lido Earn (EarnETH/EarnUSD) added a Firelight first-loss cover on top of its existing DAO vault-share buffer, covering up to 5.7% of EarnETH TVL and 8% of EarnUSD TVL per 30 days, with the DAO layer separately capped at $3M (EarnETH) / $2M (EarnUSD). A Nov 13 CryptoSlate review flagged that Lido itself states neither layer is insurance or a guarantee, so losses above these caps, exclusions, or claims that aren\'t approved can still land on depositors. Only relevant if you use Lido Earn vaults rather than plain stETH — no action needed, but worth knowing the product\'s real risk profile before relying on it as "covered."',
+    sourceUrl: 'https://blog.lido.fi/lido-earn-first-loss-protection-dao-alignment/'
   }
 ];
