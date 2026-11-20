@@ -481,5 +481,23 @@ const ALERTS = [
     title: 'Lido Earn adds "Firelight" loss-protection layer — depositors still bear residual risk',
     summary: 'On Nov 5, 2026 Lido Earn (EarnETH/EarnUSD) added a Firelight first-loss cover on top of its existing DAO vault-share buffer, covering up to 5.7% of EarnETH TVL and 8% of EarnUSD TVL per 30 days, with the DAO layer separately capped at $3M (EarnETH) / $2M (EarnUSD). A Nov 13 CryptoSlate review flagged that Lido itself states neither layer is insurance or a guarantee, so losses above these caps, exclusions, or claims that aren\'t approved can still land on depositors. Only relevant if you use Lido Earn vaults rather than plain stETH — no action needed, but worth knowing the product\'s real risk profile before relying on it as "covered."',
     sourceUrl: 'https://blog.lido.fi/lido-earn-first-loss-protection-dao-alignment/'
+  },
+  {
+    date: '2026-11-20',
+    platform: 'Hot Wallet / NEAR Staking',
+    severity: 'info',
+    actionRequired: false,
+    title: 'NEAR Security Council declines to veto HSP-029; issuance cut to 1.6% now ratified',
+    summary: 'The 14-day Security Council veto window on HSP-029 (cutting NEAR\'s max annual issuance from 2.5% to 1.6%) closed Nov 16, 2026 with no veto exercised, formally ratifying the vote already flagged on Nov 12. The cut still isn\'t live — it needs a separate validator protocol upgrade and a grace period — but this removes the last procedural hurdle, so expect staking yield on your NEAR to drift down toward ~3.37% once validators adopt it.',
+    sourceUrl: 'https://www.tokenpost.com/news/technology/59851'
+  },
+  {
+    date: '2026-11-20',
+    platform: 'Kamino',
+    severity: 'info',
+    actionRequired: false,
+    title: 'Kamino unveils "Omni" tokenized-portfolio platform at Solana Breakpoint; new app and trade-routing engine go live',
+    summary: 'At Solana Breakpoint (Nov 16, 2026) Kamino announced Omni, an institutional platform for managers to build tokenized, NAV-priced portfolios (leveraged S&P 500, Mag-7, dollar-yield, commodity baskets) usable as collateral across onchain lending — though pilots aren\'t expected until Q1 2027. It also shipped a redesigned Kamino app and a new "Kamino ONE" trade-routing engine the same day. This continues the institutional/RWA build-out already flagged for your Kamino position; no action is needed since Omni isn\'t live yet.',
+    sourceUrl: 'https://solanacompass.com/news/kamino-unveils-omni-a-platform-for-tokenized-onchain-portfolios-with-pilots-targeted-for-q1-2027'
   }
 ];
